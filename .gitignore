@@ -1,0 +1,24 @@
+###############
+# macOS
+###############
+.DS_Store
+
+###############
+# Xcode / SPM
+###############
+/.build
+/Packages
+/*.xcodeproj
+xcuserdata/
+
+###############
+# CocoaPods
+###############
+Pods/
+
+###############
+# Carthage
+##############
+Carthage
+Carthage/Checkouts
+Carthage/Build
