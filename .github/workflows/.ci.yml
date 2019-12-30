@@ -1,0 +1,15 @@
+name: Tests
+
+on: [push]
+
+jobs:
+  Tests:
+    runs-on: macos-latest
+    steps:
+    - name: Install Swift
+      uses: YOCKOW/Action-setup-swift@master
+      with:
+        swift-version: '5.1.2'
+    - uses: actions/checkout@master
+    - name: Run Unit Tests
+      run: swift test --enable-code-coverage
