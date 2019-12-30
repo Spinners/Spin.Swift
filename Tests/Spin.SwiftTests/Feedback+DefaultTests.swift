@@ -8,7 +8,7 @@
 import Spin_Swift
 import XCTest
 
-fileprivate struct MockFeedback<State: CanBeEmpty, Mutation: CanBeEmpty>: Feedback {
+fileprivate struct SpyFeedback<State: CanBeEmpty, Mutation: CanBeEmpty>: Feedback {
 
     fileprivate typealias StreamState = MockStream<State>
     fileprivate typealias StreamMutation = MockStream<Mutation>
@@ -156,7 +156,7 @@ final class Feedback_DefaultTests: XCTestCase {
 
         // When: instantiating the feedback with the stream, and no Executer
         // When: executing the feedback
-        let sut = MockFeedback(feedback: feedbackStream)
+        let sut = SpyFeedback(feedback: feedbackStream)
         let receivedMockActionStream = sut.feedbackStream(MockStream<MockState>(value: .toEmpty))
 
         // Then: the default initializer of the feedback is called
@@ -176,7 +176,7 @@ final class Feedback_DefaultTests: XCTestCase {
 
         // When: applying a new Executer to the Feedback
         let executer = MockExecuter()
-        let sut = MockFeedback(feedback: feedbackStream).execute(on: executer)
+        let sut = SpyFeedback(feedback: feedbackStream).execute(on: executer)
 
         // Then: the created feedback has the expected Executer
         XCTAssertEqual(executer, sut.feedbackExecuter)
@@ -194,7 +194,7 @@ final class Feedback_DefaultTests: XCTestCase {
 
         // When: instantiating the feedback with the effect, and no Executer, and no execution strategy
         // When: executing the feedback
-        let sut = MockFeedback(feedback: feedbackStream)
+        let sut = SpyFeedback(feedback: feedbackStream)
         let receivedMockActionStream = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 0)))
 
         // Then: the default initializer of the feedback is called
@@ -222,7 +222,7 @@ final class Feedback_DefaultTests: XCTestCase {
 
         // When: instantiating the feedback with the effect, a filter, and no Executer, and no execution strategy
         // When: executing the feedback
-        let sut = MockFeedback(feedback: feedbackStream, filteredBy: { $0.subState > 10 })
+        let sut = SpyFeedback(feedback: feedbackStream, filteredBy: { $0.subState > 10 })
         let receivedMockActionStream = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 15)))
         let receivedMockActionStreamWhenFilteredIsFalse = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 5)))
 
@@ -253,7 +253,7 @@ final class Feedback_DefaultTests: XCTestCase {
 
         // When: instantiating the feedback with the effect, and no Executer
         // When: executing the feedback
-        let sut = MockFeedback<MockState, MockAction>(feedback: feedbackStream)
+        let sut = SpyFeedback<MockState, MockAction>(feedback: feedbackStream)
         let receivedMockActionStream = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 10)))
 
         // Then: the default initializer of the feedback is called
@@ -279,7 +279,7 @@ final class Feedback_DefaultTests: XCTestCase {
 
         // When: instantiating the feedback with the effect, and no Executer
         // When: executing the feedback
-        let sut = MockFeedback<MockState, MockAction>(feedback: feedbackStream)
+        let sut = SpyFeedback<MockState, MockAction>(feedback: feedbackStream)
         let receivedMockActionStream = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 10)))
 
         // Then: the default initializer of the feedback is called
@@ -314,7 +314,7 @@ final class Feedback_DefaultTests: XCTestCase {
 
         // When: instantiating the feedback with the ui feedbacks, and no Executer
         // When: executing the feedback
-        let sut = MockFeedback<MockState, MockAction>(uiFeedbacks: stateFeedbackStream, mutationFeedbackStream)
+        let sut = SpyFeedback<MockState, MockAction>(uiFeedbacks: stateFeedbackStream, mutationFeedbackStream)
         _ = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 10)))
 
         // Then: the default initializer of the feedback is called
@@ -340,7 +340,7 @@ final class Feedback_DefaultTests: XCTestCase {
 
         // When: instantiating the feedback with the effect, a lense, and no Executer, and no execution strategy
         // When: executing the feedback
-        let sut = MockFeedback<MockState, MockAction>(feedback: feedbackStream, lensingOn: { $0.subState })
+        let sut = SpyFeedback<MockState, MockAction>(feedback: feedbackStream, lensingOn: { $0.subState })
         let receivedMockActionStream = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 15)))
 
         // Then: the default initializer of the feedback is called
@@ -368,7 +368,7 @@ final class Feedback_DefaultTests: XCTestCase {
 
         // When: instantiating the feedback with the effect, a lense, and no Executer, and no execution strategy
         // When: executing the feedback
-        let sut = MockFeedback<MockState, MockAction>(feedback: feedbackStream, lensingOn: { $0.subState }, filteredBy: { $0 > 10 })
+        let sut = SpyFeedback<MockState, MockAction>(feedback: feedbackStream, lensingOn: { $0.subState }, filteredBy: { $0 > 10 })
         let receivedMockActionStream = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 15)))
         let receivedMockActionStreamWhenFilteredIsFalse = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 5)))
 
@@ -394,11 +394,11 @@ final class Feedback_DefaultTests: XCTestCase {
             feedbackIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
-        let sourceFeedback = MockFeedback(feedback: feedbackStream)
+        let sourceFeedback = SpyFeedback(feedback: feedbackStream)
 
         // When: instantiating the feedback with an already existing feedback
         // When: executing the feedback
-        let sut = MockFeedback(sourceFeedback)
+        let sut = SpyFeedback(sourceFeedback)
         _ = sut.feedbackStream(MockStream<MockState>(value: .toEmpty))
 
         // Then: the default init of the Feedback is called
@@ -416,11 +416,11 @@ final class Feedback_DefaultTests: XCTestCase {
             feedbackIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
-        let sourceFeedback = MockFeedback(feedback: feedbackStream)
+        let sourceFeedback = SpyFeedback(feedback: feedbackStream)
 
         // When: instantiating the feedback with an already existing feedback with function builder
         // When: executing the feedback
-        let sut = MockFeedback{
+        let sut = SpyFeedback {
             sourceFeedback
         }
 
@@ -448,12 +448,12 @@ final class Feedback_DefaultTests: XCTestCase {
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
 
-        let sourceFeedbackA = MockFeedback(feedback: feedbackAStream)
-        let sourceFeedbackB = MockFeedback(feedback: feedbackBStream)
+        let sourceFeedbackA = SpyFeedback(feedback: feedbackAStream)
+        let sourceFeedbackB = SpyFeedback(feedback: feedbackBStream)
 
         // When: instantiating the feedback with already existing feedbacks with function builder
         // When: executing the feedback
-        let sut = MockFeedback{
+        let sut = SpyFeedback{
             sourceFeedbackA
             sourceFeedbackB
         }
@@ -488,13 +488,13 @@ final class Feedback_DefaultTests: XCTestCase {
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
 
-        let sourceFeedbackA = MockFeedback(feedback: feedbackAStream)
-        let sourceFeedbackB = MockFeedback(feedback: feedbackBStream)
-        let sourceFeedbackC = MockFeedback(feedback: feedbackCStream)
+        let sourceFeedbackA = SpyFeedback(feedback: feedbackAStream)
+        let sourceFeedbackB = SpyFeedback(feedback: feedbackBStream)
+        let sourceFeedbackC = SpyFeedback(feedback: feedbackCStream)
 
         // When: instantiating the feedback with already existing feedbacks with function builder
         // When: executing the feedback
-        let sut = MockFeedback{
+        let sut = SpyFeedback {
             sourceFeedbackA
             sourceFeedbackB
             sourceFeedbackC
@@ -536,14 +536,14 @@ final class Feedback_DefaultTests: XCTestCase {
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
 
-        let sourceFeedbackA = MockFeedback(feedback: feedbackAStream)
-        let sourceFeedbackB = MockFeedback(feedback: feedbackBStream)
-        let sourceFeedbackC = MockFeedback(feedback: feedbackCStream)
-        let sourceFeedbackD = MockFeedback(feedback: feedbackDStream)
+        let sourceFeedbackA = SpyFeedback(feedback: feedbackAStream)
+        let sourceFeedbackB = SpyFeedback(feedback: feedbackBStream)
+        let sourceFeedbackC = SpyFeedback(feedback: feedbackCStream)
+        let sourceFeedbackD = SpyFeedback(feedback: feedbackDStream)
 
         // When: instantiating the feedback with already existing feedbacks with function builder
         // When: executing the feedback
-        let sut = MockFeedback{
+        let sut = SpyFeedback {
             sourceFeedbackA
             sourceFeedbackB
             sourceFeedbackC
@@ -592,15 +592,15 @@ final class Feedback_DefaultTests: XCTestCase {
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
 
-        let sourceFeedbackA = MockFeedback(feedback: feedbackAStream)
-        let sourceFeedbackB = MockFeedback(feedback: feedbackBStream)
-        let sourceFeedbackC = MockFeedback(feedback: feedbackCStream)
-        let sourceFeedbackD = MockFeedback(feedback: feedbackDStream)
-        let sourceFeedbackE = MockFeedback(feedback: feedbackEStream)
+        let sourceFeedbackA = SpyFeedback(feedback: feedbackAStream)
+        let sourceFeedbackB = SpyFeedback(feedback: feedbackBStream)
+        let sourceFeedbackC = SpyFeedback(feedback: feedbackCStream)
+        let sourceFeedbackD = SpyFeedback(feedback: feedbackDStream)
+        let sourceFeedbackE = SpyFeedback(feedback: feedbackEStream)
 
         // When: instantiating the feedback with already existing feedbacks with function builder
         // When: executing the feedback
-        let sut = MockFeedback{
+        let sut = SpyFeedback {
             sourceFeedbackA
             sourceFeedbackB
             sourceFeedbackC
