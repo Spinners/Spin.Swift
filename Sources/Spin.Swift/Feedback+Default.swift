@@ -6,7 +6,6 @@
 //
 
 public extension Feedback {
-
     static var defaultExecutionStrategy: ExecutionStrategy {
         return .cancelOnNewEvent
     }
@@ -18,46 +17,57 @@ public extension Feedback {
         return newFeedback
     }
 
-    init<StreamStateType: ReactiveStream, StreamMutationType: ReactiveStream>(_ feedbackStreams: [(StreamState) -> StreamMutation])
-        where   StreamStateType == StreamState,
-                StreamMutationType == StreamMutation {
-        let feedbacks = feedbackStreams.map { Self(feedback: $0, on: nil) }
-
-        self.init(feedbacks: feedbacks)
+    init<StreamStateType, StreamMutationType>(_ feedbackStreams: [(StreamState) -> StreamMutation])
+        where
+        StreamStateType == StreamState,
+        StreamMutationType == StreamMutation {
+            let feedbacks = feedbackStreams.map { Self(feedback: $0, on: nil) }
+            self.init(feedbacks: feedbacks)
     }
 
-    init<FeedbackType: Feedback>(_ feedback: FeedbackType)
-        where   FeedbackType.StreamState == StreamState,
-                FeedbackType.StreamMutation == StreamMutation,
-                FeedbackType.Executer == Executer {
+    init<FeedbackType>(_ feedback: FeedbackType)
+        where
+        FeedbackType: Feedback,
+        FeedbackType.StreamState == StreamState,
+        FeedbackType.StreamMutation == StreamMutation,
+        FeedbackType.Executer == Executer {
             self.init(feedback: feedback.feedbackStream, on: nil)
     }
 
-    init<FeedbackType: Feedback>(@FeedbackBuilder builder: () -> FeedbackType)
-        where   FeedbackType.StreamState == StreamState,
-                FeedbackType.StreamMutation == StreamMutation {
+    init<FeedbackType>(@FeedbackBuilder builder: () -> FeedbackType)
+        where
+        FeedbackType: Feedback,
+        FeedbackType.StreamState == StreamState,
+        FeedbackType.StreamMutation == StreamMutation {
             let feedback = builder()
             self.init(feedback: feedback.feedbackStream, on: nil)
     }
 
-    init<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback>(@FeedbackBuilder builder: () -> (FeedbackTypeA, FeedbackTypeB))
-        where   FeedbackTypeA.StreamState == FeedbackTypeB.StreamState,
-                FeedbackTypeA.StreamMutation == FeedbackTypeB.StreamMutation,
-                FeedbackTypeA.StreamState == StreamState,
-        FeedbackTypeA.StreamMutation == StreamMutation {
+    init<FeedbackA, FeedbackB>(@FeedbackBuilder builder: () -> (FeedbackA, FeedbackB))
+        where
+        FeedbackA: Feedback,
+        FeedbackB: Feedback,
+        FeedbackA.StreamState == FeedbackB.StreamState,
+        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackA.StreamState == StreamState,
+        FeedbackA.StreamMutation == StreamMutation {
             let feedbacks = builder()
             let feedbackA = feedbacks.0
             let feedbackB = feedbacks.1
             self.init(feedbacks: feedbackA, feedbackB)
     }
 
-    init<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback, FeedbackTypeC: Feedback>(@FeedbackBuilder builder: () -> (FeedbackTypeA, FeedbackTypeB,  FeedbackTypeC))
-        where   FeedbackTypeA.StreamState == FeedbackTypeB.StreamState,
-                FeedbackTypeA.StreamMutation == FeedbackTypeB.StreamMutation,
-                FeedbackTypeB.StreamState == FeedbackTypeC.StreamState,
-                FeedbackTypeB.StreamMutation == FeedbackTypeC.StreamMutation,
-                FeedbackTypeA.StreamState == StreamState,
-                FeedbackTypeA.StreamMutation == StreamMutation {
+    init<FeedbackA, FeedbackB, FeedbackC>(@FeedbackBuilder builder: () -> (FeedbackA, FeedbackB, FeedbackC))
+        where
+        FeedbackA: Feedback,
+        FeedbackB: Feedback,
+        FeedbackC: Feedback,
+        FeedbackA.StreamState == FeedbackB.StreamState,
+        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackB.StreamState == FeedbackC.StreamState,
+        FeedbackB.StreamMutation == FeedbackC.StreamMutation,
+        FeedbackA.StreamState == StreamState,
+        FeedbackA.StreamMutation == StreamMutation {
             let feedbacks = builder()
             let feedbackA = feedbacks.0
             let feedbackB = feedbacks.1
@@ -65,15 +75,23 @@ public extension Feedback {
             self.init(feedbacks: feedbackA, feedbackB, feedbackC)
     }
 
-    init<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback, FeedbackTypeC: Feedback, FeedbackTypeD: Feedback>(@FeedbackBuilder builder: () -> (FeedbackTypeA, FeedbackTypeB, FeedbackTypeC, FeedbackTypeD))
-        where   FeedbackTypeA.StreamState == FeedbackTypeB.StreamState,
-                FeedbackTypeA.StreamMutation == FeedbackTypeB.StreamMutation,
-                FeedbackTypeB.StreamState == FeedbackTypeC.StreamState,
-                FeedbackTypeB.StreamMutation == FeedbackTypeC.StreamMutation,
-                FeedbackTypeC.StreamState == FeedbackTypeD.StreamState,
-                FeedbackTypeC.StreamMutation == FeedbackTypeD.StreamMutation,
-                FeedbackTypeA.StreamState == StreamState,
-                FeedbackTypeA.StreamMutation == StreamMutation {
+    init<FeedbackA, FeedbackB, FeedbackC, FeedbackD>(@FeedbackBuilder builder: () -> (  FeedbackA,
+                                                                                        FeedbackB,
+                                                                                        FeedbackC,
+                                                                                        FeedbackD))
+        where
+        FeedbackA: Feedback,
+        FeedbackB: Feedback,
+        FeedbackC: Feedback,
+        FeedbackD: Feedback,
+        FeedbackA.StreamState == FeedbackB.StreamState,
+        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackB.StreamState == FeedbackC.StreamState,
+        FeedbackB.StreamMutation == FeedbackC.StreamMutation,
+        FeedbackC.StreamState == FeedbackD.StreamState,
+        FeedbackC.StreamMutation == FeedbackD.StreamMutation,
+        FeedbackA.StreamState == StreamState,
+        FeedbackA.StreamMutation == StreamMutation {
             let feedbacks = builder()
             let feedbackA = feedbacks.0
             let feedbackB = feedbacks.1
@@ -82,21 +100,27 @@ public extension Feedback {
             self.init(feedbacks: feedbackA, feedbackB, feedbackC, feedbackD)
     }
 
-    init<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback, FeedbackTypeC: Feedback, FeedbackTypeD: Feedback, FeedbackTypeE: Feedback>(@FeedbackBuilder builder: () -> ( FeedbackTypeA,
-                                                                                                                                                                        FeedbackTypeB,
-                                                                                                                                                                        FeedbackTypeC,
-                                                                                                                                                                        FeedbackTypeD,
-                                                                                                                                                                        FeedbackTypeE))
-        where   FeedbackTypeA.StreamState == FeedbackTypeB.StreamState,
-                FeedbackTypeA.StreamMutation == FeedbackTypeB.StreamMutation,
-                FeedbackTypeB.StreamState == FeedbackTypeC.StreamState,
-                FeedbackTypeB.StreamMutation == FeedbackTypeC.StreamMutation,
-                FeedbackTypeC.StreamState == FeedbackTypeD.StreamState,
-                FeedbackTypeC.StreamMutation == FeedbackTypeD.StreamMutation,
-                FeedbackTypeD.StreamState == FeedbackTypeE.StreamState,
-                FeedbackTypeD.StreamMutation == FeedbackTypeE.StreamMutation,
-                FeedbackTypeA.StreamState == StreamState,
-                FeedbackTypeA.StreamMutation == StreamMutation {
+    init<FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE>(@FeedbackBuilder builder: () -> (   FeedbackA,
+                                                                                                    FeedbackB,
+                                                                                                    FeedbackC,
+                                                                                                    FeedbackD,
+                                                                                                    FeedbackE))
+        where
+        FeedbackA: Feedback,
+        FeedbackB: Feedback,
+        FeedbackC: Feedback,
+        FeedbackD: Feedback,
+        FeedbackE: Feedback,
+        FeedbackA.StreamState == FeedbackB.StreamState,
+        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackB.StreamState == FeedbackC.StreamState,
+        FeedbackB.StreamMutation == FeedbackC.StreamMutation,
+        FeedbackC.StreamState == FeedbackD.StreamState,
+        FeedbackC.StreamMutation == FeedbackD.StreamMutation,
+        FeedbackD.StreamState == FeedbackE.StreamState,
+        FeedbackD.StreamMutation == FeedbackE.StreamMutation,
+        FeedbackA.StreamState == StreamState,
+        FeedbackA.StreamMutation == StreamMutation {
             let feedbacks = builder()
             let feedbackA = feedbacks.0
             let feedbackB = feedbacks.1
@@ -110,7 +134,8 @@ public extension Feedback {
     /// - Parameters:
     ///   - feedback: the function transforming a `State` to a reactive stream of `Mutation`
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
-    ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while the previous execution is still in progress
+    ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while
+    ///   the previous execution is still in progress
     init(feedback: @escaping (StreamState.Value) -> StreamMutation,
          on executer: Executer? = nil,
          applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
@@ -118,12 +143,14 @@ public extension Feedback {
         self.init(feedback: feedbackStreamFromEffect, on: executer)
     }
 
-    /// Initialize the feedback with a: State -> ReactiveStream<Mutation> stream, dismissing the `State` values that don't match the filter
+    /// Initialize the feedback with a: State -> ReactiveStream<Mutation> stream, dismissing the `State` values that
+    /// don't match the filter
     /// - Parameters:
     ///   - feedback: the function transforming a `State` to a reactive stream of `Mutation`
     ///   - filter: the filter to apply to the input `State`
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
-    ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while the previous execution is still in progress
+    ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while
+    ///   the previous execution is still in progress
     init(feedback: @escaping (StreamState.Value) -> StreamMutation,
          filteredBy filter: @escaping (StreamState.Value) -> Bool,
          on executer: Executer? = nil,
@@ -134,7 +161,6 @@ public extension Feedback {
             }
 
             return feedback(state)
-
         }
 
         self.init(feedback: feedbackFromStateValueWithFilter, on: executer, applying: strategy)
@@ -165,14 +191,16 @@ public extension Feedback {
         self.init(feedback: feedbackFromStateStream, on: executer)
     }
 
-    /// Initialize the feedback with 2 partial feedbacks. Those 2 partial feedbacks will be concatenated to become a complete ReactiveStream<State> -> ReactiveStream<Mutation> feedback
+    /// Initialize the feedback with 2 partial feedbacks. Those 2 partial feedbacks will be concatenated to become a
+    /// complete ReactiveStream<State> -> ReactiveStream<Mutation> feedback
     /// - Parameters:
     ///   - stateInterpret: the function transforming a `State` to a Void output
     ///   - mutationEmitter: the function transforming a Void input to a ReactiveStream<Mutation> output
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
-    init(uiFeedbacks stateInterpret: @escaping (StreamState.Value) -> Void, _ mutationEmitter: @escaping () -> StreamMutation, on executer: Executer? = nil) {
-        let stateFeedback = Self.init(feedback: stateInterpret, on: executer)
-        let mutationFeedback = Self.init(feedback: mutationEmitter, on: executer)
+    init(uiFeedbacks stateInterpret: @escaping (StreamState.Value) -> Void,
+         _ mutationEmitter: @escaping () -> StreamMutation, on executer: Executer? = nil) {
+        let stateFeedback = Self(feedback: stateInterpret, on: executer)
+        let mutationFeedback = Self(feedback: mutationEmitter, on: executer)
 
         self.init(feedbacks: stateFeedback, mutationFeedback)
     }
@@ -182,7 +210,8 @@ public extension Feedback {
     ///   - feedback: the function transforming a `SubState` to a reactive stream of `Mutation`
     ///   - lense: the lense to apply to a State to obtain the `SubState` type paased as an input to the feedback
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
-    ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while the previous execution is still in progress
+    ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while
+    ///   the previous execution is still in progress
     init<SubState>(feedback: @escaping (SubState) -> StreamMutation,
                    lensingOn lense: @escaping (StreamState.Value) -> SubState,
                    on executer: Executer? = nil,
@@ -195,13 +224,15 @@ public extension Feedback {
         self.init(feedback: feedback, on: executer, applying: strategy)
     }
 
-    /// Initialize the feedback with a: `SubState` -> ReactiveStream<Mutation> stream, dismissing the `SubState` values that don't match the filter
+    /// Initialize the feedback with a: `SubState` -> ReactiveStream<Mutation> stream, dismissing the `SubState` values
+    /// that don't match the filter
     /// - Parameters:
     ///   - feedback: the function transforming a `SubState` to a reactive stream of `Mutation`
     ///   - lense: the lense to apply to a State to obtain the `SubState` type paased as an input to the feedback
     ///   - filter: the filter to apply to the input `State`
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
-    ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while the previous execution is still in progress
+    ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while
+    ///   the previous execution is still in progress
     init<SubState>(feedback: @escaping (SubState) -> StreamMutation,
                    lensingOn lense: @escaping (StreamState.Value) -> SubState,
                    filteredBy filter: @escaping (SubState) -> Bool,
@@ -226,51 +257,73 @@ public struct FeedbackBuilder {
         return feedback
     }
 
-    public static func buildBlock<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback>(_ feedbackA: FeedbackTypeA,
-                                                                                    _ feedbackB: FeedbackTypeB) -> (FeedbackTypeA, FeedbackTypeB)
-        where   FeedbackTypeA.StreamState == FeedbackTypeB.StreamState,
-                FeedbackTypeA.StreamMutation == FeedbackTypeB.StreamMutation {
+    public static func buildBlock<FeedbackA, FeedbackB>(_ feedbackA: FeedbackA,
+                                                        _ feedbackB: FeedbackB) -> (FeedbackA, FeedbackB)
+        where
+        FeedbackA: Feedback,
+        FeedbackB: Feedback,
+        FeedbackA.StreamState == FeedbackB.StreamState,
+        FeedbackA.StreamMutation == FeedbackB.StreamMutation {
             return (feedbackA, feedbackB)
     }
 
-    public static func buildBlock<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback, FeedbackTypeC: Feedback>(_ feedbackA: FeedbackTypeA,
-                                                                                                             _ feedbackB: FeedbackTypeB,
-                                                                                                             _ feedbackC: FeedbackTypeC) -> (FeedbackTypeA, FeedbackTypeB, FeedbackTypeC)
-        where   FeedbackTypeA.StreamState == FeedbackTypeB.StreamState,
-                FeedbackTypeA.StreamMutation == FeedbackTypeB.StreamMutation,
-                FeedbackTypeB.StreamState == FeedbackTypeC.StreamState,
-                FeedbackTypeB.StreamMutation == FeedbackTypeC.StreamMutation {
+    public static func buildBlock<FeedbackA, FeedbackB, FeedbackC>(_ feedbackA: FeedbackA,
+                                                                   _ feedbackB: FeedbackB,
+                                                                   _ feedbackC: FeedbackC) -> ( FeedbackA,
+                                                                                                FeedbackB,
+                                                                                                FeedbackC)
+        where
+        FeedbackA: Feedback,
+        FeedbackB: Feedback,
+        FeedbackC: Feedback,
+        FeedbackA.StreamState == FeedbackB.StreamState,
+        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackB.StreamState == FeedbackC.StreamState,
+        FeedbackB.StreamMutation == FeedbackC.StreamMutation {
             return (feedbackA, feedbackB, feedbackC)
     }
 
-    public static func buildBlock<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback, FeedbackTypeC: Feedback, FeedbackTypeD: Feedback>(
-        _ feedbackA: FeedbackTypeA,
-        _ feedbackB: FeedbackTypeB,
-        _ feedbackC: FeedbackTypeC,
-        _ feedbackD: FeedbackTypeD) -> (FeedbackTypeA, FeedbackTypeB, FeedbackTypeC, FeedbackTypeD)
-        where   FeedbackTypeA.StreamState == FeedbackTypeB.StreamState,
-                FeedbackTypeA.StreamMutation == FeedbackTypeB.StreamMutation,
-                FeedbackTypeB.StreamState == FeedbackTypeC.StreamState,
-                FeedbackTypeB.StreamMutation == FeedbackTypeC.StreamMutation,
-                FeedbackTypeC.StreamState == FeedbackTypeD.StreamState,
-                FeedbackTypeC.StreamMutation == FeedbackTypeD.StreamMutation {
+    public static func buildBlock<FeedbackA, FeedbackB, FeedbackC, FeedbackD>(_ feedbackA: FeedbackA,
+                                                                              _ feedbackB: FeedbackB,
+                                                                              _ feedbackC: FeedbackC,
+                                                                              _ feedbackD: FeedbackD) -> (  FeedbackA,
+                                                                                                            FeedbackB,
+                                                                                                            FeedbackC,
+                                                                                                            FeedbackD)
+        where
+        FeedbackA: Feedback,
+        FeedbackB: Feedback,
+        FeedbackC: Feedback,
+        FeedbackD: Feedback,
+        FeedbackA.StreamState == FeedbackB.StreamState,
+        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackB.StreamState == FeedbackC.StreamState,
+        FeedbackB.StreamMutation == FeedbackC.StreamMutation,
+        FeedbackC.StreamState == FeedbackD.StreamState,
+        FeedbackC.StreamMutation == FeedbackD.StreamMutation {
             return (feedbackA, feedbackB, feedbackC, feedbackD)
     }
 
-    public static func buildBlock<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback, FeedbackTypeC: Feedback, FeedbackTypeD: Feedback, FeedbackTypeE: Feedback>(
-        _ feedbackA: FeedbackTypeA,
-        _ feedbackB: FeedbackTypeB,
-        _ feedbackC: FeedbackTypeC,
-        _ feedbackD: FeedbackTypeD,
-        _ feedbackE: FeedbackTypeE) -> (FeedbackTypeA, FeedbackTypeB, FeedbackTypeC, FeedbackTypeD, FeedbackTypeE)
-        where   FeedbackTypeA.StreamState == FeedbackTypeB.StreamState,
-                FeedbackTypeA.StreamMutation == FeedbackTypeB.StreamMutation,
-                FeedbackTypeB.StreamState == FeedbackTypeC.StreamState,
-                FeedbackTypeB.StreamMutation == FeedbackTypeC.StreamMutation,
-                FeedbackTypeC.StreamState == FeedbackTypeD.StreamState,
-                FeedbackTypeC.StreamMutation == FeedbackTypeD.StreamMutation,
-                FeedbackTypeD.StreamState == FeedbackTypeE.StreamState,
-                FeedbackTypeD.StreamMutation == FeedbackTypeE.StreamMutation {
+    public static func buildBlock<FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE>(_ feedbackA: FeedbackA,
+                                                                                         _ feedbackB: FeedbackB,
+                                                                                         _ feedbackC: FeedbackC,
+                                                                                         _ feedbackD: FeedbackD,
+                                                                                         _ feedbackE: FeedbackE)
+        -> (FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE)
+        where
+        FeedbackA: Feedback,
+        FeedbackB: Feedback,
+        FeedbackC: Feedback,
+        FeedbackD: Feedback,
+        FeedbackE: Feedback,
+        FeedbackA.StreamState == FeedbackB.StreamState,
+        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackB.StreamState == FeedbackC.StreamState,
+        FeedbackB.StreamMutation == FeedbackC.StreamMutation,
+        FeedbackC.StreamState == FeedbackD.StreamState,
+        FeedbackC.StreamMutation == FeedbackD.StreamMutation,
+        FeedbackD.StreamState == FeedbackE.StreamState,
+        FeedbackD.StreamMutation == FeedbackE.StreamMutation {
             return (feedbackA, feedbackB, feedbackC, feedbackD, feedbackE)
     }
 }
