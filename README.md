@@ -1,5 +1,8 @@
 # Spin.swift
 
+![](https://github.com/Spinners/Spin.Swift/workflows/Tests/badge.svg)
+![](https://github.com/Spinners/Spin.Swift/workflows/SwiftLint/badge.svg)
+
 **Spin** aims to provide a versatile Feedback Loop implementation working with the three main reactive frameworks available in the Swift community:
 
 * Combine ([https://developer.apple.com/documentation/combine]())
