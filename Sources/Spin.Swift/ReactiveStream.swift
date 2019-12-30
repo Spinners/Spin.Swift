@@ -13,4 +13,3 @@ public protocol ReactiveStream {
     func spin() -> LifeCycle
     static func emptyStream() -> Self
 }
-
