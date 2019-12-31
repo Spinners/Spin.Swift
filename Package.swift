@@ -19,8 +19,12 @@ let package = Package(
         .library(
             name: "Spin.Combine",
             targets: ["Spin.Combine"]),
+        .library(
+            name: "Spin.ReactiveSwift",
+            targets: ["Spin.ReactiveSwift"]),
     ],
     dependencies: [
+        .package(url: "https://github.com/ReactiveCocoa/ReactiveSwift", from: "6.1.0"),
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
     ],
@@ -35,11 +39,18 @@ let package = Package(
             name: "Spin.Combine",
             dependencies: ["Spin.Swift"],
             path: "Sources/Spin.Combine"),
+        .target(
+            name: "Spin.ReactiveSwift",
+            dependencies: ["Spin.Swift", "ReactiveSwift"],
+            path: "Sources/Spin.ReactiveSwift"),
         .testTarget(
             name: "Spin.SwiftTests",
             dependencies: ["Spin.Swift"]),
         .testTarget(
             name: "Spin.CombineTests",
             dependencies: ["Spin.Combine"]),
+        .testTarget(
+            name: "Spin.ReactiveSwiftTests",
+            dependencies: ["Spin.ReactiveSwift"]),
     ]
 )

@@ -62,6 +62,20 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "Spin.ReactiveSwift"
+               BuildableName = "Spin.ReactiveSwift"
+               BlueprintName = "Spin.ReactiveSwift"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -88,6 +102,16 @@
                BlueprintIdentifier = "Spin.SwiftTests"
                BuildableName = "Spin.SwiftTests"
                BlueprintName = "Spin.SwiftTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "Spin.ReactiveSwiftTests"
+               BuildableName = "Spin.ReactiveSwiftTests"
+               BlueprintName = "Spin.ReactiveSwiftTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
