@@ -1,4 +1,4 @@
-# Spin.swift
+# Spin.Swift
 
 ![](https://github.com/Spinners/Spin.Swift/workflows/Tests/badge.svg)
 ![](https://github.com/Spinners/Spin.Swift/workflows/SwiftLint/badge.svg)
