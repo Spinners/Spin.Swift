@@ -22,9 +22,13 @@ let package = Package(
         .library(
             name: "Spin.ReactiveSwift",
             targets: ["Spin.ReactiveSwift"]),
+        .library(
+            name: "Spin.RxSwift",
+            targets: ["Spin.RxSwift"]),
     ],
     dependencies: [
         .package(url: "https://github.com/ReactiveCocoa/ReactiveSwift", from: "6.1.0"),
+        .package(url: "https://github.com/ReactiveX/RxSwift", from: "5.0.1"),
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
     ],
@@ -43,6 +47,10 @@ let package = Package(
             name: "Spin.ReactiveSwift",
             dependencies: ["Spin.Swift", "ReactiveSwift"],
             path: "Sources/Spin.ReactiveSwift"),
+        .target(
+            name: "Spin.RxSwift",
+            dependencies: ["Spin.Swift", "RxSwift", "RxRelay"],
+            path: "Sources/Spin.RxSwift"),
         .testTarget(
             name: "Spin.SwiftTests",
             dependencies: ["Spin.Swift"]),
@@ -52,5 +60,9 @@ let package = Package(
         .testTarget(
             name: "Spin.ReactiveSwiftTests",
             dependencies: ["Spin.ReactiveSwift"]),
+        .testTarget(
+            name: "Spin.RxSwiftTests",
+            dependencies: ["Spin.RxSwift", "RxRelay", "RxBlocking"],
+            swiftSettings: [.]),
     ]
 )
