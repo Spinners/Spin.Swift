@@ -62,7 +62,6 @@ let package = Package(
             dependencies: ["Spin.ReactiveSwift"]),
         .testTarget(
             name: "Spin.RxSwiftTests",
-            dependencies: ["Spin.RxSwift", "RxRelay", "RxBlocking"],
-            swiftSettings: [.]),
+            dependencies: ["Spin.RxSwift", "RxRelay", "RxBlocking"]),
     ]
 )
