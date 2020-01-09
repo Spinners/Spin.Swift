@@ -23,12 +23,14 @@ public class ReactiveViewContext<State, Mutation>: ObservableObject {
     }
 
     public func toFeedback() -> ReactiveFeedback<State, Mutation> {
-        let renderFeedbackFunction: (State) -> Void = { state in
-            self.state = state
+        let renderFeedbackFunction: (State) -> Void = { [weak self] state in
+            self?.state = state
         }
 
-        let mutationFeedbackFunction: () -> SignalProducer<Mutation, Never> = { () in
-            return self.mutationsProducer.producer
+        let mutationFeedbackFunction: () -> SignalProducer<Mutation, Never> = { [weak self] () in
+            guard let strongSelf = self else { return .empty }
+
+            return strongSelf.mutationsProducer.producer
         }
 
         return ReactiveFeedback(uiFeedbacks: renderFeedbackFunction,

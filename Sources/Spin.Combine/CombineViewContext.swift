@@ -24,12 +24,14 @@ public class CombineViewContext<State, Mutation>: ObservableObject {
     }
 
     public func toFeedback() -> DispatchQueueCombineFeedback<State, Mutation> {
-        let renderFeedbackFunction: (State) -> Void = { state in
-            self.state = state
+        let renderFeedbackFunction: (State) -> Void = { [weak self] state in
+            self?.state = state
         }
 
-        let mutationFeedbackFunction: () -> AnyPublisher<Mutation, Never> = { () in
-            return self.mutations.eraseToAnyPublisher()
+        let mutationFeedbackFunction: () -> AnyPublisher<Mutation, Never> = { [weak self] () in
+            guard let strongSelf = self else { return Empty().eraseToAnyPublisher() }
+            
+            return strongSelf.mutations.eraseToAnyPublisher()
         }
 
         return DispatchQueueCombineFeedback(uiFeedbacks: renderFeedbackFunction,

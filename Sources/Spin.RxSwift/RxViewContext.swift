@@ -24,12 +24,14 @@ public class RxViewContext<State, Mutation>: ObservableObject {
     }
 
     public func toFeedback() -> RxFeedback<State, Mutation> {
-        let renderFeedbackFunction: (State) -> Void = { state in
-            self.state = state
+        let renderFeedbackFunction: (State) -> Void = { [weak self] state in
+            self?.state = state
         }
 
-        let mutationFeedbackFunction: () -> Observable<Mutation> = { () in
-            return self.mutations.asObservable()
+        let mutationFeedbackFunction: () -> Observable<Mutation> = { [weak self] () in
+            guard let strongSelf = self else { return .empty() }
+
+            return strongSelf.mutations.asObservable()
         }
 
         return RxFeedback(uiFeedbacks: renderFeedbackFunction,
