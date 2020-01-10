@@ -53,7 +53,7 @@ final class CombineViewContextTests: XCTestCase {
         }.disposed(by: &self.disposeBag)
 
         // When: sending a mutation to the viewContext
-        sut.send(mutation: "newMutation")
+        sut.perform("newMutation")
         waitForExpectations(timeout: 5)
 
         // Then: the resulting feedback outputs the mutation
