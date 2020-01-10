@@ -9,6 +9,15 @@ import Combine
 import Spin_Combine
 import XCTest
 
+fileprivate class MockContainer {
+
+    var isRenderCalled = false
+
+    func render(state: String) {
+        self.isRenderCalled = true
+    }
+}
+
 final class CombineViewContextTests: XCTestCase {
 
     private var disposeBag = [AnyCancellable]()
@@ -19,8 +28,10 @@ final class CombineViewContextTests: XCTestCase {
 
         var receivedState = ""
 
-        // Given: a ViewContext and its resulting feedback
+        // Given: a ViewContext (with an external rendering function) and its resulting feedback
         let sut = CombineViewContext<String, String>(state: "initial")
+        let container = MockContainer()
+        sut.render(on: container) { $0.render(state:) }
         let feedback = sut.toFeedback()
 
         sut.$state.sink { state in
@@ -34,8 +45,9 @@ final class CombineViewContextTests: XCTestCase {
 
         waitForExpectations(timeout: 5)
 
-        // Then: the state is updated in the ViewContext
+        // Then: the state is updated in the ViewContext and the external rendering function is called
         XCTAssertEqual(receivedState, "newState")
+        XCTAssertTrue(container.isRenderCalled)
     }
 
     func test_mutation_is_output_by_the_feedback_when_sending_a_mutation_to_the_viewContext() throws {
