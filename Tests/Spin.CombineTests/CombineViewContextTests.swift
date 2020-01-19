@@ -70,7 +70,7 @@ final class CombineViewContextTests: XCTestCase {
         }.disposed(by: &self.disposeBag)
 
         // When: sending a event to the viewContext
-        sut.perform("newEvent")
+        sut.emit("newEvent")
         waitForExpectations(timeout: 5)
 
         // Then: the resulting feedback outputs the event

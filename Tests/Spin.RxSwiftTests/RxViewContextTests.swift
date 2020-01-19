@@ -34,7 +34,7 @@ final class RxViewContextTests: XCTestCase {
         let sut = RxViewContext<String, String>(state: "initial")
         let container = MockContainer()
         sut.render(on: container) { $0.render(state:) }
-        
+
         // Make sure the render function is called directly after being set on the containe
         XCTAssertTrue(container.isRenderCalled)
         container.isRenderCalled = false
@@ -71,7 +71,7 @@ final class RxViewContextTests: XCTestCase {
         }).disposed(by: self.disposeBag)
 
         // When: sending a event to the viewContext
-        sut.perform("newEvent")
+        sut.emit("newEvent")
         waitForExpectations(timeout: 5)
 
         // Then: the resulting feedback outputs the event

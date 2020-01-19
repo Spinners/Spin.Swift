@@ -21,7 +21,7 @@ public class CombineViewContext<State, Event>: ObservableObject {
         self.state = state
     }
 
-    public func perform(_ event: Event) {
+    public func emit(_ event: Event) {
         self.events.send(event)
     }
 

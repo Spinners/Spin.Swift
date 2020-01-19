@@ -20,7 +20,7 @@ public class ReactiveViewContext<State, Event>: ObservableObject {
         self.state = state
     }
 
-    public func perform(_ event: Event) {
+    public func emit(_ event: Event) {
         self.eventsObserver.send(value: event)
     }
 
