@@ -140,7 +140,7 @@ final class CombineFeedbackTests: XCTestCase {
     }
 
     func test_initialize_with_two_feedbacks_executes_the_original_feedbackFunctions() throws {
-        // Given: 2 feedbacks based on a Stream<State> -> Stream<Mutation>
+        // Given: 2 feedbacks based on a Stream<State> -> Stream<Event>
         var feedbackAIsCalled = false
         var feedbackBIsCalled = false
 
@@ -168,7 +168,7 @@ final class CombineFeedbackTests: XCTestCase {
     }
 
     func test_initialize_with_three_feedbacks_executes_the_original_feedbackFunctions() throws {
-        // Given: 3 feedbacks based on a Stream<State> -> Stream<Mutation>
+        // Given: 3 feedbacks based on a Stream<State> -> Stream<Event>
         var feedbackAIsCalled = false
         var feedbackBIsCalled = false
         var feedbackCIsCalled = false
@@ -203,7 +203,7 @@ final class CombineFeedbackTests: XCTestCase {
     }
 
     func test_initialize_with_four_feedbacks_executes_the_original_feedbackFunctions() throws {
-        // Given: 4 feedbacks based on a Stream<State> -> Stream<Mutation>
+        // Given: 4 feedbacks based on a Stream<State> -> Stream<Event>
         var feedbackAIsCalled = false
         var feedbackBIsCalled = false
         var feedbackCIsCalled = false
@@ -245,7 +245,7 @@ final class CombineFeedbackTests: XCTestCase {
     }
 
     func test_initialize_with_five_feedbacks_executes_the_original_feedbackFunctions() throws {
-        // Given: 5 feedbacks based on a Stream<State> -> Stream<Mutation>
+        // Given: 5 feedbacks based on a Stream<State> -> Stream<Event>
         var feedbackAIsCalled = false
         var feedbackBIsCalled = false
         var feedbackCIsCalled = false
@@ -298,7 +298,7 @@ final class CombineFeedbackTests: XCTestCase {
     }
 
     func test_initialize_with_an_array_of_feedbacks_executes_the_original_feedbackFunctions() throws {
-        // Given: 5 feedbacks based on a Stream<State> -> Stream<Mutation>
+        // Given: 5 feedbacks based on a Stream<State> -> Stream<Event>
         var feedbackAIsCalled = false
         var feedbackBIsCalled = false
         var feedbackCIsCalled = false

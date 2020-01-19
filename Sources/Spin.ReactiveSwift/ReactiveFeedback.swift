@@ -8,14 +8,14 @@
 import ReactiveSwift
 import Spin_Swift
 
-public struct ReactiveFeedback<State, Mutation>: Feedback {
+public struct ReactiveFeedback<State, Event>: Feedback {
     public typealias StreamState = SignalProducer<State, Never>
-    public typealias StreamMutation = SignalProducer<Mutation, Never>
+    public typealias StreamEvent = SignalProducer<Event, Never>
     public typealias Executer = Scheduler
 
-    public let feedbackStream: (StreamState) -> StreamMutation
+    public let feedbackStream: (StreamState) -> StreamEvent
 
-    public init(feedback: @escaping (StreamState) -> StreamMutation, on executer: Executer? = nil) {
+    public init(feedback: @escaping (StreamState) -> StreamEvent, on executer: Executer? = nil) {
         guard let executer = executer else {
             self.feedbackStream = feedback
             return
@@ -28,10 +28,10 @@ public struct ReactiveFeedback<State, Mutation>: Feedback {
 
     public init<FeedbackType: Feedback>(feedbacks: [FeedbackType])
         where FeedbackType.StreamState == StreamState,
-        FeedbackType.StreamMutation == StreamMutation {
-            let feedback = { (stateStream: FeedbackType.StreamState) -> FeedbackType.StreamMutation in
-                let mutationStreams = feedbacks.map { $0.feedbackStream(stateStream) }
-                return SignalProducer.merge(mutationStreams)
+        FeedbackType.StreamEvent == StreamEvent {
+            let feedback = { (stateStream: FeedbackType.StreamState) -> FeedbackType.StreamEvent in
+                let eventStreams = feedbacks.map { $0.feedbackStream(stateStream) }
+                return SignalProducer.merge(eventStreams)
             }
 
             self.init(feedback: feedback)
@@ -42,9 +42,9 @@ public struct ReactiveFeedback<State, Mutation>: Feedback {
         FeedbackA: Feedback,
         FeedbackB: Feedback,
         FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
         FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamMutation == StreamMutation {
+        FeedbackA.StreamEvent == StreamEvent {
             let feedback = { stateStream in
                 return SignalProducer.merge(feedbackA.feedbackStream(stateStream),
                                             feedbackB.feedbackStream(stateStream))
@@ -61,11 +61,11 @@ public struct ReactiveFeedback<State, Mutation>: Feedback {
         FeedbackB: Feedback,
         FeedbackC: Feedback,
         FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
         FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamMutation == FeedbackC.StreamMutation,
+        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
         FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamMutation == StreamMutation {
+        FeedbackA.StreamEvent == StreamEvent {
             let feedback = { stateStream in
                 return SignalProducer.merge(feedbackA.feedbackStream(stateStream),
                                             feedbackB.feedbackStream(stateStream),
@@ -85,13 +85,13 @@ public struct ReactiveFeedback<State, Mutation>: Feedback {
         FeedbackC: Feedback,
         FeedbackD: Feedback,
         FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
         FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamMutation == FeedbackC.StreamMutation,
+        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
         FeedbackC.StreamState == FeedbackD.StreamState,
-        FeedbackC.StreamMutation == FeedbackD.StreamMutation,
+        FeedbackC.StreamEvent == FeedbackD.StreamEvent,
         FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamMutation == StreamMutation {
+        FeedbackA.StreamEvent == StreamEvent {
             let feedback = { stateStream in
                 return SignalProducer.merge(feedbackA.feedbackStream(stateStream),
                                             feedbackB.feedbackStream(stateStream),
@@ -114,15 +114,15 @@ public struct ReactiveFeedback<State, Mutation>: Feedback {
         FeedbackD: Feedback,
         FeedbackE: Feedback,
         FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
         FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamMutation == FeedbackC.StreamMutation,
+        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
         FeedbackC.StreamState == FeedbackD.StreamState,
-        FeedbackC.StreamMutation == FeedbackD.StreamMutation,
+        FeedbackC.StreamEvent == FeedbackD.StreamEvent,
         FeedbackD.StreamState == FeedbackE.StreamState,
-        FeedbackD.StreamMutation == FeedbackE.StreamMutation,
+        FeedbackD.StreamEvent == FeedbackE.StreamEvent,
         FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamMutation == StreamMutation {
+        FeedbackA.StreamEvent == StreamEvent {
             let feedback = { stateStream in
                 return SignalProducer.merge(feedbackA.feedbackStream(stateStream),
                                             feedbackB.feedbackStream(stateStream),
@@ -134,9 +134,9 @@ public struct ReactiveFeedback<State, Mutation>: Feedback {
             self.init(feedback: feedback)
     }
 
-    public static func make(from effect: @escaping (StreamState.Value) -> StreamMutation,
-                            applying strategy: ExecutionStrategy) -> (StreamState) -> StreamMutation {
-        let feedbackFromEffectStream: (StreamState) -> StreamMutation = { states in
+    public static func make(from effect: @escaping (StreamState.Value) -> StreamEvent,
+                            applying strategy: ExecutionStrategy) -> (StreamState) -> StreamEvent {
+        let feedbackFromEffectStream: (StreamState) -> StreamEvent = { states in
             switch strategy {
             case .continueOnNewEvent:
                 return states.flatMap(.merge, effect)

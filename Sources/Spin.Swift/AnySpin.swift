@@ -10,21 +10,21 @@
 public struct AnySpin<StreamState: ReactiveStream>: Spin {
     public let stream: StreamState
 
-    public init<StreamMutation, ReducerType>(initialState: StreamState.Value,
-                                             feedbackStream: @escaping (StreamState) -> StreamMutation,
+    public init<StreamEvent, ReducerType>(initialState: StreamState.Value,
+                                             feedbackStream: @escaping (StreamState) -> StreamEvent,
                                              reducer: ReducerType)
         where
         ReducerType: Reducer,
-        StreamMutation == ReducerType.StreamMutation,
+        StreamEvent == ReducerType.StreamEvent,
         ReducerType.StreamState == StreamState {
             self.stream = reducer.reduce(initialState: initialState, feedback: feedbackStream)
     }
 
-    public init<StreamMutation, ReducerType>(initialState: StreamState.Value,
-                                             feedbackStreams: [(StreamState) -> StreamMutation], reducer: ReducerType)
+    public init<StreamEvent, ReducerType>(initialState: StreamState.Value,
+                                             feedbackStreams: [(StreamState) -> StreamEvent], reducer: ReducerType)
         where
         ReducerType: Reducer,
-        StreamMutation == ReducerType.StreamMutation,
+        StreamEvent == ReducerType.StreamEvent,
         ReducerType.StreamState == StreamState {
             self.stream = reducer.reduce(initialState: initialState, feedbacks: feedbackStreams)
     }
@@ -38,7 +38,7 @@ public struct AnySpin<StreamState: ReactiveStream>: Spin {
         FeedbackType.StreamState == StreamState,
         FeedbackType.StreamState.Value == StreamState.Value,
         FeedbackType.StreamState == ReducerType.StreamState,
-        FeedbackType.StreamMutation == ReducerType.StreamMutation {
+        FeedbackType.StreamEvent == ReducerType.StreamEvent {
             self.stream = reducer.reduce(initialState: initialState, feedback: feedback.feedbackStream)
     }
 
@@ -48,7 +48,7 @@ public struct AnySpin<StreamState: ReactiveStream>: Spin {
         where
         FeedbackType: Feedback, ReducerType: Reducer,
         FeedbackType.StreamState == ReducerType.StreamState,
-        FeedbackType.StreamMutation == ReducerType.StreamMutation,
+        FeedbackType.StreamEvent == ReducerType.StreamEvent,
         FeedbackType.StreamState == StreamState {
             self.init(initialState: initialState, feedback: feedbackBuilder(), reducer: reducer)
     }
@@ -61,9 +61,9 @@ public struct AnySpin<StreamState: ReactiveStream>: Spin {
         FeedbackB: Feedback,
         ReducerType: Reducer,
         FeedbackA.StreamState == ReducerType.StreamState,
-        FeedbackA.StreamMutation == ReducerType.StreamMutation,
+        FeedbackA.StreamEvent == ReducerType.StreamEvent,
         FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
         FeedbackA.StreamState == StreamState {
             let feedbacks = builder()
             let feedback = FeedbackA(feedbacks: feedbacks.0, feedbacks.1)
@@ -81,11 +81,11 @@ public struct AnySpin<StreamState: ReactiveStream>: Spin {
         FeedbackC: Feedback,
         ReducerType: Reducer,
         FeedbackA.StreamState == ReducerType.StreamState,
-        FeedbackA.StreamMutation == ReducerType.StreamMutation,
+        FeedbackA.StreamEvent == ReducerType.StreamEvent,
         FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
         FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamMutation == FeedbackC.StreamMutation,
+        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
         FeedbackA.StreamState == StreamState {
             let feedbacks = builder()
             let feedback = FeedbackA(feedbacks: feedbacks.0, feedbacks.1, feedbacks.2)
@@ -105,13 +105,13 @@ public struct AnySpin<StreamState: ReactiveStream>: Spin {
         FeedbackD: Feedback,
         ReducerType: Reducer,
         FeedbackA.StreamState == ReducerType.StreamState,
-        FeedbackA.StreamMutation == ReducerType.StreamMutation,
+        FeedbackA.StreamEvent == ReducerType.StreamEvent,
         FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
         FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamMutation == FeedbackC.StreamMutation,
+        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
         FeedbackC.StreamState == FeedbackD.StreamState,
-        FeedbackC.StreamMutation == FeedbackD.StreamMutation,
+        FeedbackC.StreamEvent == FeedbackD.StreamEvent,
         FeedbackA.StreamState == StreamState {
             let feedbacks = builder()
             let feedback = FeedbackA(feedbacks: feedbacks.0, feedbacks.1, feedbacks.2, feedbacks.3)
@@ -133,15 +133,15 @@ public struct AnySpin<StreamState: ReactiveStream>: Spin {
         FeedbackE: Feedback,
         ReducerType: Reducer,
         FeedbackA.StreamState == ReducerType.StreamState,
-        FeedbackA.StreamMutation == ReducerType.StreamMutation,
+        FeedbackA.StreamEvent == ReducerType.StreamEvent,
         FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
         FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamMutation == FeedbackC.StreamMutation,
+        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
         FeedbackC.StreamState == FeedbackD.StreamState,
-        FeedbackC.StreamMutation == FeedbackD.StreamMutation,
+        FeedbackC.StreamEvent == FeedbackD.StreamEvent,
         FeedbackD.StreamState == FeedbackE.StreamState,
-        FeedbackD.StreamMutation == FeedbackE.StreamMutation,
+        FeedbackD.StreamEvent == FeedbackE.StreamEvent,
         FeedbackA.StreamState == StreamState {
             let feedbacks = builder()
             let feedback = FeedbackA(feedbacks: feedbacks.0, feedbacks.1, feedbacks.2, feedbacks.3, feedbacks.4)

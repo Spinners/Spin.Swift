@@ -8,15 +8,15 @@
 import RxSwift
 import Spin_Swift
 
-public struct RxFeedback<State, Mutation>: Feedback {
+public struct RxFeedback<State, Event>: Feedback {
     public typealias StreamState = Observable<State>
-    public typealias StreamMutation = Observable<Mutation>
+    public typealias StreamEvent = Observable<Event>
     public typealias Executer = ImmediateSchedulerType
 
-    public let feedbackStream: (StreamState) -> StreamMutation
+    public let feedbackStream: (StreamState) -> StreamEvent
     public var feedbackExecuter: Executer?
 
-    public init(feedback: @escaping (StreamState) -> StreamMutation, on executer: Executer? = nil) {
+    public init(feedback: @escaping (StreamState) -> StreamEvent, on executer: Executer? = nil) {
         guard let executer = executer else {
             self.feedbackStream = feedback
             return
@@ -30,10 +30,10 @@ public struct RxFeedback<State, Mutation>: Feedback {
     public init<FeedbackType: Feedback>(feedbacks: [FeedbackType])
         where
         FeedbackType.StreamState == StreamState,
-        FeedbackType.StreamMutation == StreamMutation {
-        let feedback = { (stateStream: FeedbackType.StreamState) -> FeedbackType.StreamMutation in
-            let mutationStreams = feedbacks.map { $0.feedbackStream(stateStream) }
-            return Observable.merge(mutationStreams)
+        FeedbackType.StreamEvent == StreamEvent {
+        let feedback = { (stateStream: FeedbackType.StreamState) -> FeedbackType.StreamEvent in
+            let eventStreams = feedbacks.map { $0.feedbackStream(stateStream) }
+            return Observable.merge(eventStreams)
         }
 
         self.init(feedback: feedback)
@@ -44,9 +44,9 @@ public struct RxFeedback<State, Mutation>: Feedback {
         FeedbackA: Feedback,
         FeedbackB: Feedback,
         FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
         FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamMutation == StreamMutation {
+        FeedbackA.StreamEvent == StreamEvent {
         let feedback = { stateStream in
             return Observable.merge(feedbackA.feedbackStream(stateStream),
                                     feedbackB.feedbackStream(stateStream))
@@ -63,11 +63,11 @@ public struct RxFeedback<State, Mutation>: Feedback {
         FeedbackB: Feedback,
         FeedbackC: Feedback,
         FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
         FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamMutation == FeedbackC.StreamMutation,
+        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
         FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamMutation == StreamMutation {
+        FeedbackA.StreamEvent == StreamEvent {
         let feedback = { stateStream in
             return Observable.merge(feedbackA.feedbackStream(stateStream),
                                     feedbackB.feedbackStream(stateStream),
@@ -87,13 +87,13 @@ public struct RxFeedback<State, Mutation>: Feedback {
         FeedbackC: Feedback,
         FeedbackD: Feedback,
         FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
         FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamMutation == FeedbackC.StreamMutation,
+        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
         FeedbackC.StreamState == FeedbackD.StreamState,
-        FeedbackC.StreamMutation == FeedbackD.StreamMutation,
+        FeedbackC.StreamEvent == FeedbackD.StreamEvent,
         FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamMutation == StreamMutation {
+        FeedbackA.StreamEvent == StreamEvent {
         let feedback = { stateStream in
             return Observable.merge(feedbackA.feedbackStream(stateStream),
                                     feedbackB.feedbackStream(stateStream),
@@ -116,15 +116,15 @@ public struct RxFeedback<State, Mutation>: Feedback {
         FeedbackD: Feedback,
         FeedbackE: Feedback,
         FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
         FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamMutation == FeedbackC.StreamMutation,
+        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
         FeedbackC.StreamState == FeedbackD.StreamState,
-        FeedbackC.StreamMutation == FeedbackD.StreamMutation,
+        FeedbackC.StreamEvent == FeedbackD.StreamEvent,
         FeedbackD.StreamState == FeedbackE.StreamState,
-        FeedbackD.StreamMutation == FeedbackE.StreamMutation,
+        FeedbackD.StreamEvent == FeedbackE.StreamEvent,
         FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamMutation == StreamMutation {
+        FeedbackA.StreamEvent == StreamEvent {
         let feedback = { stateStream in
             return Observable.merge(feedbackA.feedbackStream(stateStream),
                                     feedbackB.feedbackStream(stateStream),
@@ -136,13 +136,13 @@ public struct RxFeedback<State, Mutation>: Feedback {
         self.init(feedback: feedback)
     }
 
-    public static func make(from effect: @escaping (StreamState.Value) -> StreamMutation,
-                            applying strategy: ExecutionStrategy) -> (StreamState) -> StreamMutation {
-        let effectStream = { (state: StreamState.Value) -> StreamMutation in
+    public static func make(from effect: @escaping (StreamState.Value) -> StreamEvent,
+                            applying strategy: ExecutionStrategy) -> (StreamState) -> StreamEvent {
+        let effectStream = { (state: StreamState.Value) -> StreamEvent in
             return effect(state).catchError { _ in return .empty() }
         }
 
-        let feedbackFromEffectStream: (StreamState) -> StreamMutation = { states in
+        let feedbackFromEffectStream: (StreamState) -> StreamEvent = { states in
             switch strategy {
             case .continueOnNewEvent:
                 return states.flatMap(effectStream)

@@ -9,11 +9,11 @@ import Combine
 import RxRelay
 import RxSwift
 
-public class RxViewContext<State, Mutation>: ObservableObject {
+public class RxViewContext<State, Event>: ObservableObject {
     @Published
     public var state: State
 
-    private let mutations = PublishRelay<Mutation>()
+    private let events = PublishRelay<Event>()
 
     private var externalRenderFeedbackFunction: ((State) -> Void)?
 
@@ -21,28 +21,28 @@ public class RxViewContext<State, Mutation>: ObservableObject {
         self.state = state
     }
 
-    public func perform(_ mutation: Mutation) {
-        self.mutations.accept(mutation)
+    public func perform(_ event: Event) {
+        self.events.accept(event)
     }
 
     public func render<Container: AnyObject>(on container: Container, using function: @escaping (Container) -> (State) -> Void) {
         self.externalRenderFeedbackFunction = weakify(container: container, function: function)
     }
 
-    public func toFeedback() -> RxFeedback<State, Mutation> {
+    public func toFeedback() -> RxFeedback<State, Event> {
         let renderFeedbackFunction: (State) -> Void = { [weak self] state in
             self?.state = state
             self?.externalRenderFeedbackFunction?(state)
         }
 
-        let mutationFeedbackFunction: () -> Observable<Mutation> = { [weak self] () in
+        let eventFeedbackFunction: () -> Observable<Event> = { [weak self] () in
             guard let strongSelf = self else { return .empty() }
 
-            return strongSelf.mutations.asObservable()
+            return strongSelf.events.asObservable()
         }
 
         return RxFeedback(uiFeedbacks: renderFeedbackFunction,
-                          mutationFeedbackFunction,
+                          eventFeedbackFunction,
                           on: MainScheduler.instance)
     }
 }

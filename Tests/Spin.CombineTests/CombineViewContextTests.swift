@@ -23,7 +23,7 @@ final class CombineViewContextTests: XCTestCase {
     private var disposeBag = [AnyCancellable]()
 
     func test_state_is_updated_when_feeding_the_resulting_feedback_with_an_input_state() throws {
-        let exp = expectation(description: "new mutation")
+        let exp = expectation(description: "new event")
         exp.expectedFulfillmentCount = 2
 
         var receivedState = ""
@@ -50,25 +50,25 @@ final class CombineViewContextTests: XCTestCase {
         XCTAssertTrue(container.isRenderCalled)
     }
 
-    func test_mutation_is_output_by_the_feedback_when_sending_a_mutation_to_the_viewContext() throws {
-        let exp = expectation(description: "new mutation")
+    func test_event_is_output_by_the_feedback_when_sending_a_event_to_the_viewContext() throws {
+        let exp = expectation(description: "new event")
 
-        var receivedMutation = ""
+        var receivedEvent = ""
 
         // Given: a ViewContext and its resulting feedback
         let sut = CombineViewContext<String, String>(state: "initial")
         let feedback = sut.toFeedback()
 
-        feedback.feedbackStream(Just<String>("newState").eraseToAnyPublisher()).sink { mutation in
-            receivedMutation = mutation
+        feedback.feedbackStream(Just<String>("newState").eraseToAnyPublisher()).sink { event in
+            receivedEvent = event
             exp.fulfill()
         }.disposed(by: &self.disposeBag)
 
-        // When: sending a mutation to the viewContext
-        sut.perform("newMutation")
+        // When: sending a event to the viewContext
+        sut.perform("newEvent")
         waitForExpectations(timeout: 5)
 
-        // Then: the resulting feedback outputs the mutation
-        XCTAssertEqual(receivedMutation, "newMutation")
+        // Then: the resulting feedback outputs the event
+        XCTAssertEqual(receivedEvent, "newEvent")
     }
 }

@@ -8,22 +8,22 @@
 import ReactiveSwift
 import Spin_Swift
 
-public struct ReactiveReducer<State, Mutation>: Reducer {
+public struct ReactiveReducer<State, Event>: Reducer {
     public typealias StreamState = SignalProducer<State, Never>
-    public typealias StreamMutation = SignalProducer<Mutation, Never>
+    public typealias StreamEvent = SignalProducer<Event, Never>
     public typealias Executer = Scheduler
 
-    public let reducer: (StreamState.Value, StreamMutation.Value) -> StreamState.Value
+    public let reducer: (StreamState.Value, StreamEvent.Value) -> StreamState.Value
     public let executer: Executer
 
-    public init(reducer: @escaping (StreamState.Value, StreamMutation.Value) -> StreamState.Value,
+    public init(reducer: @escaping (StreamState.Value, StreamEvent.Value) -> StreamState.Value,
                 on executer: Executer = QueueScheduler.main) {
         self.reducer = reducer
         self.executer = executer
     }
 
     public func reduce(initialState: StreamState.Value,
-                       feedback: @escaping (StreamState) -> StreamMutation) -> StreamState {
+                       feedback: @escaping (StreamState) -> StreamEvent) -> StreamState {
         return SignalProducer.deferred {
             let currentState = MutableProperty<State>(initialState)
 
@@ -36,7 +36,7 @@ public struct ReactiveReducer<State, Mutation>: Reducer {
     }
 
     public func reduce(initialState: StreamState.Value,
-                       feedbacks: [(StreamState) -> StreamMutation]) -> StreamState {
+                       feedbacks: [(StreamState) -> StreamEvent]) -> StreamState {
         let feedback = { stateStream in
             return SignalProducer.merge(feedbacks.map { $0(stateStream) })
         }

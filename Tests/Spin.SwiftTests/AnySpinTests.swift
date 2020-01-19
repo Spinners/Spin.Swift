@@ -18,7 +18,7 @@ final class AnySpinTests: XCTestCase {
             return MockStream<MockAction>(value: .toEmpty)
         }
 
-        let reducerFunction = { (state: MockState, mutation: MockAction) -> MockState in
+        let reducerFunction = { (state: MockState, event: MockAction) -> MockState in
             MockState(subState: 0)
         }
 
@@ -41,7 +41,7 @@ final class AnySpinTests: XCTestCase {
             return MockStream<MockAction>(value: .toEmpty)
         }
 
-        let reducerFunction = { (state: MockState, mutation: MockAction) -> MockState in
+        let reducerFunction = { (state: MockState, event: MockAction) -> MockState in
             MockState(subState: 0)
         }
 
@@ -64,7 +64,7 @@ final class AnySpinTests: XCTestCase {
             return MockStream<MockAction>(value: .toEmpty)
         }
 
-        let reducerFunction = { (state: MockState, mutation: MockAction) -> MockState in
+        let reducerFunction = { (state: MockState, event: MockAction) -> MockState in
             MockState(subState: 0)
         }
 
@@ -95,7 +95,7 @@ final class AnySpinTests: XCTestCase {
             return MockStream<MockAction>(value: .toEmpty)
         }
 
-        let reducerFunction = { (state: MockState, mutation: MockAction) -> MockState in
+        let reducerFunction = { (state: MockState, event: MockAction) -> MockState in
             MockState(subState: 0)
         }
 
@@ -134,7 +134,7 @@ final class AnySpinTests: XCTestCase {
             return MockStream<MockAction>(value: .toEmpty)
         }
 
-        let reducerFunction = { (state: MockState, mutation: MockAction) -> MockState in
+        let reducerFunction = { (state: MockState, event: MockAction) -> MockState in
             MockState(subState: 0)
         }
 
@@ -181,7 +181,7 @@ final class AnySpinTests: XCTestCase {
             return MockStream<MockAction>(value: .toEmpty)
         }
 
-        let reducerFunction = { (state: MockState, mutation: MockAction) -> MockState in
+        let reducerFunction = { (state: MockState, event: MockAction) -> MockState in
             MockState(subState: 0)
         }
 
@@ -236,7 +236,7 @@ final class AnySpinTests: XCTestCase {
             return MockStream<MockAction>(value: .toEmpty)
         }
 
-        let reducerFunction = { (state: MockState, mutation: MockAction) -> MockState in
+        let reducerFunction = { (state: MockState, event: MockAction) -> MockState in
             MockState(subState: 0)
         }
 

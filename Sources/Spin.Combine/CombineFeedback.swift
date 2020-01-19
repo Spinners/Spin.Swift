@@ -9,15 +9,15 @@ import Combine
 import Dispatch
 import Spin_Swift
 
-public struct CombineFeedback<State, Mutation, SchedulerTime, SchedulerOptions>: Feedback
-where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConvertible {
+public struct CombineFeedback<State, Event, SchedulerTime, SchedulerOptions>: Feedback
+    where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConvertible {
     public typealias StreamState = AnyPublisher<State, Never>
-    public typealias StreamMutation = AnyPublisher<Mutation, Never>
+    public typealias StreamEvent = AnyPublisher<Event, Never>
     public typealias Executer = AnyScheduler<SchedulerTime, SchedulerOptions>
 
-    public let feedbackStream: (StreamState) -> StreamMutation
+    public let feedbackStream: (StreamState) -> StreamEvent
 
-    public init(feedback: @escaping (StreamState) -> StreamMutation, on executer: Executer? = nil) {
+    public init(feedback: @escaping (StreamState) -> StreamEvent, on executer: Executer? = nil) {
         guard let executer = executer else {
             self.feedbackStream = feedback
             return
@@ -32,10 +32,10 @@ where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConv
         where
         FeedbackType: Feedback,
         FeedbackType.StreamState == StreamState,
-        FeedbackType.StreamMutation == StreamMutation {
-            let feedback = { (stateStream: FeedbackType.StreamState) -> FeedbackType.StreamMutation in
-                let mutationStreams = feedbacks.map { $0.feedbackStream(stateStream) }
-                return Publishers.MergeMany(mutationStreams).eraseToAnyPublisher()
+        FeedbackType.StreamEvent == StreamEvent {
+            let feedback = { (stateStream: FeedbackType.StreamState) -> FeedbackType.StreamEvent in
+                let eventStreams = feedbacks.map { $0.feedbackStream(stateStream) }
+                return Publishers.MergeMany(eventStreams).eraseToAnyPublisher()
             }
 
             self.init(feedback: feedback)
@@ -46,9 +46,9 @@ where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConv
         FeedbackA: Feedback,
         FeedbackB: Feedback,
         FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
         FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamMutation == StreamMutation {
+        FeedbackA.StreamEvent == StreamEvent {
             let feedback = { stateStream in
                 return Publishers.Merge(feedbackA.feedbackStream(stateStream),
                                         feedbackB.feedbackStream(stateStream))
@@ -66,11 +66,11 @@ where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConv
         FeedbackB: Feedback,
         FeedbackC: Feedback,
         FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
         FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamMutation == FeedbackC.StreamMutation,
+        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
         FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamMutation == StreamMutation {
+        FeedbackA.StreamEvent == StreamEvent {
             let feedback = { stateStream in
                 return Publishers.Merge3(feedbackA.feedbackStream(stateStream),
                                          feedbackB.feedbackStream(stateStream),
@@ -91,13 +91,13 @@ where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConv
         FeedbackC: Feedback,
         FeedbackD: Feedback,
         FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
         FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamMutation == FeedbackC.StreamMutation,
+        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
         FeedbackC.StreamState == FeedbackD.StreamState,
-        FeedbackC.StreamMutation == FeedbackD.StreamMutation,
+        FeedbackC.StreamEvent == FeedbackD.StreamEvent,
         FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamMutation == StreamMutation {
+        FeedbackA.StreamEvent == StreamEvent {
             let feedback = { stateStream in
                 return Publishers.Merge4(feedbackA.feedbackStream(stateStream),
                                          feedbackB.feedbackStream(stateStream),
@@ -121,15 +121,15 @@ where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConv
         FeedbackD: Feedback,
         FeedbackE: Feedback,
         FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamMutation == FeedbackB.StreamMutation,
+        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
         FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamMutation == FeedbackC.StreamMutation,
+        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
         FeedbackC.StreamState == FeedbackD.StreamState,
-        FeedbackC.StreamMutation == FeedbackD.StreamMutation,
+        FeedbackC.StreamEvent == FeedbackD.StreamEvent,
         FeedbackD.StreamState == FeedbackE.StreamState,
-        FeedbackD.StreamMutation == FeedbackE.StreamMutation,
+        FeedbackD.StreamEvent == FeedbackE.StreamEvent,
         FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamMutation == StreamMutation {
+        FeedbackA.StreamEvent == StreamEvent {
             let feedback = { stateStream in
                 return Publishers.Merge5(feedbackA.feedbackStream(stateStream),
                                          feedbackB.feedbackStream(stateStream),
@@ -142,9 +142,9 @@ where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConv
             self.init(feedback: feedback)
     }
 
-    public static func make(from effect: @escaping (StreamState.Value) -> StreamMutation,
-                            applying strategy: ExecutionStrategy) -> (StreamState) -> StreamMutation {
-        let feedbackFromEffectStream: (StreamState) -> StreamMutation = { states in
+    public static func make(from effect: @escaping (StreamState.Value) -> StreamEvent,
+                            applying strategy: ExecutionStrategy) -> (StreamState) -> StreamEvent {
+        let feedbackFromEffectStream: (StreamState) -> StreamEvent = { states in
             switch strategy {
             case .continueOnNewEvent:
                 return states.flatMap(effect).eraseToAnyPublisher()
@@ -157,5 +157,5 @@ where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConv
     }
 }
 
-public typealias DispatchQueueCombineFeedback<State, Mutation> =
-    CombineFeedback<State, Mutation, DispatchQueue.SchedulerTimeType, DispatchQueue.SchedulerOptions>
+public typealias DispatchQueueCombineFeedback<State, Event> =
+    CombineFeedback<State, Event, DispatchQueue.SchedulerTimeType, DispatchQueue.SchedulerOptions>

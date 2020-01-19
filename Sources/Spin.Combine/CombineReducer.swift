@@ -9,22 +9,22 @@ import Combine
 import Dispatch
 import Spin_Swift
 
-public struct CombineReducer<State, Mutation, SchedulerTime, SchedulerOptions>: Reducer
+public struct CombineReducer<State, Event, SchedulerTime, SchedulerOptions>: Reducer
     where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConvertible {
     public typealias StreamState = AnyPublisher<State, Never>
-    public typealias StreamMutation = AnyPublisher<Mutation, Never>
+    public typealias StreamEvent = AnyPublisher<Event, Never>
     public typealias Executer = AnyScheduler<SchedulerTime, SchedulerOptions>
 
-    public let reducer: (StreamState.Value, StreamMutation.Value) -> StreamState.Value
+    public let reducer: (StreamState.Value, StreamEvent.Value) -> StreamState.Value
     public let executer: Executer
 
-    public init(reducer: @escaping (StreamState.Value, StreamMutation.Value) -> StreamState.Value, on executer: Executer) {
+    public init(reducer: @escaping (StreamState.Value, StreamEvent.Value) -> StreamState.Value, on executer: Executer) {
         self.reducer = reducer
         self.executer = executer
     }
 
     public func reduce(initialState: StreamState.Value,
-                       feedback: @escaping (StreamState) -> StreamMutation) -> StreamState {
+                       feedback: @escaping (StreamState) -> StreamEvent) -> StreamState {
         return Deferred<StreamState> {
             let currentState = CurrentValueSubject<StreamState.Value, Never>(initialState)
 
@@ -38,7 +38,7 @@ public struct CombineReducer<State, Mutation, SchedulerTime, SchedulerOptions>: 
     }
 
     public func reduce(initialState: StreamState.Value,
-                       feedbacks: [(StreamState) -> StreamMutation]) -> StreamState {
+                       feedbacks: [(StreamState) -> StreamEvent]) -> StreamState {
         let feedback = { stateStream in
             return Publishers.MergeMany(feedbacks.map { $0(stateStream) }).eraseToAnyPublisher()
         }
@@ -47,12 +47,12 @@ public struct CombineReducer<State, Mutation, SchedulerTime, SchedulerOptions>: 
     }
 }
 
-public typealias DispatchQueueCombineReducer<State, Mutation>
-    = CombineReducer<State, Mutation, DispatchQueue.SchedulerTimeType, DispatchQueue.SchedulerOptions>
+public typealias DispatchQueueCombineReducer<State, Event>
+    = CombineReducer<State, Event, DispatchQueue.SchedulerTimeType, DispatchQueue.SchedulerOptions>
 
 public extension CombineReducer
     where SchedulerTime == DispatchQueue.SchedulerTimeType, SchedulerOptions == DispatchQueue.SchedulerOptions {
-    init(reducer: @escaping (StreamState.Value, StreamMutation.Value) -> StreamState.Value) {
+    init(reducer: @escaping (StreamState.Value, StreamEvent.Value) -> StreamState.Value) {
         self.init(reducer: reducer, on: DispatchQueue.main.eraseToAnyScheduler())
     }
 }

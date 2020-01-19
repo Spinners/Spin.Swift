@@ -25,7 +25,7 @@ final class RxViewContextTests: XCTestCase {
     private let disposeBag = DisposeBag()
 
     func test_state_is_updated_when_feeding_the_resulting_feedback_with_an_input_state() throws {
-        let exp = expectation(description: "new mutation")
+        let exp = expectation(description: "new event")
         exp.expectedFulfillmentCount = 2
 
         var receivedState = ""
@@ -51,25 +51,25 @@ final class RxViewContextTests: XCTestCase {
         XCTAssertTrue(container.isRenderCalled)
     }
 
-    func test_mutation_is_output_by_the_feedback_when_sending_a_mutation_to_the_viewContext() throws {
-        let exp = expectation(description: "new mutation")
+    func test_event_is_output_by_the_feedback_when_sending_a_event_to_the_viewContext() throws {
+        let exp = expectation(description: "new event")
 
-        var receivedMutation = ""
+        var receivedEvent = ""
 
         // Given: a ViewContext and its resulting feedback
         let sut = RxViewContext<String, String>(state: "initial")
         let feedback = sut.toFeedback()
 
-        feedback.feedbackStream(.just("newState")).subscribe(onNext: { mutation in
-             receivedMutation = mutation
+        feedback.feedbackStream(.just("newState")).subscribe(onNext: { event in
+             receivedEvent = event
             exp.fulfill()
         }).disposed(by: self.disposeBag)
 
-        // When: sending a mutation to the viewContext
-        sut.perform("newMutation")
+        // When: sending a event to the viewContext
+        sut.perform("newEvent")
         waitForExpectations(timeout: 5)
 
-        // Then: the resulting feedback outputs the mutation
-        XCTAssertEqual(receivedMutation, "newMutation")
+        // Then: the resulting feedback outputs the event
+        XCTAssertEqual(receivedEvent, "newEvent")
     }
 }

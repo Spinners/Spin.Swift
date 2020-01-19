@@ -8,12 +8,12 @@
 import Combine
 import Dispatch
 
-public class CombineViewContext<State, Mutation>: ObservableObject {
+public class CombineViewContext<State, Event>: ObservableObject {
 
     @Published
     public var state: State
 
-    private let mutations = PassthroughSubject<Mutation, Never>()
+    private let events = PassthroughSubject<Event, Never>()
 
     private var externalRenderFeedbackFunction: ((State) -> Void)?
 
@@ -21,28 +21,28 @@ public class CombineViewContext<State, Mutation>: ObservableObject {
         self.state = state
     }
 
-    public func perform(_ mutation: Mutation) {
-        self.mutations.send(mutation)
+    public func perform(_ event: Event) {
+        self.events.send(event)
     }
 
     public func render<Container: AnyObject>(on container: Container, using function: @escaping (Container) -> (State) -> Void) {
         self.externalRenderFeedbackFunction = weakify(container: container, function: function)
     }
 
-    public func toFeedback() -> DispatchQueueCombineFeedback<State, Mutation> {
+    public func toFeedback() -> DispatchQueueCombineFeedback<State, Event> {
         let renderFeedbackFunction: (State) -> Void = { [weak self] state in
             self?.state = state
             self?.externalRenderFeedbackFunction?(state)
         }
 
-        let mutationFeedbackFunction: () -> AnyPublisher<Mutation, Never> = { [weak self] () in
+        let eventFeedbackFunction: () -> AnyPublisher<Event, Never> = { [weak self] () in
             guard let strongSelf = self else { return Empty().eraseToAnyPublisher() }
             
-            return strongSelf.mutations.eraseToAnyPublisher()
+            return strongSelf.events.eraseToAnyPublisher()
         }
 
         return DispatchQueueCombineFeedback(uiFeedbacks: renderFeedbackFunction,
-                                            mutationFeedbackFunction,
+                                            eventFeedbackFunction,
                                             on: DispatchQueue.main.eraseToAnyScheduler())
     }
 }

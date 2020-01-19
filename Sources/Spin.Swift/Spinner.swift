@@ -17,18 +17,18 @@ public struct Spinner<State> {
     }
 
     public func add<FeedbackType: Feedback>(feedback: FeedbackType) -> SpinnerFeedback< FeedbackType.StreamState,
-        FeedbackType.StreamMutation>
+        FeedbackType.StreamEvent>
         where FeedbackType.StreamState.Value == State {
-            return SpinnerFeedback< FeedbackType.StreamState, FeedbackType.StreamMutation>(initialState: self.initialState,
+            return SpinnerFeedback< FeedbackType.StreamState, FeedbackType.StreamEvent>(initialState: self.initialState,
                                                                                            feedback: feedback)
     }
 }
 
-public struct SpinnerFeedback<StreamState: ReactiveStream, StreamMutation: ReactiveStream> {
+public struct SpinnerFeedback<StreamState: ReactiveStream, StreamEvent: ReactiveStream> {
     internal let initialState: StreamState.Value
-    internal let feedbackStreams: [(StreamState) -> StreamMutation]
+    internal let feedbackStreams: [(StreamState) -> StreamEvent]
 
-    internal init (initialState state: StreamState.Value, feedbackStreams: [(StreamState) -> StreamMutation]) {
+    internal init (initialState state: StreamState.Value, feedbackStreams: [(StreamState) -> StreamEvent]) {
         self.initialState = state
         self.feedbackStreams = feedbackStreams
     }
@@ -37,17 +37,17 @@ public struct SpinnerFeedback<StreamState: ReactiveStream, StreamMutation: React
                                            feedback: FeedbackType)
         where
         FeedbackType.StreamState == StreamState,
-        FeedbackType.StreamMutation == StreamMutation {
+        FeedbackType.StreamEvent == StreamEvent {
             self.init(initialState: state, feedbackStreams: [feedback.feedbackStream])
     }
 
-    public func add<NewFeedbackType>(feedback: NewFeedbackType) -> SpinnerFeedback<StreamState, StreamMutation>
+    public func add<NewFeedbackType>(feedback: NewFeedbackType) -> SpinnerFeedback<StreamState, StreamEvent>
         where
         NewFeedbackType: Feedback,
         NewFeedbackType.StreamState == StreamState,
-        NewFeedbackType.StreamMutation == StreamMutation {
+        NewFeedbackType.StreamEvent == StreamEvent {
             let newFeedbackStreams = self.feedbackStreams + [feedback.feedbackStream]
-            return SpinnerFeedback<StreamState, StreamMutation>(initialState: self.initialState,
+            return SpinnerFeedback<StreamState, StreamEvent>(initialState: self.initialState,
                                                                 feedbackStreams: newFeedbackStreams)
     }
 
@@ -55,7 +55,7 @@ public struct SpinnerFeedback<StreamState: ReactiveStream, StreamMutation: React
         where
         ReducerType: Reducer,
         ReducerType.StreamState == StreamState,
-        ReducerType.StreamMutation == StreamMutation {
+        ReducerType.StreamEvent == StreamEvent {
             return AnySpin<StreamState>(initialState: self.initialState,
                                         feedbackStreams: self.feedbackStreams, reducer: reducer)
     }
