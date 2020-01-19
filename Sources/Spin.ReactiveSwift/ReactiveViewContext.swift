@@ -26,6 +26,7 @@ public class ReactiveViewContext<State, Event>: ObservableObject {
 
     public func render<Container: AnyObject>(on container: Container, using function: @escaping (Container) -> (State) -> Void) {
         self.externalRenderFeedbackFunction = weakify(container: container, function: function)
+        self.externalRenderFeedbackFunction?(self.state)
     }
 
     public func toFeedback() -> ReactiveFeedback<State, Event> {

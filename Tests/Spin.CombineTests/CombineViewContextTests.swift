@@ -32,6 +32,11 @@ final class CombineViewContextTests: XCTestCase {
         let sut = CombineViewContext<String, String>(state: "initial")
         let container = MockContainer()
         sut.render(on: container) { $0.render(state:) }
+
+        // Make sure the render function is called directly after being set on the containe
+        XCTAssertTrue(container.isRenderCalled)
+        container.isRenderCalled = false
+
         let feedback = sut.toFeedback()
 
         sut.$state.sink { state in
