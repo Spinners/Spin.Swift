@@ -17,10 +17,10 @@ public extension Feedback {
         return newFeedback
     }
 
-    init<StreamStateType, StreamEventType>(_ feedbackStreams: [(StreamState) -> StreamEvent])
+    init<StateStreamType, EventStreamType>(_ feedbackStreams: [(StateStream) -> EventStream])
         where
-        StreamStateType == StreamState,
-        StreamEventType == StreamEvent {
+        StateStreamType == StateStream,
+        EventStreamType == EventStream {
             let feedbacks = feedbackStreams.map { Self(feedback: $0, on: nil) }
             self.init(feedbacks: feedbacks)
     }
@@ -28,8 +28,8 @@ public extension Feedback {
     init<FeedbackType>(_ feedback: FeedbackType)
         where
         FeedbackType: Feedback,
-        FeedbackType.StreamState == StreamState,
-        FeedbackType.StreamEvent == StreamEvent,
+        FeedbackType.StateStream == StateStream,
+        FeedbackType.EventStream == EventStream,
         FeedbackType.Executer == Executer {
             self.init(feedback: feedback.feedbackStream, on: nil)
     }
@@ -37,8 +37,8 @@ public extension Feedback {
     init<FeedbackType>(@FeedbackBuilder builder: () -> FeedbackType)
         where
         FeedbackType: Feedback,
-        FeedbackType.StreamState == StreamState,
-        FeedbackType.StreamEvent == StreamEvent {
+        FeedbackType.StateStream == StateStream,
+        FeedbackType.EventStream == EventStream {
             let feedback = builder()
             self.init(feedback: feedback.feedbackStream, on: nil)
     }
@@ -47,10 +47,10 @@ public extension Feedback {
         where
         FeedbackA: Feedback,
         FeedbackB: Feedback,
-        FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
-        FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamEvent == StreamEvent {
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream,
+        FeedbackA.StateStream == StateStream,
+        FeedbackA.EventStream == EventStream {
             let feedbacks = builder()
             let feedbackA = feedbacks.0
             let feedbackB = feedbacks.1
@@ -62,12 +62,12 @@ public extension Feedback {
         FeedbackA: Feedback,
         FeedbackB: Feedback,
         FeedbackC: Feedback,
-        FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
-        FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
-        FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamEvent == StreamEvent {
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream,
+        FeedbackB.StateStream == FeedbackC.StateStream,
+        FeedbackB.EventStream == FeedbackC.EventStream,
+        FeedbackA.StateStream == StateStream,
+        FeedbackA.EventStream == EventStream {
             let feedbacks = builder()
             let feedbackA = feedbacks.0
             let feedbackB = feedbacks.1
@@ -84,14 +84,14 @@ public extension Feedback {
         FeedbackB: Feedback,
         FeedbackC: Feedback,
         FeedbackD: Feedback,
-        FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
-        FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
-        FeedbackC.StreamState == FeedbackD.StreamState,
-        FeedbackC.StreamEvent == FeedbackD.StreamEvent,
-        FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamEvent == StreamEvent {
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream,
+        FeedbackB.StateStream == FeedbackC.StateStream,
+        FeedbackB.EventStream == FeedbackC.EventStream,
+        FeedbackC.StateStream == FeedbackD.StateStream,
+        FeedbackC.EventStream == FeedbackD.EventStream,
+        FeedbackA.StateStream == StateStream,
+        FeedbackA.EventStream == EventStream {
             let feedbacks = builder()
             let feedbackA = feedbacks.0
             let feedbackB = feedbacks.1
@@ -111,16 +111,16 @@ public extension Feedback {
         FeedbackC: Feedback,
         FeedbackD: Feedback,
         FeedbackE: Feedback,
-        FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
-        FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
-        FeedbackC.StreamState == FeedbackD.StreamState,
-        FeedbackC.StreamEvent == FeedbackD.StreamEvent,
-        FeedbackD.StreamState == FeedbackE.StreamState,
-        FeedbackD.StreamEvent == FeedbackE.StreamEvent,
-        FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamEvent == StreamEvent {
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream,
+        FeedbackB.StateStream == FeedbackC.StateStream,
+        FeedbackB.EventStream == FeedbackC.EventStream,
+        FeedbackC.StateStream == FeedbackD.StateStream,
+        FeedbackC.EventStream == FeedbackD.EventStream,
+        FeedbackD.StateStream == FeedbackE.StateStream,
+        FeedbackD.EventStream == FeedbackE.EventStream,
+        FeedbackA.StateStream == StateStream,
+        FeedbackA.EventStream == EventStream {
             let feedbacks = builder()
             let feedbackA = feedbacks.0
             let feedbackB = feedbacks.1
@@ -136,7 +136,7 @@ public extension Feedback {
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
     ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while
     ///   the previous execution is still in progress
-    init(feedback: @escaping (StreamState.Value) -> StreamEvent,
+    init(feedback: @escaping (StateStream.Value) -> EventStream,
          on executer: Executer? = nil,
          applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
         let feedbackStreamFromEffect = Self.make(from: feedback, applying: strategy)
@@ -151,13 +151,13 @@ public extension Feedback {
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
     ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while
     ///   the previous execution is still in progress
-    init(feedback: @escaping (StreamState.Value) -> StreamEvent,
-         filteredBy filter: @escaping (StreamState.Value) -> Bool,
+    init(feedback: @escaping (StateStream.Value) -> EventStream,
+         filteredBy filter: @escaping (StateStream.Value) -> Bool,
          on executer: Executer? = nil,
          applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
-        let feedbackFromStateValueWithFilter: (StreamState.Value) -> StreamEvent = { state -> StreamEvent in
+        let feedbackFromStateValueWithFilter: (StateStream.Value) -> EventStream = { state -> EventStream in
             guard filter(state) else {
-                return StreamEvent.emptyStream()
+                return EventStream.emptyStream()
             }
 
             return feedback(state)
@@ -170,10 +170,10 @@ public extension Feedback {
     /// - Parameters:
     ///   - feedback: the function transforming a `State` to a Void output
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
-    init(feedback: @escaping (StreamState.Value) -> Void, on executer: Executer? = nil) {
-        let feedbackFromStateValue: (StreamState.Value) -> StreamEvent = { state -> StreamEvent in
+    init(feedback: @escaping (StateStream.Value) -> Void, on executer: Executer? = nil) {
+        let feedbackFromStateValue: (StateStream.Value) -> EventStream = { state -> EventStream in
             feedback(state)
-            return StreamEvent.emptyStream()
+            return EventStream.emptyStream()
         }
 
         self.init(feedback: feedbackFromStateValue, on: executer, applying: Self.defaultExecutionStrategy)
@@ -183,8 +183,8 @@ public extension Feedback {
     /// - Parameters:
     ///   - feedback: the function transforming a Void input to a ReactiveStream<Event> output
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
-    init(feedback: @escaping () -> StreamEvent, on executer: Executer? = nil) {
-        let feedbackFromStateStream: (StreamState) -> StreamEvent = { _ -> StreamEvent in
+    init(feedback: @escaping () -> EventStream, on executer: Executer? = nil) {
+        let feedbackFromStateStream: (StateStream) -> EventStream = { _ -> EventStream in
             return feedback()
         }
 
@@ -197,8 +197,8 @@ public extension Feedback {
     ///   - stateInterpret: the function transforming a `State` to a Void output
     ///   - eventEmitter: the function transforming a Void input to a ReactiveStream<Event> output
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
-    init(uiFeedbacks stateInterpret: @escaping (StreamState.Value) -> Void,
-         _ eventEmitter: @escaping () -> StreamEvent, on executer: Executer? = nil) {
+    init(uiFeedbacks stateInterpret: @escaping (StateStream.Value) -> Void,
+         _ eventEmitter: @escaping () -> EventStream, on executer: Executer? = nil) {
         let stateFeedback = Self(feedback: stateInterpret, on: executer)
         let eventFeedback = Self(feedback: eventEmitter, on: executer)
 
@@ -212,11 +212,11 @@ public extension Feedback {
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
     ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while
     ///   the previous execution is still in progress
-    init<SubState>(feedback: @escaping (SubState) -> StreamEvent,
-                   lensingOn lense: @escaping (StreamState.Value) -> SubState,
+    init<SubState>(feedback: @escaping (SubState) -> EventStream,
+                   lensingOn lense: @escaping (StateStream.Value) -> SubState,
                    on executer: Executer? = nil,
                    applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
-        let feedback: (StreamState.Value) -> StreamEvent = { state -> StreamEvent in
+        let feedback: (StateStream.Value) -> EventStream = { state -> EventStream in
             let substate = lense(state)
             return feedback(substate)
         }
@@ -233,17 +233,17 @@ public extension Feedback {
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
     ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while
     ///   the previous execution is still in progress
-    init<SubState>(feedback: @escaping (SubState) -> StreamEvent,
-                   lensingOn lense: @escaping (StreamState.Value) -> SubState,
+    init<SubState>(feedback: @escaping (SubState) -> EventStream,
+                   lensingOn lense: @escaping (StateStream.Value) -> SubState,
                    filteredBy filter: @escaping (SubState) -> Bool,
                    on executer: Executer? = nil,
                    applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
-        let feedback: (StreamState.Value) -> StreamEvent = { state -> StreamEvent in
+        let feedback: (StateStream.Value) -> EventStream = { state -> EventStream in
             let substate = lense(state)
             return feedback(substate)
         }
 
-        let filterState: (StreamState.Value) -> Bool = { state -> Bool in
+        let filterState: (StateStream.Value) -> Bool = { state -> Bool in
             return filter(lense(state))
         }
 
@@ -262,8 +262,8 @@ public struct FeedbackBuilder {
         where
         FeedbackA: Feedback,
         FeedbackB: Feedback,
-        FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamEvent == FeedbackB.StreamEvent {
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream {
             return (feedbackA, feedbackB)
     }
 
@@ -276,10 +276,10 @@ public struct FeedbackBuilder {
         FeedbackA: Feedback,
         FeedbackB: Feedback,
         FeedbackC: Feedback,
-        FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
-        FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamEvent == FeedbackC.StreamEvent {
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream,
+        FeedbackB.StateStream == FeedbackC.StateStream,
+        FeedbackB.EventStream == FeedbackC.EventStream {
             return (feedbackA, feedbackB, feedbackC)
     }
 
@@ -295,12 +295,12 @@ public struct FeedbackBuilder {
         FeedbackB: Feedback,
         FeedbackC: Feedback,
         FeedbackD: Feedback,
-        FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
-        FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
-        FeedbackC.StreamState == FeedbackD.StreamState,
-        FeedbackC.StreamEvent == FeedbackD.StreamEvent {
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream,
+        FeedbackB.StateStream == FeedbackC.StateStream,
+        FeedbackB.EventStream == FeedbackC.EventStream,
+        FeedbackC.StateStream == FeedbackD.StateStream,
+        FeedbackC.EventStream == FeedbackD.EventStream {
             return (feedbackA, feedbackB, feedbackC, feedbackD)
     }
 
@@ -316,14 +316,14 @@ public struct FeedbackBuilder {
         FeedbackC: Feedback,
         FeedbackD: Feedback,
         FeedbackE: Feedback,
-        FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
-        FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
-        FeedbackC.StreamState == FeedbackD.StreamState,
-        FeedbackC.StreamEvent == FeedbackD.StreamEvent,
-        FeedbackD.StreamState == FeedbackE.StreamState,
-        FeedbackD.StreamEvent == FeedbackE.StreamEvent {
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream,
+        FeedbackB.StateStream == FeedbackC.StateStream,
+        FeedbackB.EventStream == FeedbackC.EventStream,
+        FeedbackC.StateStream == FeedbackD.StateStream,
+        FeedbackC.EventStream == FeedbackD.EventStream,
+        FeedbackD.StateStream == FeedbackE.StateStream,
+        FeedbackD.EventStream == FeedbackE.EventStream {
             return (feedbackA, feedbackB, feedbackC, feedbackD, feedbackE)
     }
 }

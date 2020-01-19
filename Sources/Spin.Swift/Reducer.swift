@@ -8,20 +8,20 @@
 /// A Reducer represents the way a reactive stream of `Event` can
 /// sequentially mutate an initial `State` over time be executing a sequence of `Feedbacks`
 public protocol Reducer {
-    associatedtype StreamState: ReactiveStream
-    associatedtype StreamEvent: ReactiveStream
+    associatedtype StateStream: ReactiveStream
+    associatedtype EventStream: ReactiveStream
     associatedtype Executer
 
-    var reducer: (StreamState.Value, StreamEvent.Value) -> StreamState.Value { get }
+    var reducer: (StateStream.Value, EventStream.Value) -> StateStream.Value { get }
     var executer: Executer { get }
 
-    init(reducer: @escaping (StreamState.Value, StreamEvent.Value) -> StreamState.Value, on executer: Executer)
+    init(reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value, on executer: Executer)
 
-    func apply(on initialState: StreamState.Value,
-               after feedback: @escaping (StreamState) -> StreamEvent) -> StreamState
+    func apply(on initialState: StateStream.Value,
+               after feedback: @escaping (StateStream) -> EventStream) -> StateStream
 
-    func apply(on initialState: StreamState.Value,
-               after feedbacks: [(StreamState) -> StreamEvent]) -> StreamState
+    func apply(on initialState: StateStream.Value,
+               after feedbacks: [(StateStream) -> EventStream]) -> StateStream
 }
 
 public extension Reducer {

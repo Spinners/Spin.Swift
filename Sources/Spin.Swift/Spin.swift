@@ -12,11 +12,11 @@ public protocol SpinDefinition {
 }
 
 public extension SpinDefinition {
-    func toReactiveStream() -> SpinType.StreamState {
+    func toReactiveStream() -> SpinType.StateStream {
         self.spin.stream
     }
 
-    func spin() -> SpinType.StreamState.LifeCycle {
+    func spin() -> SpinType.StateStream.LifeCycle {
         self.spin.toReactiveStream().spin()
     }
 }
@@ -24,17 +24,17 @@ public extension SpinDefinition {
 /// A Spin defines the reactive stream that outputs the feedback loop sequence of `States`
 /// `AnySpin` is a concrete implementation based on an initial state, a collection of feedbacks and a reducer
 public protocol Spin {
-    associatedtype StreamState: ReactiveStream
+    associatedtype StateStream: ReactiveStream
 
-    var stream: StreamState { get }
+    var stream: StateStream { get }
 }
 
 public extension Spin {
-    func toReactiveStream() -> StreamState {
+    func toReactiveStream() -> StateStream {
         self.stream
     }
 
-    func spin() -> StreamState.LifeCycle {
+    func spin() -> StateStream.LifeCycle {
         self.toReactiveStream().spin()
     }
 }

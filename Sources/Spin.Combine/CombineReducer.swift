@@ -11,22 +11,22 @@ import Spin_Swift
 
 public struct CombineReducer<State, Event, SchedulerTime, SchedulerOptions>: Reducer
     where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConvertible {
-    public typealias StreamState = AnyPublisher<State, Never>
-    public typealias StreamEvent = AnyPublisher<Event, Never>
+    public typealias StateStream = AnyPublisher<State, Never>
+    public typealias EventStream = AnyPublisher<Event, Never>
     public typealias Executer = AnyScheduler<SchedulerTime, SchedulerOptions>
 
-    public let reducer: (StreamState.Value, StreamEvent.Value) -> StreamState.Value
+    public let reducer: (StateStream.Value, EventStream.Value) -> StateStream.Value
     public let executer: Executer
 
-    public init(reducer: @escaping (StreamState.Value, StreamEvent.Value) -> StreamState.Value, on executer: Executer) {
+    public init(reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value, on executer: Executer) {
         self.reducer = reducer
         self.executer = executer
     }
 
-    public func apply(on initialState: StreamState.Value,
-                      after feedback: @escaping (StreamState) -> StreamEvent) -> StreamState {
-        return Deferred<StreamState> {
-            let currentState = CurrentValueSubject<StreamState.Value, Never>(initialState)
+    public func apply(on initialState: StateStream.Value,
+                      after feedback: @escaping (StateStream) -> EventStream) -> StateStream {
+        return Deferred<StateStream> {
+            let currentState = CurrentValueSubject<StateStream.Value, Never>(initialState)
 
             return feedback(currentState.eraseToAnyPublisher())
                 .receive(on: self.executer)
@@ -37,8 +37,8 @@ public struct CombineReducer<State, Event, SchedulerTime, SchedulerOptions>: Red
         }.eraseToAnyPublisher()
     }
 
-    public func apply(on initialState: StreamState.Value,
-                      after feedbacks: [(StreamState) -> StreamEvent]) -> StreamState {
+    public func apply(on initialState: StateStream.Value,
+                      after feedbacks: [(StateStream) -> EventStream]) -> StateStream {
         let feedback = { stateStream in
             return Publishers.MergeMany(feedbacks.map { $0(stateStream) }).eraseToAnyPublisher()
         }
@@ -52,7 +52,7 @@ public typealias DispatchQueueCombineReducer<State, Event>
 
 public extension CombineReducer
     where SchedulerTime == DispatchQueue.SchedulerTimeType, SchedulerOptions == DispatchQueue.SchedulerOptions {
-    init(reducer: @escaping (StreamState.Value, StreamEvent.Value) -> StreamState.Value) {
+    init(reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value) {
         self.init(reducer: reducer, on: DispatchQueue.main.eraseToAnyScheduler())
     }
 }

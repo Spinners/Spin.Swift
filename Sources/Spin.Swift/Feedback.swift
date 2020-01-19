@@ -18,30 +18,30 @@ public enum ExecutionStrategy: Equatable {
 /// while eventually performing side effects. The feedback can be executed on a dedicated `Executer`. If no `Executer`
 /// is provided, then the feedback will be executer on the current `Executer`
 public protocol Feedback {
-    associatedtype StreamState: ReactiveStream
-    associatedtype StreamEvent: ReactiveStream
+    associatedtype StateStream: ReactiveStream
+    associatedtype EventStream: ReactiveStream
     associatedtype Executer
 
-    var feedbackStream: (StreamState) -> StreamEvent { get }
+    var feedbackStream: (StateStream) -> EventStream { get }
 
-    static func make(from effect: @escaping (StreamState.Value) -> StreamEvent,
-                     applying strategy: ExecutionStrategy) -> (StreamState) -> StreamEvent
+    static func make(from effect: @escaping (StateStream.Value) -> EventStream,
+                     applying strategy: ExecutionStrategy) -> (StateStream) -> EventStream
 
-    init(feedback: @escaping (StreamState) -> StreamEvent,
+    init(feedback: @escaping (StateStream) -> EventStream,
          on executer: Executer?)
 
-    init<FeedbackType: Feedback>(feedbacks: [FeedbackType]) where   FeedbackType.StreamState == StreamState,
-        FeedbackType.StreamEvent == StreamEvent
+    init<FeedbackType: Feedback>(feedbacks: [FeedbackType]) where   FeedbackType.StateStream == StateStream,
+        FeedbackType.EventStream == EventStream
 
     init<FeedbackA, FeedbackB>(feedbacks feedbackA: FeedbackA,
                                _ feedbackB: FeedbackB)
         where
         FeedbackA: Feedback,
         FeedbackB: Feedback,
-        FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
-        FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamEvent == StreamEvent
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream,
+        FeedbackA.StateStream == StateStream,
+        FeedbackA.EventStream == EventStream
 
     init<FeedbackA, FeedbackB, FeedbackC>(feedbacks feedbacksA: FeedbackA,
                                           _ feedbackB: FeedbackB,
@@ -50,12 +50,12 @@ public protocol Feedback {
         FeedbackA: Feedback,
         FeedbackB: Feedback,
         FeedbackC: Feedback,
-        FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
-        FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
-        FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamEvent == StreamEvent
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream,
+        FeedbackB.StateStream == FeedbackC.StateStream,
+        FeedbackB.EventStream == FeedbackC.EventStream,
+        FeedbackA.StateStream == StateStream,
+        FeedbackA.EventStream == EventStream
 
     init<FeedbackA, FeedbackB, FeedbackC, FeedbackD>(feedbacks feedbackA: FeedbackA,
                                                      _ feedbackB: FeedbackB,
@@ -66,14 +66,14 @@ public protocol Feedback {
         FeedbackB: Feedback,
         FeedbackC: Feedback,
         FeedbackD: Feedback,
-        FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
-        FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
-        FeedbackC.StreamState == FeedbackD.StreamState,
-        FeedbackC.StreamEvent == FeedbackD.StreamEvent,
-        FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamEvent == StreamEvent
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream,
+        FeedbackB.StateStream == FeedbackC.StateStream,
+        FeedbackB.EventStream == FeedbackC.EventStream,
+        FeedbackC.StateStream == FeedbackD.StateStream,
+        FeedbackC.EventStream == FeedbackD.EventStream,
+        FeedbackA.StateStream == StateStream,
+        FeedbackA.EventStream == EventStream
 
     init<FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE>(feedbacks feedbackA: FeedbackA,
                                                                 _ feedbackB: FeedbackB,
@@ -86,14 +86,14 @@ public protocol Feedback {
         FeedbackC: Feedback,
         FeedbackD: Feedback,
         FeedbackE: Feedback,
-        FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
-        FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
-        FeedbackC.StreamState == FeedbackD.StreamState,
-        FeedbackC.StreamEvent == FeedbackD.StreamEvent,
-        FeedbackD.StreamState == FeedbackE.StreamState,
-        FeedbackD.StreamEvent == FeedbackE.StreamEvent,
-        FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamEvent == StreamEvent
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream,
+        FeedbackB.StateStream == FeedbackC.StateStream,
+        FeedbackB.EventStream == FeedbackC.EventStream,
+        FeedbackC.StateStream == FeedbackD.StateStream,
+        FeedbackC.EventStream == FeedbackD.EventStream,
+        FeedbackD.StateStream == FeedbackE.StateStream,
+        FeedbackD.EventStream == FeedbackE.EventStream,
+        FeedbackA.StateStream == StateStream,
+        FeedbackA.EventStream == EventStream
 }

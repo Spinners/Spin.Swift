@@ -11,13 +11,13 @@ import Spin_Swift
 
 public struct CombineFeedback<State, Event, SchedulerTime, SchedulerOptions>: Feedback
     where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConvertible {
-    public typealias StreamState = AnyPublisher<State, Never>
-    public typealias StreamEvent = AnyPublisher<Event, Never>
+    public typealias StateStream = AnyPublisher<State, Never>
+    public typealias EventStream = AnyPublisher<Event, Never>
     public typealias Executer = AnyScheduler<SchedulerTime, SchedulerOptions>
 
-    public let feedbackStream: (StreamState) -> StreamEvent
+    public let feedbackStream: (StateStream) -> EventStream
 
-    public init(feedback: @escaping (StreamState) -> StreamEvent, on executer: Executer? = nil) {
+    public init(feedback: @escaping (StateStream) -> EventStream, on executer: Executer? = nil) {
         guard let executer = executer else {
             self.feedbackStream = feedback
             return
@@ -31,9 +31,9 @@ public struct CombineFeedback<State, Event, SchedulerTime, SchedulerOptions>: Fe
     public init<FeedbackType>(feedbacks: [FeedbackType])
         where
         FeedbackType: Feedback,
-        FeedbackType.StreamState == StreamState,
-        FeedbackType.StreamEvent == StreamEvent {
-            let feedback = { (stateStream: FeedbackType.StreamState) -> FeedbackType.StreamEvent in
+        FeedbackType.StateStream == StateStream,
+        FeedbackType.EventStream == EventStream {
+            let feedback = { (stateStream: FeedbackType.StateStream) -> FeedbackType.EventStream in
                 let eventStreams = feedbacks.map { $0.feedbackStream(stateStream) }
                 return Publishers.MergeMany(eventStreams).eraseToAnyPublisher()
             }
@@ -45,10 +45,10 @@ public struct CombineFeedback<State, Event, SchedulerTime, SchedulerOptions>: Fe
         where
         FeedbackA: Feedback,
         FeedbackB: Feedback,
-        FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
-        FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamEvent == StreamEvent {
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream,
+        FeedbackA.StateStream == StateStream,
+        FeedbackA.EventStream == EventStream {
             let feedback = { stateStream in
                 return Publishers.Merge(feedbackA.feedbackStream(stateStream),
                                         feedbackB.feedbackStream(stateStream))
@@ -65,12 +65,12 @@ public struct CombineFeedback<State, Event, SchedulerTime, SchedulerOptions>: Fe
         FeedbackA: Feedback,
         FeedbackB: Feedback,
         FeedbackC: Feedback,
-        FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
-        FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
-        FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamEvent == StreamEvent {
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream,
+        FeedbackB.StateStream == FeedbackC.StateStream,
+        FeedbackB.EventStream == FeedbackC.EventStream,
+        FeedbackA.StateStream == StateStream,
+        FeedbackA.EventStream == EventStream {
             let feedback = { stateStream in
                 return Publishers.Merge3(feedbackA.feedbackStream(stateStream),
                                          feedbackB.feedbackStream(stateStream),
@@ -90,14 +90,14 @@ public struct CombineFeedback<State, Event, SchedulerTime, SchedulerOptions>: Fe
         FeedbackB: Feedback,
         FeedbackC: Feedback,
         FeedbackD: Feedback,
-        FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
-        FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
-        FeedbackC.StreamState == FeedbackD.StreamState,
-        FeedbackC.StreamEvent == FeedbackD.StreamEvent,
-        FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamEvent == StreamEvent {
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream,
+        FeedbackB.StateStream == FeedbackC.StateStream,
+        FeedbackB.EventStream == FeedbackC.EventStream,
+        FeedbackC.StateStream == FeedbackD.StateStream,
+        FeedbackC.EventStream == FeedbackD.EventStream,
+        FeedbackA.StateStream == StateStream,
+        FeedbackA.EventStream == EventStream {
             let feedback = { stateStream in
                 return Publishers.Merge4(feedbackA.feedbackStream(stateStream),
                                          feedbackB.feedbackStream(stateStream),
@@ -120,16 +120,16 @@ public struct CombineFeedback<State, Event, SchedulerTime, SchedulerOptions>: Fe
         FeedbackC: Feedback,
         FeedbackD: Feedback,
         FeedbackE: Feedback,
-        FeedbackA.StreamState == FeedbackB.StreamState,
-        FeedbackA.StreamEvent == FeedbackB.StreamEvent,
-        FeedbackB.StreamState == FeedbackC.StreamState,
-        FeedbackB.StreamEvent == FeedbackC.StreamEvent,
-        FeedbackC.StreamState == FeedbackD.StreamState,
-        FeedbackC.StreamEvent == FeedbackD.StreamEvent,
-        FeedbackD.StreamState == FeedbackE.StreamState,
-        FeedbackD.StreamEvent == FeedbackE.StreamEvent,
-        FeedbackA.StreamState == StreamState,
-        FeedbackA.StreamEvent == StreamEvent {
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream,
+        FeedbackB.StateStream == FeedbackC.StateStream,
+        FeedbackB.EventStream == FeedbackC.EventStream,
+        FeedbackC.StateStream == FeedbackD.StateStream,
+        FeedbackC.EventStream == FeedbackD.EventStream,
+        FeedbackD.StateStream == FeedbackE.StateStream,
+        FeedbackD.EventStream == FeedbackE.EventStream,
+        FeedbackA.StateStream == StateStream,
+        FeedbackA.EventStream == EventStream {
             let feedback = { stateStream in
                 return Publishers.Merge5(feedbackA.feedbackStream(stateStream),
                                          feedbackB.feedbackStream(stateStream),
@@ -142,9 +142,9 @@ public struct CombineFeedback<State, Event, SchedulerTime, SchedulerOptions>: Fe
             self.init(feedback: feedback)
     }
 
-    public static func make(from effect: @escaping (StreamState.Value) -> StreamEvent,
-                            applying strategy: ExecutionStrategy) -> (StreamState) -> StreamEvent {
-        let feedbackFromEffectStream: (StreamState) -> StreamEvent = { states in
+    public static func make(from effect: @escaping (StateStream.Value) -> EventStream,
+                            applying strategy: ExecutionStrategy) -> (StateStream) -> EventStream {
+        let feedbackFromEffectStream: (StateStream) -> EventStream = { states in
             switch strategy {
             case .continueOnNewEvent:
                 return states.flatMap(effect).eraseToAnyPublisher()

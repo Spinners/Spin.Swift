@@ -16,47 +16,47 @@ public struct Spinner<State> {
         return Spinner<State>(initialState: state)
     }
 
-    public func add<FeedbackType: Feedback>(feedback: FeedbackType) -> SpinnerFeedback< FeedbackType.StreamState,
-                                                                                        FeedbackType.StreamEvent>
-        where FeedbackType.StreamState.Value == State {
-            return SpinnerFeedback< FeedbackType.StreamState, FeedbackType.StreamEvent>(initialState: self.initialState,
+    public func add<FeedbackType: Feedback>(feedback: FeedbackType) -> SpinnerFeedback< FeedbackType.StateStream,
+                                                                                        FeedbackType.EventStream>
+        where FeedbackType.StateStream.Value == State {
+            return SpinnerFeedback< FeedbackType.StateStream, FeedbackType.EventStream>(initialState: self.initialState,
                                                                                         feedback: feedback)
     }
 }
 
-public struct SpinnerFeedback<StreamState: ReactiveStream, StreamEvent: ReactiveStream> {
-    internal let initialState: StreamState.Value
-    internal let feedbackStreams: [(StreamState) -> StreamEvent]
+public struct SpinnerFeedback<StateStream: ReactiveStream, EventStream: ReactiveStream> {
+    internal let initialState: StateStream.Value
+    internal let feedbackStreams: [(StateStream) -> EventStream]
 
-    internal init (initialState state: StreamState.Value, feedbackStreams: [(StreamState) -> StreamEvent]) {
+    internal init (initialState state: StateStream.Value, feedbackStreams: [(StateStream) -> EventStream]) {
         self.initialState = state
         self.feedbackStreams = feedbackStreams
     }
 
-    internal init<FeedbackType: Feedback> (initialState state: StreamState.Value,
+    internal init<FeedbackType: Feedback> (initialState state: StateStream.Value,
                                            feedback: FeedbackType)
         where
-        FeedbackType.StreamState == StreamState,
-        FeedbackType.StreamEvent == StreamEvent {
+        FeedbackType.StateStream == StateStream,
+        FeedbackType.EventStream == EventStream {
             self.init(initialState: state, feedbackStreams: [feedback.feedbackStream])
     }
 
-    public func add<NewFeedbackType>(feedback: NewFeedbackType) -> SpinnerFeedback<StreamState, StreamEvent>
+    public func add<NewFeedbackType>(feedback: NewFeedbackType) -> SpinnerFeedback<StateStream, EventStream>
         where
         NewFeedbackType: Feedback,
-        NewFeedbackType.StreamState == StreamState,
-        NewFeedbackType.StreamEvent == StreamEvent {
+        NewFeedbackType.StateStream == StateStream,
+        NewFeedbackType.EventStream == EventStream {
             let newFeedbackStreams = self.feedbackStreams + [feedback.feedbackStream]
-            return SpinnerFeedback<StreamState, StreamEvent>(initialState: self.initialState,
+            return SpinnerFeedback<StateStream, EventStream>(initialState: self.initialState,
                                                              feedbackStreams: newFeedbackStreams)
     }
 
-    public func reduce<ReducerType>(with reducer: ReducerType) -> AnySpin<StreamState>
+    public func reduce<ReducerType>(with reducer: ReducerType) -> AnySpin<StateStream>
         where
         ReducerType: Reducer,
-        ReducerType.StreamState == StreamState,
-        ReducerType.StreamEvent == StreamEvent {
-            return AnySpin<StreamState>(initialState: self.initialState,
+        ReducerType.StateStream == StateStream,
+        ReducerType.EventStream == EventStream {
+            return AnySpin<StateStream>(initialState: self.initialState,
                                         feedbackStreams: self.feedbackStreams,
                                         reducer: reducer)
     }
