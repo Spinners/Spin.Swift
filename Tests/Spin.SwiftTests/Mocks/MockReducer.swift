@@ -19,7 +19,8 @@ class MockReducer: Reducer {
         self.executer = executer
     }
 
-    func reduce(initialState: MockState, feedback: (MockStream<MockState>) -> MockStream<MockAction>) -> MockStream<MockState> {
+    func apply(on initialState: MockState,
+               after feedback: (MockStream<MockState>) -> MockStream<MockAction>) -> MockStream<MockState> {
         self.reduceIsCalled = true
         self.numberOfFeedbacks = 1
         _ = feedback(MockStream<MockState>(value: initialState))
@@ -27,7 +28,8 @@ class MockReducer: Reducer {
         return MockStream<MockState>(value: MockState(subState: 1701))
     }
 
-    func reduce(initialState: MockState, feedbacks: [(MockStream<MockState>) -> MockStream<MockAction>]) -> MockStream<MockState> {
+    func apply(on initialState: MockState,
+               after feedbacks: [(MockStream<MockState>) -> MockStream<MockAction>]) -> MockStream<MockState> {
         self.reduceIsCalled = true
         self.numberOfFeedbacks = feedbacks.count
         feedbacks.forEach { _ = $0(MockStream<MockState>(value: initialState)) }

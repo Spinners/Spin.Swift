@@ -17,10 +17,10 @@ public struct Spinner<State> {
     }
 
     public func add<FeedbackType: Feedback>(feedback: FeedbackType) -> SpinnerFeedback< FeedbackType.StreamState,
-        FeedbackType.StreamEvent>
+                                                                                        FeedbackType.StreamEvent>
         where FeedbackType.StreamState.Value == State {
             return SpinnerFeedback< FeedbackType.StreamState, FeedbackType.StreamEvent>(initialState: self.initialState,
-                                                                                           feedback: feedback)
+                                                                                        feedback: feedback)
     }
 }
 
@@ -48,7 +48,7 @@ public struct SpinnerFeedback<StreamState: ReactiveStream, StreamEvent: Reactive
         NewFeedbackType.StreamEvent == StreamEvent {
             let newFeedbackStreams = self.feedbackStreams + [feedback.feedbackStream]
             return SpinnerFeedback<StreamState, StreamEvent>(initialState: self.initialState,
-                                                                feedbackStreams: newFeedbackStreams)
+                                                             feedbackStreams: newFeedbackStreams)
     }
 
     public func reduce<ReducerType>(with reducer: ReducerType) -> AnySpin<StreamState>
@@ -57,6 +57,7 @@ public struct SpinnerFeedback<StreamState: ReactiveStream, StreamEvent: Reactive
         ReducerType.StreamState == StreamState,
         ReducerType.StreamEvent == StreamEvent {
             return AnySpin<StreamState>(initialState: self.initialState,
-                                        feedbackStreams: self.feedbackStreams, reducer: reducer)
+                                        feedbackStreams: self.feedbackStreams,
+                                        reducer: reducer)
     }
 }

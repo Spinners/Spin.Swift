@@ -23,8 +23,8 @@ public struct CombineReducer<State, Event, SchedulerTime, SchedulerOptions>: Red
         self.executer = executer
     }
 
-    public func reduce(initialState: StreamState.Value,
-                       feedback: @escaping (StreamState) -> StreamEvent) -> StreamState {
+    public func apply(on initialState: StreamState.Value,
+                      after feedback: @escaping (StreamState) -> StreamEvent) -> StreamState {
         return Deferred<StreamState> {
             let currentState = CurrentValueSubject<StreamState.Value, Never>(initialState)
 
@@ -37,13 +37,13 @@ public struct CombineReducer<State, Event, SchedulerTime, SchedulerOptions>: Red
         }.eraseToAnyPublisher()
     }
 
-    public func reduce(initialState: StreamState.Value,
-                       feedbacks: [(StreamState) -> StreamEvent]) -> StreamState {
+    public func apply(on initialState: StreamState.Value,
+                      after feedbacks: [(StreamState) -> StreamEvent]) -> StreamState {
         let feedback = { stateStream in
             return Publishers.MergeMany(feedbacks.map { $0(stateStream) }).eraseToAnyPublisher()
         }
 
-        return self.reduce(initialState: initialState, feedback: feedback)
+        return self.apply(on: initialState, after: feedback)
     }
 }
 

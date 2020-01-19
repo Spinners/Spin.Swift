@@ -35,7 +35,7 @@ final class ReactiveReducerTests: XCTestCase {
 
         // When: reducing without specifying an Executer for the reduce operation
         _ = ReactiveReducer(reducer: reducerFunction)
-            .reduce(initialState: 0, feedback: feedback.feedbackStream)
+            .apply(on: 0, after: feedback.feedbackStream)
             .take(first: 2)
             .spin()
             .disposed(by: disposeBag)
@@ -69,7 +69,7 @@ final class ReactiveReducerTests: XCTestCase {
 
         // When: reducing with specifying an Executer for the reduce operation
         _ = ReactiveReducer(reducer: reducerFunction, on: reducerScheduler)
-            .reduce(initialState: 0, feedback: feedback.feedbackStream)
+            .apply(on: 0, after: feedback.feedbackStream)
             .take(first: 2)
             .collect()
             .first()
@@ -102,7 +102,7 @@ final class ReactiveReducerTests: XCTestCase {
 
         // When: reducing the feedbacks
         _ = ReactiveReducer(reducer: reducerFunction)
-            .reduce(initialState: initialState, feedback: ReactiveFeedback(feedbacks: feedbackA, feedbackB).feedbackStream)
+            .apply(on: initialState, after: ReactiveFeedback(feedbacks: feedbackA, feedbackB).feedbackStream)
             .take(first: 1)
             .collect()
             .first()
@@ -132,7 +132,7 @@ final class ReactiveReducerTests: XCTestCase {
 
         // When: reducing with those feedback streams
         _ = try ReactiveReducer(reducer: reducerFunction)
-            .reduce(initialState: 0, feedbacks: [feedbackAFunction, feedbackBFunction])
+            .apply(on: 0, after: [feedbackAFunction, feedbackBFunction])
             .take(first: 1)
             .collect()
             .first()?

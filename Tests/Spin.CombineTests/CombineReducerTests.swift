@@ -35,7 +35,7 @@ final class CombineReducerTests: XCTestCase {
 
         // When: reducing without specifying an Executer for the reduce operation
         let recorder = CombineReducer(reducer: reducerFunction)
-            .reduce(initialState: 0, feedback: feedback.feedbackStream)
+            .apply(on: 0, after: feedback.feedbackStream)
             .output(in: (0...1))
             .record()
 
@@ -73,7 +73,7 @@ final class CombineReducerTests: XCTestCase {
 
         // When: reducing with specifying an Executer for the reduce operation
         let recorder = CombineReducer(reducer: reducerFunction, on: reducerScheduler)
-            .reduce(initialState: 0, feedback: feedback.feedbackStream)
+            .apply(on: 0, after: feedback.feedbackStream)
             .output(in: (0...1))
             .record()
 
@@ -107,7 +107,7 @@ final class CombineReducerTests: XCTestCase {
 
         // When: reducing the feedbacks
         let recorder = CombineReducer(reducer: reducerFunction)
-            .reduce(initialState: initialState, feedback: DispatchQueueCombineFeedback(feedbacks: feedbackA, feedbackB).feedbackStream)
+            .apply(on: initialState, after: DispatchQueueCombineFeedback(feedbacks: feedbackA, feedbackB).feedbackStream)
             .first()
             .record()
 
@@ -138,7 +138,7 @@ final class CombineReducerTests: XCTestCase {
 
         // When: reducing with those feedback streams
         let recorder = CombineReducer(reducer: reducerFunction)
-            .reduce(initialState: 0, feedbacks: [feedbackAFunction, feedbackBFunction])
+            .apply(on: 0, after: [feedbackAFunction, feedbackBFunction])
             .output(in: (0...1))
             .record()
 

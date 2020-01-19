@@ -33,7 +33,7 @@ final class RxReducerTests: XCTestCase {
 
         // When: reducing without specifying an Executer for the reduce operation
         _ = RxReducer(reducer: reducerFunction)
-            .reduce(initialState: 0, feedback: feedback.feedbackStream)
+            .apply(on: 0, after: feedback.feedbackStream)
             .take(2)
             .toBlocking()
             .materialize()
@@ -67,7 +67,7 @@ final class RxReducerTests: XCTestCase {
 
         // When: reducing with specifying an Executer for the reduce operation
         _ = RxReducer(reducer: reducerFunction, on: reducerScheduler)
-            .reduce(initialState: 0, feedback: feedback.feedbackStream)
+            .apply(on: 0, after: feedback.feedbackStream)
             .take(2)
             .toBlocking()
             .materialize()
@@ -93,7 +93,7 @@ final class RxReducerTests: XCTestCase {
 
         // When: reducing the feedback loop
         let events = RxReducer(reducer: reducerFunction)
-            .reduce(initialState: 0, feedback: feedback.feedbackStream)
+            .apply(on: 0, after: feedback.feedbackStream)
             .toBlocking()
             .materialize()
 
@@ -125,7 +125,7 @@ final class RxReducerTests: XCTestCase {
 
         // When: reducing the feedbacks
         _ = RxReducer(reducer: reducerFunction)
-            .reduce(initialState: initialState, feedback: RxFeedback(feedbacks: feedbackA, feedbackB).feedbackStream)
+            .apply(on: initialState, after: RxFeedback(feedbacks: feedbackA, feedbackB).feedbackStream)
             .take(1)
             .toBlocking()
             .materialize()
@@ -155,7 +155,7 @@ final class RxReducerTests: XCTestCase {
 
         // When: reducing with those feedback streams
         _ = RxReducer(reducer: reducerFunction)
-            .reduce(initialState: 0, feedbacks: [feedbackAFunction, feedbackBFunction])
+            .apply(on: 0, after: [feedbackAFunction, feedbackBFunction])
             .take(2)
             .toBlocking()
             .materialize()

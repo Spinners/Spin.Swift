@@ -5,28 +5,28 @@
 //  Created by Thibault Wittemberg on 2019-12-29.
 //
 
-/// `AnySpin` is a concrete implemtation of `Spin`. This is what is to be returned in a concrete SpinDefinition
+/// `AnySpin` is a concrete implementation of `Spin`. This is what is to be returned in a concrete SpinDefinition
 /// implementation or a `Spinner` building process
 public struct AnySpin<StreamState: ReactiveStream>: Spin {
     public let stream: StreamState
 
     public init<StreamEvent, ReducerType>(initialState: StreamState.Value,
-                                             feedbackStream: @escaping (StreamState) -> StreamEvent,
-                                             reducer: ReducerType)
+                                          feedbackStream: @escaping (StreamState) -> StreamEvent,
+                                          reducer: ReducerType)
         where
         ReducerType: Reducer,
         StreamEvent == ReducerType.StreamEvent,
         ReducerType.StreamState == StreamState {
-            self.stream = reducer.reduce(initialState: initialState, feedback: feedbackStream)
+            self.stream = reducer.apply(on: initialState, after: feedbackStream)
     }
 
     public init<StreamEvent, ReducerType>(initialState: StreamState.Value,
-                                             feedbackStreams: [(StreamState) -> StreamEvent], reducer: ReducerType)
+                                          feedbackStreams: [(StreamState) -> StreamEvent], reducer: ReducerType)
         where
         ReducerType: Reducer,
         StreamEvent == ReducerType.StreamEvent,
         ReducerType.StreamState == StreamState {
-            self.stream = reducer.reduce(initialState: initialState, feedbacks: feedbackStreams)
+            self.stream = reducer.apply(on: initialState, after: feedbackStreams)
     }
 
     public init<FeedbackType, ReducerType>(initialState: StreamState.Value,
@@ -39,7 +39,7 @@ public struct AnySpin<StreamState: ReactiveStream>: Spin {
         FeedbackType.StreamState.Value == StreamState.Value,
         FeedbackType.StreamState == ReducerType.StreamState,
         FeedbackType.StreamEvent == ReducerType.StreamEvent {
-            self.stream = reducer.reduce(initialState: initialState, feedback: feedback.feedbackStream)
+            self.stream = reducer.apply(on: initialState, after: feedback.feedbackStream)
     }
 
     public init<FeedbackType, ReducerType>(initialState: StreamState.Value,

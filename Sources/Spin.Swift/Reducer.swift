@@ -17,11 +17,11 @@ public protocol Reducer {
 
     init(reducer: @escaping (StreamState.Value, StreamEvent.Value) -> StreamState.Value, on executer: Executer)
 
-    func reduce(initialState: StreamState.Value,
-                feedback: @escaping (StreamState) -> StreamEvent) -> StreamState
+    func apply(on initialState: StreamState.Value,
+               after feedback: @escaping (StreamState) -> StreamEvent) -> StreamState
 
-    func reduce(initialState: StreamState.Value,
-                feedbacks: [(StreamState) -> StreamEvent]) -> StreamState
+    func apply(on initialState: StreamState.Value,
+               after feedbacks: [(StreamState) -> StreamEvent]) -> StreamState
 }
 
 public extension Reducer {
