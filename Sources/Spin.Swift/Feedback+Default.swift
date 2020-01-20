@@ -5,6 +5,10 @@
 //  Created by Thibault Wittemberg on 2019-12-29.
 //
 
+public enum FeedbackFilterError: Error {
+    case effectIsNotExecuted
+}
+
 public extension Feedback {
     static var defaultExecutionStrategy: ExecutionStrategy {
         return .cancelOnNewEvent
@@ -147,7 +151,7 @@ public extension Feedback {
     /// don't match the filter
     /// - Parameters:
     ///   - feedback: the function transforming a `State` to a reactive stream of `Event`
-    ///   - filter: the filter to apply to the input `State`
+    ///   - filter: the filter to apply to the input `State`.
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
     ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while
     ///   the previous execution is still in progress
@@ -161,6 +165,30 @@ public extension Feedback {
             }
 
             return feedback(state)
+        }
+
+        self.init(feedback: feedbackFromStateValueWithFilter, on: executer, applying: strategy)
+    }
+
+    /// Initialize the feedback with a: SubState -> ReactiveStream<Event> stream, dismissing the `State` values that
+    /// don't match the filter.
+    /// The returned Result allows to extract a SubState from the State and to pass it to the feedback function
+    /// - Parameters:
+    ///   - feedback: the function transforming a `State` to a reactive stream of `Event`
+    ///   - filter: the filter to apply to the input `State`. It should return .success(value) in case the feedabck should be executed
+    ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
+    ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while
+    ///   the previous execution is still in progress
+    init<SubState>(feedback: @escaping (SubState) -> EventStream,
+         filteredByResult filter: @escaping (StateStream.Value) -> Result<SubState, FeedbackFilterError>,
+         on executer: Executer? = nil,
+         applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
+        let feedbackFromStateValueWithFilter: (StateStream.Value) -> EventStream = { state -> EventStream in
+            guard case let .success(substate) = filter(state) else {
+                return EventStream.emptyStream()
+            }
+
+            return feedback(substate)
         }
 
         self.init(feedback: feedbackFromStateValueWithFilter, on: executer, applying: strategy)

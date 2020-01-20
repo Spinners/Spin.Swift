@@ -241,6 +241,43 @@ final class Feedback_DefaultTests: XCTestCase {
         XCTAssertEqual(receivedMockActionStreamWhenFilteredIsFalse.value, MockAction.toEmpty)
     }
 
+    func test_feedback_is_called_with_substate_when_filteredResult_is_passed_in_the_initializer() {
+        // Given: a feedback stream based on a State -> Stream<Event>
+        var feedbackIsCalled = false
+        var feedbackIsCalledWithSubState: Int?
+        let feedbackStream: (Int) -> MockStream<MockAction> = { subState -> MockStream<MockAction> in
+            feedbackIsCalled = true
+            feedbackIsCalledWithSubState = subState
+            return MockStream<MockAction>(value: MockAction(value: 10))
+        }
+
+        // When: instantiating the feedback with the effect, a Result filter, and no Executer, and no execution strategy
+        // When: executing the feedback
+        let sut = SpyFeedback<MockState, MockAction>(feedback: feedbackStream, filteredByResult: { state in
+            if state.subState > 10 {
+            return .success(state.subState)
+            }
+
+            return .failure(.effectIsNotExecuted)
+        })
+        let receivedMockActionStream = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 15)))
+        let receivedMockActionStreamWhenFilteredIsFalse = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 5)))
+
+        // Then: the default initializer of the feedback is called
+        // Then: the Executer inside the feedback is nil
+        // Then: the ExecutionStrategy is the default one
+        // Then: the received subState in the feedback closure is the one returned be the Result filter closure
+        // Then: the feedback closure given to the feedback is executed and gives the expected result
+        // Then: the received element from the feedback when the filter is false is an empty stream
+        XCTAssertTrue(sut.initIsCalled)
+        XCTAssertNil(sut.feedbackExecuter)
+        XCTAssertTrue(feedbackIsCalled)
+        XCTAssertEqual(spyExecutionStrategy, MockFeedback<MockState, MockAction>.defaultExecutionStrategy)
+        XCTAssertEqual(feedbackIsCalledWithSubState, 15)
+        XCTAssertEqual(receivedMockActionStream.value, MockAction(value: 10))
+        XCTAssertEqual(receivedMockActionStreamWhenFilteredIsFalse.value, MockAction.toEmpty)
+    }
+
     func test_initializer_is_called_with_nil_executer_when_instantiated_with_a_voidEvent_effect_but_without_executer() {
         // Given: a feedback stream based on a State -> Void
         var feedbackIsCalled = false
