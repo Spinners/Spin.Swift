@@ -76,4 +76,32 @@ final class CombineViewContextTests: XCTestCase {
         // Then: the resulting feedback outputs the event
         XCTAssertEqual(receivedEvent, "newEvent")
     }
+
+    func test_binding_make_the_viewContext_emit_an_event_when_the_binding_is_mutated() {
+        let exp = expectation(description: "new event")
+        var receivedEvent = ""
+
+        // Given: a ViewContext and its resulting feedback
+        let sut = CombineViewContext<String, String>(state: "initial")
+        let feedback = sut.toFeedback()
+
+        // Given: a Binding on the \.count State KeyPath
+        let binding = sut.binding(for: \.count, event: { "\($0)" })
+
+        // Then: the "get" side of the Binding gives the actuel state size in terms of string count ("initialState" -> 7 chars)
+        XCTAssertEqual(binding.wrappedValue, 7)
+
+        feedback.feedbackStream(Just<String>("newState").eraseToAnyPublisher()).sink { event in
+            receivedEvent = event
+            exp.fulfill()
+        }.disposed(by: &self.disposeBag)
+
+        // When: "setting" the Binding to a new count value
+        binding.wrappedValue = 16
+
+        waitForExpectations(timeout: 5)
+
+        // Then: an Event is emitted with the new count value
+        XCTAssertEqual(receivedEvent, "16")
+    }
 }

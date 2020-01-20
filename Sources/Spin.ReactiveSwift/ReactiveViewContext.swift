@@ -7,6 +7,7 @@
 
 import Combine
 import ReactiveSwift
+import SwiftUI
 
 public class ReactiveViewContext<State, Event>: ObservableObject {
     @Published
@@ -27,6 +28,10 @@ public class ReactiveViewContext<State, Event>: ObservableObject {
     public func render<Container: AnyObject>(on container: Container, using function: @escaping (Container) -> (State) -> Void) {
         self.externalRenderFeedbackFunction = weakify(container: container, function: function)
         self.externalRenderFeedbackFunction?(self.state)
+    }
+
+    public func binding<SubState>(for keyPath: KeyPath<State, SubState>, event: @escaping (SubState) -> Event) -> Binding<SubState> {
+        return Binding(get: { self.state[keyPath: keyPath] }, set: { self.emit(event($0)) })
     }
 
     public func toFeedback() -> ReactiveFeedback<State, Event> {
