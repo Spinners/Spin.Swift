@@ -23,7 +23,7 @@ final class CombineReducerTests: XCTestCase {
                                                  qos: .userInitiated,
                                                  attributes: .concurrent)
 
-        let feedback = DispatchQueueCombineFeedback<Int, String>(feedback: { (inputs: AnyPublisher<Int, Never>) -> AnyPublisher<String, Never> in
+        let feedback = DispatchQueueCombineFeedback<Int, String>(effect: { (inputs: AnyPublisher<Int, Never>) -> AnyPublisher<String, Never> in
             return inputs.map { _ in return "" }.receive(on: inputStreamScheduler).eraseToAnyPublisher()
         })
 
@@ -35,7 +35,7 @@ final class CombineReducerTests: XCTestCase {
 
         // When: reducing without specifying an Executer for the reduce operation
         let recorder = CombineReducer(reducer: reducerFunction)
-            .apply(on: 0, after: feedback.feedbackStream)
+            .apply(on: 0, after: feedback.effect)
             .output(in: (0...1))
             .record()
 
@@ -61,7 +61,7 @@ final class CombineReducerTests: XCTestCase {
                                              qos: .userInitiated,
                                              attributes: .concurrent).eraseToAnyScheduler()
 
-        let feedback = DispatchQueueCombineFeedback<Int, String>(feedback: { (inputs: AnyPublisher<Int, Never>) in
+        let feedback = DispatchQueueCombineFeedback<Int, String>(effect: { (inputs: AnyPublisher<Int, Never>) in
             return inputs.map { _ in return "" }.receive(on: inputStreamScheduler).eraseToAnyPublisher()
         })
 
@@ -73,7 +73,7 @@ final class CombineReducerTests: XCTestCase {
 
         // When: reducing with specifying an Executer for the reduce operation
         let recorder = CombineReducer(reducer: reducerFunction, on: reducerScheduler)
-            .apply(on: 0, after: feedback.feedbackStream)
+            .apply(on: 0, after: feedback.effect)
             .output(in: (0...1))
             .record()
 
@@ -91,12 +91,12 @@ final class CombineReducerTests: XCTestCase {
         var receivedInitialStateInFeedbackA = 0
         var receivedInitialStateInFeedbackB = 0
 
-        let feedbackA = DispatchQueueCombineFeedback<Int, String>(feedback: { (input: Int) -> AnyPublisher<String, Never> in
+        let feedbackA = DispatchQueueCombineFeedback<Int, String>(effect: { (input: Int) -> AnyPublisher<String, Never> in
             receivedInitialStateInFeedbackA = input
             return Just<String>("").eraseToAnyPublisher()
         })
 
-        let feedbackB = DispatchQueueCombineFeedback<Int, String>(feedback: { (input: Int) -> AnyPublisher<String, Never> in
+        let feedbackB = DispatchQueueCombineFeedback<Int, String>(effect: { (input: Int) -> AnyPublisher<String, Never> in
             receivedInitialStateInFeedbackB = input
             return Just<String>("").eraseToAnyPublisher()
         })
@@ -107,7 +107,7 @@ final class CombineReducerTests: XCTestCase {
 
         // When: reducing the feedbacks
         let recorder = CombineReducer(reducer: reducerFunction)
-            .apply(on: initialState, after: DispatchQueueCombineFeedback(feedbacks: feedbackA, feedbackB).feedbackStream)
+            .apply(on: initialState, after: DispatchQueueCombineFeedback(feedbacks: feedbackA, feedbackB).effect)
             .first()
             .record()
 

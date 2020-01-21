@@ -16,7 +16,7 @@ final class ReactiveFeedbackTests: XCTestCase {
         let expectedExecuterName = "FEEDBACK_QUEUE_\(UUID().uuidString)"
 
         // Given: a feedback with no Executer
-        let sut = ReactiveFeedback(feedback: { (inputs: SignalProducer<Int, Never>) -> SignalProducer<String, Never> in
+        let sut = ReactiveFeedback(effect: { (inputs: SignalProducer<Int, Never>) -> SignalProducer<String, Never> in
             feedbackIsCalled = true
             return inputs.map {
                 receivedExecuterName = DispatchQueue.currentLabel
@@ -29,7 +29,7 @@ final class ReactiveFeedbackTests: XCTestCase {
             .observe(on: QueueScheduler(qos: .userInitiated, name: expectedExecuterName))
 
         // When: executing the feedback
-        _ = sut.feedbackStream(inputStream).take(first: 1).collect().first()
+        _ = sut.effect(inputStream).take(first: 1).collect().first()
 
         // Then: the feedback is called
         // Then: the feedback happens on the dedicated Executer specified on the inputStream, since no Executer has been given
@@ -44,7 +44,7 @@ final class ReactiveFeedbackTests: XCTestCase {
         let expectedExecuterName = "FEEDBACK_QUEUE_\(UUID().uuidString)"
 
         // Given: a feedback with a dedicated Executer
-        let sut = ReactiveFeedback(feedback: { (inputs: SignalProducer<Int, Never>) -> SignalProducer<String, Never> in
+        let sut = ReactiveFeedback(effect: { (inputs: SignalProducer<Int, Never>) -> SignalProducer<String, Never> in
             feedbackIsCalled = true
             return inputs.map {
                 receivedExecuterName = DispatchQueue.currentLabel
@@ -57,7 +57,7 @@ final class ReactiveFeedbackTests: XCTestCase {
             .observe(on: QueueScheduler(qos: .userInitiated, name: "FEEDBACK_QUEUE_\(UUID().uuidString)"))
 
         // When: executing the feedback
-        _ = sut.feedbackStream(inputStream).take(first: 1).first()
+        _ = sut.effect(inputStream).take(first: 1).first()
 
         // Then: the feedback is called
         // Then: the feedback happens on the dedicated Executer given in the Feedback initializer, not on the one defined
@@ -133,188 +133,188 @@ final class ReactiveFeedbackTests: XCTestCase {
 
     func test_initialize_with_two_feedbacks_executes_the_original_feedbackFunctions() throws {
         // Given: 2 feedbacks based on a Stream<State> -> Stream<Event>
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
+        var effectAIsCalled = false
+        var effectBIsCalled = false
 
-        let feedbackAStream: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
-            feedbackAIsCalled = true
+        let effectA: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
+            effectAIsCalled = true
             return SignalProducer(value: 0)
         }
-        let feedbackBStream: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
-            feedbackBIsCalled = true
+        let effectB: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
+            effectBIsCalled = true
             return SignalProducer(value: 0)
         }
 
-        let sourceFeedbackA = ReactiveFeedback(feedback: feedbackAStream)
-        let sourceFeedbackB = ReactiveFeedback(feedback: feedbackBStream)
+        let sourceFeedbackA = ReactiveFeedback(effect: effectA)
+        let sourceFeedbackB = ReactiveFeedback(effect: effectB)
 
         // When: instantiating the feedback with already existing feedbacks
         // When: executing the feedback
         let sut = ReactiveFeedback(feedbacks: sourceFeedbackA, sourceFeedbackB)
-        _ = try sut.feedbackStream(SignalProducer(value: 0)).take(first: 2).collect().single()?.get()
+        _ = try sut.effect(SignalProducer(value: 0)).take(first: 2).collect().single()?.get()
 
         // Then: the original feedback streams are preserved
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
+        XCTAssertTrue(effectAIsCalled)
+        XCTAssertTrue(effectBIsCalled)
     }
 
     func test_initialize_with_three_feedbacks_executes_the_original_feedbackFunctions() throws {
         // Given: 3 feedbacks based on a Stream<State> -> Stream<Event>
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
-        var feedbackCIsCalled = false
+        var effectAIsCalled = false
+        var effectBIsCalled = false
+        var effectCIsCalled = false
 
-        let feedbackAStream: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
-            feedbackAIsCalled = true
+        let effectA: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
+            effectAIsCalled = true
             return SignalProducer(value: 0)
         }
-        let feedbackBStream: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
-            feedbackBIsCalled = true
+        let effectB: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
+            effectBIsCalled = true
             return SignalProducer(value: 0)
         }
-        let feedbackCStream: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
-            feedbackCIsCalled = true
+        let effectC: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
+            effectCIsCalled = true
             return SignalProducer(value: 0)
         }
 
-        let sourceFeedbackA = ReactiveFeedback(feedback: feedbackAStream)
-        let sourceFeedbackB = ReactiveFeedback(feedback: feedbackBStream)
-        let sourceFeedbackC = ReactiveFeedback(feedback: feedbackCStream)
+        let sourceFeedbackA = ReactiveFeedback(effect: effectA)
+        let sourceFeedbackB = ReactiveFeedback(effect: effectB)
+        let sourceFeedbackC = ReactiveFeedback(effect: effectC)
 
         // When: instantiating the feedback with already existing feedbacks
         // When: executing the feedback
         let sut = ReactiveFeedback(feedbacks: sourceFeedbackA, sourceFeedbackB, sourceFeedbackC)
-        _ = try sut.feedbackStream(SignalProducer(value: 0)).take(first: 3).collect().single()?.get()
+        _ = try sut.effect(SignalProducer(value: 0)).take(first: 3).collect().single()?.get()
 
         // Then: the original feedback streams are preserved
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
-        XCTAssertTrue(feedbackCIsCalled)
+        XCTAssertTrue(effectAIsCalled)
+        XCTAssertTrue(effectBIsCalled)
+        XCTAssertTrue(effectCIsCalled)
     }
 
     func test_initialize_with_four_feedbacks_executes_the_original_feedbackFunctions() throws {
         // Given: 4 feedbacks based on a Stream<State> -> Stream<Event>
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
-        var feedbackCIsCalled = false
-        var feedbackDIsCalled = false
+        var effectAIsCalled = false
+        var effectBIsCalled = false
+        var effectCIsCalled = false
+        var effectDIsCalled = false
 
-        let feedbackAStream: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
-            feedbackAIsCalled = true
+        let effectA: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
+            effectAIsCalled = true
             return SignalProducer(value: 0)
         }
-        let feedbackBStream: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
-            feedbackBIsCalled = true
+        let effectB: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
+            effectBIsCalled = true
             return SignalProducer(value: 0)
         }
-        let feedbackCStream: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
-            feedbackCIsCalled = true
+        let effectC: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
+            effectCIsCalled = true
             return SignalProducer(value: 0)
         }
-        let feedbackDStream: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
-            feedbackDIsCalled = true
+        let effectD: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
+            effectDIsCalled = true
             return SignalProducer(value: 0)
         }
 
-        let sourceFeedbackA = ReactiveFeedback(feedback: feedbackAStream)
-        let sourceFeedbackB = ReactiveFeedback(feedback: feedbackBStream)
-        let sourceFeedbackC = ReactiveFeedback(feedback: feedbackCStream)
-        let sourceFeedbackD = ReactiveFeedback(feedback: feedbackDStream)
+        let sourceFeedbackA = ReactiveFeedback(effect: effectA)
+        let sourceFeedbackB = ReactiveFeedback(effect: effectB)
+        let sourceFeedbackC = ReactiveFeedback(effect: effectC)
+        let sourceFeedbackD = ReactiveFeedback(effect: effectD)
 
         // When: instantiating the feedback with already existing feedbacks
         // When: executing the feedback
         let sut = ReactiveFeedback(feedbacks: sourceFeedbackA, sourceFeedbackB, sourceFeedbackC, sourceFeedbackD)
-        _ = try sut.feedbackStream(SignalProducer(value: 0)).take(first: 4).collect().single()?.get()
+        _ = try sut.effect(SignalProducer(value: 0)).take(first: 4).collect().single()?.get()
 
         // Then: the original feedback streams are preserved
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
-        XCTAssertTrue(feedbackCIsCalled)
-        XCTAssertTrue(feedbackDIsCalled)
+        XCTAssertTrue(effectAIsCalled)
+        XCTAssertTrue(effectBIsCalled)
+        XCTAssertTrue(effectCIsCalled)
+        XCTAssertTrue(effectDIsCalled)
     }
 
     func test_initialize_with_five_feedbacks_executes_the_original_feedbackFunctions() throws {
         // Given: 5 feedbacks based on a Stream<State> -> Stream<Event>
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
-        var feedbackCIsCalled = false
-        var feedbackDIsCalled = false
-        var feedbackEIsCalled = false
+        var effectAIsCalled = false
+        var effectBIsCalled = false
+        var effectCIsCalled = false
+        var effectDIsCalled = false
+        var effectEIsCalled = false
 
-        let feedbackAStream: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
-            feedbackAIsCalled = true
+        let effectA: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
+            effectAIsCalled = true
             return SignalProducer(value: 0)
         }
-        let feedbackBStream: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
-            feedbackBIsCalled = true
+        let effectB: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
+            effectBIsCalled = true
             return SignalProducer(value: 0)
         }
-        let feedbackCStream: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
-            feedbackCIsCalled = true
+        let effectC: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
+            effectCIsCalled = true
             return SignalProducer(value: 0)
         }
-        let feedbackDStream: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
-            feedbackDIsCalled = true
+        let effectD: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
+            effectDIsCalled = true
             return SignalProducer(value: 0)
         }
-        let feedbackEStream: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
-            feedbackEIsCalled = true
+        let effectE: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
+            effectEIsCalled = true
             return SignalProducer(value: 0)
         }
 
-        let sourceFeedbackA = ReactiveFeedback(feedback: feedbackAStream)
-        let sourceFeedbackB = ReactiveFeedback(feedback: feedbackBStream)
-        let sourceFeedbackC = ReactiveFeedback(feedback: feedbackCStream)
-        let sourceFeedbackD = ReactiveFeedback(feedback: feedbackDStream)
-        let sourceFeedbackE = ReactiveFeedback(feedback: feedbackEStream)
+        let sourceFeedbackA = ReactiveFeedback(effect: effectA)
+        let sourceFeedbackB = ReactiveFeedback(effect: effectB)
+        let sourceFeedbackC = ReactiveFeedback(effect: effectC)
+        let sourceFeedbackD = ReactiveFeedback(effect: effectD)
+        let sourceFeedbackE = ReactiveFeedback(effect: effectE)
 
         // When: instantiating the feedback with already existing feedbacks
         // When: executing the feedback
         let sut = ReactiveFeedback(feedbacks: sourceFeedbackA, sourceFeedbackB, sourceFeedbackC, sourceFeedbackD, sourceFeedbackE)
-        _ = try sut.feedbackStream(SignalProducer(value: 0)).take(first: 5).collect().single()?.get()
+        _ = try sut.effect(SignalProducer(value: 0)).take(first: 5).collect().single()?.get()
 
         // Then: the original feedback streams are preserved
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
-        XCTAssertTrue(feedbackCIsCalled)
-        XCTAssertTrue(feedbackDIsCalled)
-        XCTAssertTrue(feedbackEIsCalled)
+        XCTAssertTrue(effectAIsCalled)
+        XCTAssertTrue(effectBIsCalled)
+        XCTAssertTrue(effectCIsCalled)
+        XCTAssertTrue(effectDIsCalled)
+        XCTAssertTrue(effectEIsCalled)
     }
 
     func test_initialize_with_an_array_of_feedbacks_executes_the_original_feedbackFunctions() throws {
         // Given: 5 feedbacks based on a Stream<State> -> Stream<Event>
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
-        var feedbackCIsCalled = false
-        var feedbackDIsCalled = false
-        var feedbackEIsCalled = false
+        var effectAIsCalled = false
+        var effectBIsCalled = false
+        var effectCIsCalled = false
+        var effectDIsCalled = false
+        var effectEIsCalled = false
 
-        let feedbackAStream: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
-            feedbackAIsCalled = true
+        let effectA: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
+            effectAIsCalled = true
             return SignalProducer(value: 0)
         }
-        let feedbackBStream: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
-            feedbackBIsCalled = true
+        let effectB: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
+            effectBIsCalled = true
             return SignalProducer(value: 0)
         }
-        let feedbackCStream: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
-            feedbackCIsCalled = true
+        let effectC: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
+            effectCIsCalled = true
             return SignalProducer(value: 0)
         }
-        let feedbackDStream: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
-            feedbackDIsCalled = true
+        let effectD: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
+            effectDIsCalled = true
             return SignalProducer(value: 0)
         }
-        let feedbackEStream: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
-            feedbackEIsCalled = true
+        let effectE: (Int) -> SignalProducer<Int, Never> = { states -> SignalProducer<Int, Never> in
+            effectEIsCalled = true
             return SignalProducer(value: 0)
         }
 
-        let sourceFeedbackA = ReactiveFeedback(feedback: feedbackAStream)
-        let sourceFeedbackB = ReactiveFeedback(feedback: feedbackBStream)
-        let sourceFeedbackC = ReactiveFeedback(feedback: feedbackCStream)
-        let sourceFeedbackD = ReactiveFeedback(feedback: feedbackDStream)
-        let sourceFeedbackE = ReactiveFeedback(feedback: feedbackEStream)
+        let sourceFeedbackA = ReactiveFeedback(effect: effectA)
+        let sourceFeedbackB = ReactiveFeedback(effect: effectB)
+        let sourceFeedbackC = ReactiveFeedback(effect: effectC)
+        let sourceFeedbackD = ReactiveFeedback(effect: effectD)
+        let sourceFeedbackE = ReactiveFeedback(effect: effectE)
 
         // When: instantiating the feedback with already existing feedbacks with function builder
         // When: executing the feedback
@@ -323,13 +323,13 @@ final class ReactiveFeedbackTests: XCTestCase {
                                                sourceFeedbackC,
                                                sourceFeedbackD,
                                                sourceFeedbackE])
-        _ = try sut.feedbackStream(SignalProducer(value: 0)).take(first: 5).collect().single()?.get()
+        _ = try sut.effect(SignalProducer(value: 0)).take(first: 5).collect().single()?.get()
 
         // Then: the original feedback streams are preserved
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
-        XCTAssertTrue(feedbackCIsCalled)
-        XCTAssertTrue(feedbackDIsCalled)
-        XCTAssertTrue(feedbackEIsCalled)
+        XCTAssertTrue(effectAIsCalled)
+        XCTAssertTrue(effectBIsCalled)
+        XCTAssertTrue(effectCIsCalled)
+        XCTAssertTrue(effectDIsCalled)
+        XCTAssertTrue(effectEIsCalled)
     }
 }

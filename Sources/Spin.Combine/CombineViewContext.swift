@@ -48,7 +48,7 @@ public class CombineViewContext<State, Event>: ObservableObject {
             return strongSelf.events.eraseToAnyPublisher()
         }
 
-        return DispatchQueueCombineFeedback(uiFeedbacks: renderFeedbackFunction,
+        return DispatchQueueCombineFeedback(uiEffects: renderFeedbackFunction,
                                             eventFeedbackFunction,
                                             on: DispatchQueue.main.eraseToAnyScheduler())
     }

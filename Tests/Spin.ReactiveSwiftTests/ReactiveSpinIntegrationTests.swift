@@ -16,16 +16,16 @@ fileprivate enum StringAction {
 
 fileprivate struct SutSpin: SpinDefinition {
 
-    let feedbackAFunction: (String) -> SignalProducer<StringAction, Never>
-    let feedbackBFunction: (String) -> SignalProducer<StringAction, Never>
-    let feedbackCFunction: (String) -> SignalProducer<StringAction, Never>
+    let effectA: (String) -> SignalProducer<StringAction, Never>
+    let effectB: (String) -> SignalProducer<StringAction, Never>
+    let effectC: (String) -> SignalProducer<StringAction, Never>
     let reducerFunction: (String, StringAction) -> String
 
     var spin: ReactiveSpin<String> {
         ReactiveSpin(initialState: "initialState", reducer: ReactiveReducer(reducer: reducerFunction)) {
-            ReactiveFeedback(feedback: feedbackAFunction)
-            ReactiveFeedback(feedback: feedbackBFunction)
-            ReactiveFeedback(feedback: feedbackCFunction)
+            ReactiveFeedback(effect: effectA)
+            ReactiveFeedback(effect: effectB)
+            ReactiveFeedback(effect: effectC)
         }
     }
 }
@@ -40,21 +40,21 @@ final class ReactiveSpinIntegrationTests: XCTestCase {
 
         // Given: an initial state, feedbacks and a reducer
         var counterA = 0
-        let feedbackAFunction = { (state: String) -> SignalProducer<StringAction, Never> in
+        let effectA = { (state: String) -> SignalProducer<StringAction, Never> in
             counterA += 1
             let counter = counterA
             return SignalProducer<StringAction, Never>(value: .append("_a\(counter)"))
         }
 
         var counterB = 0
-        let feedbackBFunction = { (state: String) -> SignalProducer<StringAction, Never> in
+        let effectB = { (state: String) -> SignalProducer<StringAction, Never> in
             counterB += 1
             let counter = counterB
             return SignalProducer<StringAction, Never>(value: .append("_b\(counter)"))
         }
 
         var counterC = 0
-        let feedbackCFunction = { (state: String) -> SignalProducer<StringAction, Never> in
+        let effectC = { (state: String) -> SignalProducer<StringAction, Never> in
             counterC += 1
             let counter = counterC
             return SignalProducer<StringAction, Never>(value: .append("_c\(counter)"))
@@ -70,9 +70,9 @@ final class ReactiveSpinIntegrationTests: XCTestCase {
         // When: spinning the feedbacks and the reducer on the default executer
         Spinner
             .from(initialState: "initialState")
-            .add(feedback: ReactiveFeedback(feedback: feedbackAFunction))
-            .add(feedback: ReactiveFeedback(feedback: feedbackBFunction))
-            .add(feedback: ReactiveFeedback(feedback: feedbackCFunction))
+            .add(feedback: ReactiveFeedback(effect: effectA))
+            .add(feedback: ReactiveFeedback(effect: effectB))
+            .add(feedback: ReactiveFeedback(effect: effectC))
             .reduce(with: ReactiveReducer(reducer: reducerFunction))
             .toReactiveStream()
             .take(first: 7)
@@ -101,21 +101,21 @@ final class ReactiveSpinIntegrationTests: XCTestCase {
 
         // Given: an initial state, feedbacks and a reducer
         var counterA = 0
-        let feedbackAFunction = { (state: String) -> SignalProducer<StringAction, Never> in
+        let effectA = { (state: String) -> SignalProducer<StringAction, Never> in
             counterA += 1
             let counter = counterA
             return SignalProducer<StringAction, Never>(value: .append("_a\(counter)"))
         }
 
         var counterB = 0
-        let feedbackBFunction = { (state: String) -> SignalProducer<StringAction, Never> in
+        let effectB = { (state: String) -> SignalProducer<StringAction, Never> in
             counterB += 1
             let counter = counterB
             return SignalProducer<StringAction, Never>(value: .append("_b\(counter)"))
         }
 
         var counterC = 0
-        let feedbackCFunction = { (state: String) -> SignalProducer<StringAction, Never> in
+        let effectC = { (state: String) -> SignalProducer<StringAction, Never> in
             counterC += 1
             let counter = counterC
             return SignalProducer<StringAction, Never>(value: .append("_c\(counter)"))
@@ -129,9 +129,9 @@ final class ReactiveSpinIntegrationTests: XCTestCase {
         }
 
         // When: spinning the feedbacks and the reducer on the default executer
-        SutSpin(feedbackAFunction: feedbackAFunction,
-                feedbackBFunction: feedbackBFunction,
-                feedbackCFunction: feedbackCFunction,
+        SutSpin(effectA: effectA,
+                effectB: effectB,
+                effectC: effectC,
                 reducerFunction: reducerFunction)
             .toReactiveStream()
             .take(first: 7)

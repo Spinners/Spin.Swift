@@ -12,21 +12,21 @@ struct MockFeedback<State: CanBeEmpty, Event: CanBeEmpty>: Feedback {
     typealias EventStream = MockStream<Event>
     typealias Executer = MockExecuter
 
-    var feedbackStream: (StateStream) -> EventStream
+    var effect: (StateStream) -> EventStream
     var feedbackExecuter: Executer?
 
-    init(feedback: @escaping (StateStream) -> EventStream, on executer: Executer? = nil) {
-        self.feedbackStream = feedback
+    init(effect: @escaping (StateStream) -> EventStream, on executer: Executer? = nil) {
+        self.effect = effect
         self.feedbackExecuter = executer
     }
 
     init<FeedbackType: Feedback>(feedbacks: [FeedbackType]) where FeedbackType.StateStream == StateStream, FeedbackType.EventStream == EventStream {
         let feedback = { (stateStream: FeedbackType.StateStream) -> FeedbackType.EventStream in
-            _ = feedbacks.map { $0.feedbackStream(stateStream) }
+            _ = feedbacks.map { $0.effect(stateStream) }
             return .emptyStream()
         }
 
-        self.init(feedback: feedback)
+        self.init(effect: feedback)
     }
 
     init<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback>(feedbacks feedbackA: FeedbackTypeA, _ feedbackB: FeedbackTypeB)
@@ -36,12 +36,12 @@ struct MockFeedback<State: CanBeEmpty, Event: CanBeEmpty>: Feedback {
                  FeedbackTypeA.EventStream == EventStream {
 
         let feedback: (StateStream) -> EventStream = { stateStream in
-            _ = feedbackA.feedbackStream(stateStream)
-            _ = feedbackB.feedbackStream(stateStream)
+            _ = feedbackA.effect(stateStream)
+            _ = feedbackB.effect(stateStream)
             return .emptyStream()
         }
 
-        self.init(feedback: feedback)
+        self.init(effect: feedback)
     }
 
     init<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback, FeedbackTypeC: Feedback>(feedbacks feedbackA: FeedbackTypeA, _ feedbackB: FeedbackTypeB, _ feedbackC: FeedbackTypeC)
@@ -53,14 +53,14 @@ struct MockFeedback<State: CanBeEmpty, Event: CanBeEmpty>: Feedback {
                  FeedbackTypeA.EventStream == EventStream {
 
          let feedback: (StateStream) -> EventStream = { stateStream in
-            _ = feedbackA.feedbackStream(stateStream)
-            _ = feedbackB.feedbackStream(stateStream)
-            _ = feedbackC.feedbackStream(stateStream)
+            _ = feedbackA.effect(stateStream)
+            _ = feedbackB.effect(stateStream)
+            _ = feedbackC.effect(stateStream)
 
             return .emptyStream()
          }
 
-         self.init(feedback: feedback)
+         self.init(effect: feedback)
      }
 
     init<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback, FeedbackTypeC: Feedback, FeedbackTypeD: Feedback>(feedbacks feedbackA: FeedbackTypeA,
@@ -77,15 +77,15 @@ struct MockFeedback<State: CanBeEmpty, Event: CanBeEmpty>: Feedback {
                  FeedbackTypeA.EventStream == EventStream {
 
          let feedback: (StateStream) -> EventStream = { stateStream in
-            _ = feedbackA.feedbackStream(stateStream)
-            _ = feedbackB.feedbackStream(stateStream)
-            _ = feedbackC.feedbackStream(stateStream)
-            _ = feedbackD.feedbackStream(stateStream)
+            _ = feedbackA.effect(stateStream)
+            _ = feedbackB.effect(stateStream)
+            _ = feedbackC.effect(stateStream)
+            _ = feedbackD.effect(stateStream)
 
             return .emptyStream()
          }
 
-         self.init(feedback: feedback)
+         self.init(effect: feedback)
      }
 
     init<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback, FeedbackTypeC: Feedback, FeedbackTypeD: Feedback, FeedbackTypeE: Feedback>(feedbacks feedbackA: FeedbackTypeA,
@@ -105,16 +105,16 @@ struct MockFeedback<State: CanBeEmpty, Event: CanBeEmpty>: Feedback {
                  FeedbackTypeA.EventStream == EventStream {
 
          let feedback: (StateStream) -> EventStream = { stateStream in
-            _ = feedbackA.feedbackStream(stateStream)
-            _ = feedbackB.feedbackStream(stateStream)
-            _ = feedbackC.feedbackStream(stateStream)
-            _ = feedbackD.feedbackStream(stateStream)
-            _ = feedbackE.feedbackStream(stateStream)
+            _ = feedbackA.effect(stateStream)
+            _ = feedbackB.effect(stateStream)
+            _ = feedbackC.effect(stateStream)
+            _ = feedbackD.effect(stateStream)
+            _ = feedbackE.effect(stateStream)
 
             return .emptyStream()
          }
 
-         self.init(feedback: feedback)
+         self.init(effect: feedback)
      }
 
     static func make(from effect: @escaping (StateStream.Value) -> EventStream, applying strategy: ExecutionStrategy) -> (StateStream) -> EventStream {

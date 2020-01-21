@@ -47,7 +47,7 @@ public class RxViewContext<State, Event>: ObservableObject {
             return strongSelf.events.asObservable()
         }
 
-        return RxFeedback(uiFeedbacks: renderFeedbackFunction,
+        return RxFeedback(uiEffects: renderFeedbackFunction,
                           eventFeedbackFunction,
                           on: MainScheduler.instance)
     }

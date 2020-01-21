@@ -39,7 +39,7 @@ public struct AnySpin<StateStream: ReactiveStream>: Spin {
         FeedbackType.StateStream.Value == StateStream.Value,
         FeedbackType.StateStream == ReducerType.StateStream,
         FeedbackType.EventStream == ReducerType.EventStream {
-            self.stream = reducer.apply(on: initialState, after: feedback.feedbackStream)
+            self.stream = reducer.apply(on: initialState, after: feedback.effect)
     }
 
     public init<FeedbackType, ReducerType>(initialState: StateStream.Value,

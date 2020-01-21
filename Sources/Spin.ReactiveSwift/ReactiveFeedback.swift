@@ -13,16 +13,16 @@ public struct ReactiveFeedback<State, Event>: Feedback {
     public typealias EventStream = SignalProducer<Event, Never>
     public typealias Executer = Scheduler
 
-    public let feedbackStream: (StateStream) -> EventStream
+    public let effect: (StateStream) -> EventStream
 
-    public init(feedback: @escaping (StateStream) -> EventStream, on executer: Executer? = nil) {
+    public init(effect: @escaping (StateStream) -> EventStream, on executer: Executer? = nil) {
         guard let executer = executer else {
-            self.feedbackStream = feedback
+            self.effect = effect
             return
         }
 
-        self.feedbackStream = { stateStream in
-            return feedback(stateStream.observe(on: executer))
+        self.effect = { stateStream in
+            return effect(stateStream.observe(on: executer))
         }
     }
 
@@ -30,11 +30,11 @@ public struct ReactiveFeedback<State, Event>: Feedback {
         where FeedbackType.StateStream == StateStream,
         FeedbackType.EventStream == EventStream {
             let feedback = { (stateStream: FeedbackType.StateStream) -> FeedbackType.EventStream in
-                let eventStreams = feedbacks.map { $0.feedbackStream(stateStream) }
+                let eventStreams = feedbacks.map { $0.effect(stateStream) }
                 return SignalProducer.merge(eventStreams)
             }
 
-            self.init(feedback: feedback)
+            self.init(effect: feedback)
     }
 
     public init<FeedbackA, FeedbackB>(feedbacks feedbackA: FeedbackA, _ feedbackB: FeedbackB)
@@ -46,11 +46,11 @@ public struct ReactiveFeedback<State, Event>: Feedback {
         FeedbackA.StateStream == StateStream,
         FeedbackA.EventStream == EventStream {
             let feedback = { stateStream in
-                return SignalProducer.merge(feedbackA.feedbackStream(stateStream),
-                                            feedbackB.feedbackStream(stateStream))
+                return SignalProducer.merge(feedbackA.effect(stateStream),
+                                            feedbackB.effect(stateStream))
             }
 
-            self.init(feedback: feedback)
+            self.init(effect: feedback)
     }
 
     public init<FeedbackA, FeedbackB, FeedbackC>(feedbacks feedbackA: FeedbackA,
@@ -67,12 +67,12 @@ public struct ReactiveFeedback<State, Event>: Feedback {
         FeedbackA.StateStream == StateStream,
         FeedbackA.EventStream == EventStream {
             let feedback = { stateStream in
-                return SignalProducer.merge(feedbackA.feedbackStream(stateStream),
-                                            feedbackB.feedbackStream(stateStream),
-                                            feedbackC.feedbackStream(stateStream))
+                return SignalProducer.merge(feedbackA.effect(stateStream),
+                                            feedbackB.effect(stateStream),
+                                            feedbackC.effect(stateStream))
             }
 
-            self.init(feedback: feedback)
+            self.init(effect: feedback)
     }
 
     public init<FeedbackA, FeedbackB, FeedbackC, FeedbackD>(feedbacks feedbackA: FeedbackA,
@@ -93,13 +93,13 @@ public struct ReactiveFeedback<State, Event>: Feedback {
         FeedbackA.StateStream == StateStream,
         FeedbackA.EventStream == EventStream {
             let feedback = { stateStream in
-                return SignalProducer.merge(feedbackA.feedbackStream(stateStream),
-                                            feedbackB.feedbackStream(stateStream),
-                                            feedbackC.feedbackStream(stateStream),
-                                            feedbackD.feedbackStream(stateStream))
+                return SignalProducer.merge(feedbackA.effect(stateStream),
+                                            feedbackB.effect(stateStream),
+                                            feedbackC.effect(stateStream),
+                                            feedbackD.effect(stateStream))
             }
 
-            self.init(feedback: feedback)
+            self.init(effect: feedback)
     }
 
     public init<FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE>(feedbacks feedbackA: FeedbackA,
@@ -124,14 +124,14 @@ public struct ReactiveFeedback<State, Event>: Feedback {
         FeedbackA.StateStream == StateStream,
         FeedbackA.EventStream == EventStream {
             let feedback = { stateStream in
-                return SignalProducer.merge(feedbackA.feedbackStream(stateStream),
-                                            feedbackB.feedbackStream(stateStream),
-                                            feedbackC.feedbackStream(stateStream),
-                                            feedbackD.feedbackStream(stateStream),
-                                            feedbackE.feedbackStream(stateStream))
+                return SignalProducer.merge(feedbackA.effect(stateStream),
+                                            feedbackB.effect(stateStream),
+                                            feedbackC.effect(stateStream),
+                                            feedbackD.effect(stateStream),
+                                            feedbackE.effect(stateStream))
             }
 
-            self.init(feedback: feedback)
+            self.init(effect: feedback)
     }
 
     public static func make(from effect: @escaping (StateStream.Value) -> EventStream,

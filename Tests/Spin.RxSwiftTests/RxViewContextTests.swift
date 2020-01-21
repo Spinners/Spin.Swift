@@ -47,7 +47,7 @@ final class RxViewContextTests: XCTestCase {
         }.store(in: &self.cancellables)
 
         // When: feeding the resulting feedback with a state input stream
-        feedback.feedbackStream(.just("newState")).subscribe().disposed(by: self.disposeBag)
+        feedback.effect(.just("newState")).subscribe().disposed(by: self.disposeBag)
 
         waitForExpectations(timeout: 5)
 
@@ -65,7 +65,7 @@ final class RxViewContextTests: XCTestCase {
         let sut = RxViewContext<String, String>(state: "initial")
         let feedback = sut.toFeedback()
 
-        feedback.feedbackStream(.just("newState")).subscribe(onNext: { event in
+        feedback.effect(.just("newState")).subscribe(onNext: { event in
             receivedEvent = event
             exp.fulfill()
         }).disposed(by: self.disposeBag)
@@ -92,7 +92,7 @@ final class RxViewContextTests: XCTestCase {
         // Then: the "get" side of the Binding gives the actuel state size in terms of string count ("initialState" -> 7 chars)
         XCTAssertEqual(binding.wrappedValue, 7)
         
-        feedback.feedbackStream(.just("newState")).subscribe(onNext: { event in
+        feedback.effect(.just("newState")).subscribe(onNext: { event in
             receivedEvent = event
             exp.fulfill()
         }).disposed(by: self.disposeBag)

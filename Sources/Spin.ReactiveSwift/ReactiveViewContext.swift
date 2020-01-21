@@ -46,7 +46,7 @@ public class ReactiveViewContext<State, Event>: ObservableObject {
             return strongSelf.eventsProducer.producer
         }
 
-        return ReactiveFeedback(uiFeedbacks: renderFeedbackFunction,
+        return ReactiveFeedback(uiEffects: renderFeedbackFunction,
                                 eventFeedbackFunction,
                                 on: UIScheduler())
     }

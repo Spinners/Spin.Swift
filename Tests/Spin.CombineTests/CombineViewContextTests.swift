@@ -46,7 +46,7 @@ final class CombineViewContextTests: XCTestCase {
 
         // When: feeding the resulting feedback with a state input stream
         let subject = PassthroughSubject<String, Never>()
-        feedback.feedbackStream(Just<String>("newState").eraseToAnyPublisher()).subscribe(subject).disposed(by: &self.disposeBag)
+        feedback.effect(Just<String>("newState").eraseToAnyPublisher()).subscribe(subject).disposed(by: &self.disposeBag)
 
         waitForExpectations(timeout: 5)
 
@@ -64,7 +64,7 @@ final class CombineViewContextTests: XCTestCase {
         let sut = CombineViewContext<String, String>(state: "initial")
         let feedback = sut.toFeedback()
 
-        feedback.feedbackStream(Just<String>("newState").eraseToAnyPublisher()).sink { event in
+        feedback.effect(Just<String>("newState").eraseToAnyPublisher()).sink { event in
             receivedEvent = event
             exp.fulfill()
         }.disposed(by: &self.disposeBag)
@@ -91,7 +91,7 @@ final class CombineViewContextTests: XCTestCase {
         // Then: the "get" side of the Binding gives the actuel state size in terms of string count ("initialState" -> 7 chars)
         XCTAssertEqual(binding.wrappedValue, 7)
 
-        feedback.feedbackStream(Just<String>("newState").eraseToAnyPublisher()).sink { event in
+        feedback.effect(Just<String>("newState").eraseToAnyPublisher()).sink { event in
             receivedEvent = event
             exp.fulfill()
         }.disposed(by: &self.disposeBag)

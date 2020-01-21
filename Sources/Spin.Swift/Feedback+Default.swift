@@ -17,15 +17,15 @@ public extension Feedback {
     /// Set an executer for the feedback after its initilization
     /// - Parameter executer: the executer on which the feedback (the underlying reactive streams) will be executed
     func execute(on executer: Executer) -> Self {
-        let newFeedback = Self(feedback: self.feedbackStream, on: executer)
+        let newFeedback = Self(effect: self.effect, on: executer)
         return newFeedback
     }
 
-    init<StateStreamType, EventStreamType>(_ feedbackStreams: [(StateStream) -> EventStream])
+    init<StateStreamType, EventStreamType>(_ effects: [(StateStream) -> EventStream])
         where
         StateStreamType == StateStream,
         EventStreamType == EventStream {
-            let feedbacks = feedbackStreams.map { Self(feedback: $0, on: nil) }
+            let feedbacks = effects.map { Self(effect: $0, on: nil) }
             self.init(feedbacks: feedbacks)
     }
 
@@ -35,7 +35,7 @@ public extension Feedback {
         FeedbackType.StateStream == StateStream,
         FeedbackType.EventStream == EventStream,
         FeedbackType.Executer == Executer {
-            self.init(feedback: feedback.feedbackStream, on: nil)
+            self.init(effect: feedback.effect, on: nil)
     }
 
     init<FeedbackType>(@FeedbackBuilder builder: () -> FeedbackType)
@@ -44,7 +44,7 @@ public extension Feedback {
         FeedbackType.StateStream == StateStream,
         FeedbackType.EventStream == EventStream {
             let feedback = builder()
-            self.init(feedback: feedback.feedbackStream, on: nil)
+            self.init(effect: feedback.effect, on: nil)
     }
 
     init<FeedbackA, FeedbackB>(@FeedbackBuilder builder: () -> (FeedbackA, FeedbackB))
@@ -80,9 +80,9 @@ public extension Feedback {
     }
 
     init<FeedbackA, FeedbackB, FeedbackC, FeedbackD>(@FeedbackBuilder builder: () -> (  FeedbackA,
-                                                                                        FeedbackB,
-                                                                                        FeedbackC,
-                                                                                        FeedbackD))
+        FeedbackB,
+        FeedbackC,
+        FeedbackD))
         where
         FeedbackA: Feedback,
         FeedbackB: Feedback,
@@ -105,10 +105,10 @@ public extension Feedback {
     }
 
     init<FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE>(@FeedbackBuilder builder: () -> (   FeedbackA,
-                                                                                                    FeedbackB,
-                                                                                                    FeedbackC,
-                                                                                                    FeedbackD,
-                                                                                                    FeedbackE))
+        FeedbackB,
+        FeedbackC,
+        FeedbackD,
+        FeedbackE))
         where
         FeedbackA: Feedback,
         FeedbackB: Feedback,
@@ -136,87 +136,87 @@ public extension Feedback {
 
     /// Initialize the feedback with a: State -> ReactiveStream<Event> stream
     /// - Parameters:
-    ///   - feedback: the function transforming a `State` to a reactive stream of `Event`
+    ///   - effect: the function transforming a `State` to a reactive stream of `Event`
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
     ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while
     ///   the previous execution is still in progress
-    init(feedback: @escaping (StateStream.Value) -> EventStream,
+    init(effect: @escaping (StateStream.Value) -> EventStream,
          on executer: Executer? = nil,
          applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
-        let feedbackStreamFromEffect = Self.make(from: feedback, applying: strategy)
-        self.init(feedback: feedbackStreamFromEffect, on: executer)
+        let effect = Self.make(from: effect, applying: strategy)
+        self.init(effect: effect, on: executer)
     }
 
     /// Initialize the feedback with a: State -> ReactiveStream<Event> stream, dismissing the `State` values that
     /// don't match the filter
     /// - Parameters:
-    ///   - feedback: the function transforming a `State` to a reactive stream of `Event`
+    ///   - effect: the function transforming a `State` to a reactive stream of `Event`
     ///   - filter: the filter to apply to the input `State`.
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
     ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while
     ///   the previous execution is still in progress
-    init(feedback: @escaping (StateStream.Value) -> EventStream,
+    init(effect: @escaping (StateStream.Value) -> EventStream,
          filteredBy filter: @escaping (StateStream.Value) -> Bool,
          on executer: Executer? = nil,
          applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
-        let feedbackFromStateValueWithFilter: (StateStream.Value) -> EventStream = { state -> EventStream in
+        let effectWithFilter: (StateStream.Value) -> EventStream = { state -> EventStream in
             guard filter(state) else {
                 return EventStream.emptyStream()
             }
 
-            return feedback(state)
+            return effect(state)
         }
 
-        self.init(feedback: feedbackFromStateValueWithFilter, on: executer, applying: strategy)
+        self.init(effect: effectWithFilter, on: executer, applying: strategy)
     }
 
     /// Initialize the feedback with a: SubState -> ReactiveStream<Event> stream, dismissing the `State` values that
     /// don't match the filter.
     /// The returned Result allows to extract a SubState from the State and to pass it to the feedback function
     /// - Parameters:
-    ///   - feedback: the function transforming a `State` to a reactive stream of `Event`
+    ///   - effect: the function transforming a `SubState` to a reactive stream of `Event`
     ///   - filter: the filter to apply to the input `State`. It should return .success(value) in case the feedabck should be executed
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
     ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while
     ///   the previous execution is still in progress
-    init<SubState>(feedback: @escaping (SubState) -> EventStream,
-         filteredByResult filter: @escaping (StateStream.Value) -> Result<SubState, FeedbackFilterError>,
-         on executer: Executer? = nil,
-         applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
-        let feedbackFromStateValueWithFilter: (StateStream.Value) -> EventStream = { state -> EventStream in
+    init<SubState>(effect: @escaping (SubState) -> EventStream,
+                   filteredByResult filter: @escaping (StateStream.Value) -> Result<SubState, FeedbackFilterError>,
+                   on executer: Executer? = nil,
+                   applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
+        let effectWithFilter: (StateStream.Value) -> EventStream = { state -> EventStream in
             guard case let .success(substate) = filter(state) else {
                 return EventStream.emptyStream()
             }
 
-            return feedback(substate)
+            return effect(substate)
         }
 
-        self.init(feedback: feedbackFromStateValueWithFilter, on: executer, applying: strategy)
+        self.init(effect: effectWithFilter, on: executer, applying: strategy)
     }
 
     /// Initialize the feedback with a: State -> Void stream
     /// - Parameters:
-    ///   - feedback: the function transforming a `State` to a Void output
+    ///   - effect: the function transforming a `State` to a Void output
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
-    init(feedback: @escaping (StateStream.Value) -> Void, on executer: Executer? = nil) {
-        let feedbackFromStateValue: (StateStream.Value) -> EventStream = { state -> EventStream in
-            feedback(state)
+    init(effect: @escaping (StateStream.Value) -> Void, on executer: Executer? = nil) {
+        let effectFromStateValue: (StateStream.Value) -> EventStream = { state -> EventStream in
+            effect(state)
             return EventStream.emptyStream()
         }
 
-        self.init(feedback: feedbackFromStateValue, on: executer, applying: Self.defaultExecutionStrategy)
+        self.init(effect: effectFromStateValue, on: executer, applying: Self.defaultExecutionStrategy)
     }
 
     /// Initialize the feedback with a: Void -> ReactiveStream<Event> stream
     /// - Parameters:
-    ///   - feedback: the function transforming a Void input to a ReactiveStream<Event> output
+    ///   - effect: the function transforming a Void input to a ReactiveStream<Event> output
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
-    init(feedback: @escaping () -> EventStream, on executer: Executer? = nil) {
-        let feedbackFromStateStream: (StateStream) -> EventStream = { _ -> EventStream in
-            return feedback()
+    init(effect: @escaping () -> EventStream, on executer: Executer? = nil) {
+        let effectFromEventStream: (StateStream) -> EventStream = { _ -> EventStream in
+            return effect()
         }
 
-        self.init(feedback: feedbackFromStateStream, on: executer)
+        self.init(effect: effectFromEventStream, on: executer)
     }
 
     /// Initialize the feedback with 2 partial feedbacks. Those 2 partial feedbacks will be concatenated to become a
@@ -225,57 +225,57 @@ public extension Feedback {
     ///   - stateInterpret: the function transforming a `State` to a Void output
     ///   - eventEmitter: the function transforming a Void input to a ReactiveStream<Event> output
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
-    init(uiFeedbacks stateInterpret: @escaping (StateStream.Value) -> Void,
+    init(uiEffects stateInterpret: @escaping (StateStream.Value) -> Void,
          _ eventEmitter: @escaping () -> EventStream, on executer: Executer? = nil) {
-        let stateFeedback = Self(feedback: stateInterpret, on: executer)
-        let eventFeedback = Self(feedback: eventEmitter, on: executer)
+        let stateFeedback = Self(effect: stateInterpret, on: executer)
+        let eventFeedback = Self(effect: eventEmitter, on: executer)
 
         self.init(feedbacks: stateFeedback, eventFeedback)
     }
 
     /// Initialize the feedback with a: `SubState` -> ReactiveStream<Event> stream
     /// - Parameters:
-    ///   - feedback: the function transforming a `SubState` to a reactive stream of `Event`
+    ///   - effect: the function transforming a `SubState` to a reactive stream of `Event`
     ///   - lense: the lense to apply to a State to obtain the `SubState` type paased as an input to the feedback
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
     ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while
     ///   the previous execution is still in progress
-    init<SubState>(feedback: @escaping (SubState) -> EventStream,
+    init<SubState>(effect: @escaping (SubState) -> EventStream,
                    lensingOn lense: @escaping (StateStream.Value) -> SubState,
                    on executer: Executer? = nil,
                    applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
-        let feedback: (StateStream.Value) -> EventStream = { state -> EventStream in
+        let effectFromSubState: (StateStream.Value) -> EventStream = { state -> EventStream in
             let substate = lense(state)
-            return feedback(substate)
+            return effect(substate)
         }
 
-        self.init(feedback: feedback, on: executer, applying: strategy)
+        self.init(effect: effectFromSubState, on: executer, applying: strategy)
     }
 
     /// Initialize the feedback with a: `SubState` -> ReactiveStream<Event> stream, dismissing the `SubState` values
     /// that don't match the filter
     /// - Parameters:
-    ///   - feedback: the function transforming a `SubState` to a reactive stream of `Event`
+    ///   - effect: the function transforming a `SubState` to a reactive stream of `Event`
     ///   - lense: the lense to apply to a State to obtain the `SubState` type paased as an input to the feedback
     ///   - filter: the filter to apply to the input `State`
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
     ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while
     ///   the previous execution is still in progress
-    init<SubState>(feedback: @escaping (SubState) -> EventStream,
+    init<SubState>(effect: @escaping (SubState) -> EventStream,
                    lensingOn lense: @escaping (StateStream.Value) -> SubState,
                    filteredBy filter: @escaping (SubState) -> Bool,
                    on executer: Executer? = nil,
                    applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
-        let feedback: (StateStream.Value) -> EventStream = { state -> EventStream in
+        let effectFromSubState: (StateStream.Value) -> EventStream = { state -> EventStream in
             let substate = lense(state)
-            return feedback(substate)
+            return effect(substate)
         }
 
         let filterState: (StateStream.Value) -> Bool = { state -> Bool in
             return filter(lense(state))
         }
 
-        self.init(feedback: feedback, filteredBy: filterState, on: executer, applying: strategy)
+        self.init(effect: effectFromSubState, filteredBy: filterState, on: executer, applying: strategy)
     }
 }
 

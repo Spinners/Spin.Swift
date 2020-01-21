@@ -47,7 +47,7 @@ final class ReactiveViewContextTests: XCTestCase {
         }.store(in: &self.cancellables)
 
         // When: feeding the resulting feedback with a state input stream
-        feedback.feedbackStream(SignalProducer<String, Never>(value: "newState")).start().disposed(by: self.disposeBag)
+        feedback.effect(SignalProducer<String, Never>(value: "newState")).start().disposed(by: self.disposeBag)
 
         waitForExpectations(timeout: 5)
 
@@ -65,7 +65,7 @@ final class ReactiveViewContextTests: XCTestCase {
         let sut = ReactiveViewContext<String, String>(state: "initial")
         let feedback = sut.toFeedback()
 
-        feedback.feedbackStream(SignalProducer<String, Never>(value: "newState")).startWithValues{ event in
+        feedback.effect(SignalProducer<String, Never>(value: "newState")).startWithValues{ event in
             receivedEvent = event
             exp.fulfill()
         }.disposed(by: self.disposeBag)
@@ -92,7 +92,7 @@ final class ReactiveViewContextTests: XCTestCase {
         // Then: the "get" side of the Binding gives the actuel state size in terms of string count ("initialState" -> 7 chars)
         XCTAssertEqual(binding.wrappedValue, 7)
 
-        feedback.feedbackStream(SignalProducer<String, Never>(value: "newState")).startWithValues{ event in
+        feedback.effect(SignalProducer<String, Never>(value: "newState")).startWithValues{ event in
             receivedEvent = event
             exp.fulfill()
         }.disposed(by: self.disposeBag)

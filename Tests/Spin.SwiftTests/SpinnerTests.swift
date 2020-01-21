@@ -25,7 +25,7 @@ final class SpinnerTests: XCTestCase {
     func test_spinner_add_creates_a_SpinnerFeedback_with_the_provided_feedback() {
         // Given: a Feedback
         var feedbackIsCalled = false
-        let feedback = MockFeedback(feedback: { (states: MockStream<MockState>) -> MockStream<MockAction> in
+        let feedback = MockFeedback(effect: { (states: MockStream<MockState>) -> MockStream<MockAction> in
             feedbackIsCalled = true
             return MockStream<MockAction>(value: .toEmpty)
         })
@@ -36,7 +36,7 @@ final class SpinnerTests: XCTestCase {
             .from(initialState: MockState(subState: 1701))
             .add(feedback: feedback)
 
-        _ = MockFeedback(sut.feedbackStreams).feedbackStream(MockStream<MockState>(value: .toEmpty))
+        _ = MockFeedback(sut.feedbackStreams).effect(MockStream<MockState>(value: .toEmpty))
 
         // Then: the SpinnerFeedback has the original initial state
         // Then: the SpinnerFeedback holds the original stream
@@ -49,11 +49,11 @@ final class SpinnerTests: XCTestCase {
         var feedbackAIsCalled = false
         var feedbackBIsCalled = false
 
-        let feedbackA = MockFeedback(feedback: { (states: MockStream<MockState>) -> MockStream<MockAction> in
+        let feedbackA = MockFeedback(effect: { (states: MockStream<MockState>) -> MockStream<MockAction> in
             feedbackAIsCalled = true
             return MockStream<MockAction>(value: .toEmpty)
         })
-        let feedbackB = MockFeedback(feedback: { (states: MockStream<MockState>) -> MockStream<MockAction> in
+        let feedbackB = MockFeedback(effect: { (states: MockStream<MockState>) -> MockStream<MockAction> in
             feedbackBIsCalled = true
             return MockStream<MockAction>(value: .toEmpty)
         })
@@ -64,7 +64,7 @@ final class SpinnerTests: XCTestCase {
             .from(initialState: MockState(subState: 1701))
             .add(feedback: feedbackA)
             .add(feedback: feedbackB)
-        _ = MockFeedback(sut.feedbackStreams).feedbackStream(MockStream<MockState>(value: .toEmpty))
+        _ = MockFeedback(sut.feedbackStreams).effect(MockStream<MockState>(value: .toEmpty))
 
         // Then: the SpinnerFeedback has the original initial state
         // Then: the SpinnerFeedback holds the original streams
@@ -76,10 +76,10 @@ final class SpinnerTests: XCTestCase {
     func test_reduce_gives_the_expected_Spin() {
         // Given: an initial state, 2 feedbacks and 1 reducer
         let expectedInitialState = MockState(subState: 1701)
-        let feedbackA = MockFeedback(feedback: { (states: MockStream<MockState>) -> MockStream<MockAction> in
+        let feedbackA = MockFeedback(effect: { (states: MockStream<MockState>) -> MockStream<MockAction> in
             return MockStream<MockAction>(value: .toEmpty)
         })
-        let feedbackB = MockFeedback(feedback: { (states: MockStream<MockState>) -> MockStream<MockAction> in
+        let feedbackB = MockFeedback(effect: { (states: MockStream<MockState>) -> MockStream<MockAction> in
             return MockStream<MockAction>(value: .toEmpty)
         })
         let reducerFunction = { (state: MockState, action: MockAction) -> MockState in return MockState(subState: 1702) }
@@ -100,8 +100,8 @@ final class SpinnerTests: XCTestCase {
     func test_toReactiveStream_triggers_the_reducer() {
         // Given: an initial state, 2 feedbacks and 1 reducer
         let expectedInitialState = MockState(subState: 1701)
-        let feedbackA = MockFeedback(feedback: { (states: MockStream<MockState>) in return MockStream<MockAction>(value: .toEmpty) })
-        let feedbackB = MockFeedback(feedback: { (states: MockStream<MockState>) in return MockStream<MockAction>(value: .toEmpty) })
+        let feedbackA = MockFeedback(effect: { (states: MockStream<MockState>) in return MockStream<MockAction>(value: .toEmpty) })
+        let feedbackB = MockFeedback(effect: { (states: MockStream<MockState>) in return MockStream<MockAction>(value: .toEmpty) })
         let reducerFunction = { (state: MockState, action: MockAction) -> MockState in return MockState(subState: 1702) }
         let reducer = MockReducer(reducer: reducerFunction)
 
@@ -120,8 +120,8 @@ final class SpinnerTests: XCTestCase {
     func test_spin_triggers_the_reactiveStream() {
         // Given: an initial state, 2 feedbacks and 1 reducer
         let expectedInitialState = MockState(subState: 1701)
-        let feedbackA = MockFeedback(feedback: { (states: MockStream<MockState>) in return MockStream<MockAction>(value: .toEmpty) })
-        let feedbackB = MockFeedback(feedback: { (states: MockStream<MockState>) in return MockStream<MockAction>(value: .toEmpty) })
+        let feedbackA = MockFeedback(effect: { (states: MockStream<MockState>) in return MockStream<MockAction>(value: .toEmpty) })
+        let feedbackB = MockFeedback(effect: { (states: MockStream<MockState>) in return MockStream<MockAction>(value: .toEmpty) })
         let reducerFunction = { (state: MockState, action: MockAction) -> MockState in return MockState(subState: 1702) }
         let reducer = MockReducer(reducer: reducerFunction)
 

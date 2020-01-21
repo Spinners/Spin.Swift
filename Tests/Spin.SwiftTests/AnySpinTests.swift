@@ -36,7 +36,7 @@ final class AnySpinTests: XCTestCase {
     func test_initialize_with_a_feedback_and_a_reducer_makes_a_stream_based_on_those_elements() {
         // Given: a feedback and a reducer
         var feedbackIsCalled = false
-        let feedbackFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
+        let effectFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
             feedbackIsCalled = true
             return MockStream<MockAction>(value: .toEmpty)
         }
@@ -45,7 +45,7 @@ final class AnySpinTests: XCTestCase {
             MockState(subState: 0)
         }
 
-        let feedback = MockFeedback(feedback: feedbackFunction)
+        let feedback = MockFeedback(effect: effectFunction)
         let reducer = MockReducer(reducer: reducerFunction)
 
         // When: building an AnySpin based on those feedback and reducer
@@ -58,9 +58,9 @@ final class AnySpinTests: XCTestCase {
 
     func test_initialize_with_functionBuilder_with_a_feedback_and_a_reducer_makes_a_stream_based_on_those_elements() {
         // Given: a feedback and a reducer
-        var feedbackIsCalled = false
-        let feedbackFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
-            feedbackIsCalled = true
+        var effectIsCalled = false
+        let effectFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
+            effectIsCalled = true
             return MockStream<MockAction>(value: .toEmpty)
         }
 
@@ -72,26 +72,26 @@ final class AnySpinTests: XCTestCase {
 
         // When: building an AnySpin based on those feedback and reducer, with a declarative syntax
         _ = AnySpin(initialState: MockState(subState: 0), reducer: reducer) {
-            MockFeedback(feedback: feedbackFunction)
+            MockFeedback(effect: effectFunction)
         }
 
         // Then: the AnySpin initializer produces a reactive stream based on those elements
         XCTAssertTrue(reducer.reduceIsCalled)
-        XCTAssertTrue(feedbackIsCalled)
+        XCTAssertTrue(effectIsCalled)
     }
 
     func test_initialize_with_functionBuilder_with_two_feedbacks_and_a_reducer_makes_a_stream_based_on_those_elements() {
         // Given: 2 feedback ands a reducer
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
+        var effectAIsCalled = false
+        var effectBIsCalled = false
 
-        let feedbackAFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
-            feedbackAIsCalled = true
+        let effectAFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
+            effectAIsCalled = true
             return MockStream<MockAction>(value: .toEmpty)
         }
 
-        let feedbackBFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
-            feedbackBIsCalled = true
+        let effectBFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
+            effectBIsCalled = true
             return MockStream<MockAction>(value: .toEmpty)
         }
 
@@ -103,34 +103,34 @@ final class AnySpinTests: XCTestCase {
 
         // When: building an AnySpin based on those feedbacks and reducer, with a declarative syntax
         _ = AnySpin(initialState: MockState(subState: 0), reducer: reducer) {
-            MockFeedback(feedback: feedbackAFunction)
-            MockFeedback(feedback: feedbackBFunction)
+            MockFeedback(effect: effectAFunction)
+            MockFeedback(effect: effectBFunction)
         }
 
         // Then: the AnySpin initializer produces a reactive stream based on those elements
         XCTAssertTrue(reducer.reduceIsCalled)
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
+        XCTAssertTrue(effectAIsCalled)
+        XCTAssertTrue(effectBIsCalled)
     }
 
     func test_initialize_with_functionBuilder_with_three_feedbacks_and_a_reducer_makes_a_stream_based_on_those_elements() {
         // Given: 3 feedback ands a reducer
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
-        var feedbackCIsCalled = false
+        var effectAIsCalled = false
+        var effectBIsCalled = false
+        var effectCIsCalled = false
 
-        let feedbackAFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
-            feedbackAIsCalled = true
+        let effectAFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
+            effectAIsCalled = true
             return MockStream<MockAction>(value: .toEmpty)
         }
 
-        let feedbackBFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
-            feedbackBIsCalled = true
+        let effectBFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
+            effectBIsCalled = true
             return MockStream<MockAction>(value: .toEmpty)
         }
 
-        let feedbackCFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
-            feedbackCIsCalled = true
+        let effectCFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
+            effectCIsCalled = true
             return MockStream<MockAction>(value: .toEmpty)
         }
 
@@ -142,42 +142,42 @@ final class AnySpinTests: XCTestCase {
 
         // When: building an AnySpin based on those feedbacks and reducer, with a declarative syntax
         _ = AnySpin(initialState: MockState(subState: 0), reducer: reducer) {
-            MockFeedback(feedback: feedbackAFunction)
-            MockFeedback(feedback: feedbackBFunction)
-            MockFeedback(feedback: feedbackCFunction)
+            MockFeedback(effect: effectAFunction)
+            MockFeedback(effect: effectBFunction)
+            MockFeedback(effect: effectCFunction)
         }
 
         // Then: the AnySpin initializer produces a reactive stream based on those elements
         XCTAssertTrue(reducer.reduceIsCalled)
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
-        XCTAssertTrue(feedbackCIsCalled)
+        XCTAssertTrue(effectAIsCalled)
+        XCTAssertTrue(effectBIsCalled)
+        XCTAssertTrue(effectCIsCalled)
     }
 
     func test_initialize_with_functionBuilder_with_four_feedbacks_and_a_reducer_makes_a_stream_based_on_those_elements() {
         // Given: 4 feedback ands a reducer
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
-        var feedbackCIsCalled = false
-        var feedbackDIsCalled = false
+        var effectAIsCalled = false
+        var effectBIsCalled = false
+        var effectCIsCalled = false
+        var effectDIsCalled = false
 
-        let feedbackAFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
-            feedbackAIsCalled = true
+        let effectAFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
+            effectAIsCalled = true
             return MockStream<MockAction>(value: .toEmpty)
         }
 
-        let feedbackBFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
-            feedbackBIsCalled = true
+        let effectBFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
+            effectBIsCalled = true
             return MockStream<MockAction>(value: .toEmpty)
         }
 
-        let feedbackCFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
-            feedbackCIsCalled = true
+        let effectCFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
+            effectCIsCalled = true
             return MockStream<MockAction>(value: .toEmpty)
         }
 
-        let feedbackDFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
-            feedbackDIsCalled = true
+        let effectDFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
+            effectDIsCalled = true
             return MockStream<MockAction>(value: .toEmpty)
         }
 
@@ -189,50 +189,50 @@ final class AnySpinTests: XCTestCase {
 
         // When: building an AnySpin based on those feedbacks and reducer, with a declarative syntax
         _ = AnySpin(initialState: MockState(subState: 0), reducer: reducer) {
-            MockFeedback(feedback: feedbackAFunction)
-            MockFeedback(feedback: feedbackBFunction)
-            MockFeedback(feedback: feedbackCFunction)
-            MockFeedback(feedback: feedbackDFunction)
+            MockFeedback(effect: effectAFunction)
+            MockFeedback(effect: effectBFunction)
+            MockFeedback(effect: effectCFunction)
+            MockFeedback(effect: effectDFunction)
         }
 
         // Then: the AnySpin initializer produces a reactive stream based on those elements
         XCTAssertTrue(reducer.reduceIsCalled)
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
-        XCTAssertTrue(feedbackCIsCalled)
-        XCTAssertTrue(feedbackDIsCalled)
+        XCTAssertTrue(effectAIsCalled)
+        XCTAssertTrue(effectBIsCalled)
+        XCTAssertTrue(effectCIsCalled)
+        XCTAssertTrue(effectDIsCalled)
     }
 
     func test_initialize_with_functionBuilder_with_five_feedbacks_and_a_reducer_makes_a_stream_based_on_those_elements() {
         // Given: 4 feedback ands a reducer
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
-        var feedbackCIsCalled = false
-        var feedbackDIsCalled = false
-        var feedbackEIsCalled = false
+        var effectAIsCalled = false
+        var effectBIsCalled = false
+        var effectCIsCalled = false
+        var effectDIsCalled = false
+        var effectEIsCalled = false
 
-        let feedbackAFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
-            feedbackAIsCalled = true
+        let effectAFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
+            effectAIsCalled = true
             return MockStream<MockAction>(value: .toEmpty)
         }
 
-        let feedbackBFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
-            feedbackBIsCalled = true
+        let effectBFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
+            effectBIsCalled = true
             return MockStream<MockAction>(value: .toEmpty)
         }
 
-        let feedbackCFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
-            feedbackCIsCalled = true
+        let effectCFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
+            effectCIsCalled = true
             return MockStream<MockAction>(value: .toEmpty)
         }
 
-        let feedbackDFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
-            feedbackDIsCalled = true
+        let effectDFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
+            effectDIsCalled = true
             return MockStream<MockAction>(value: .toEmpty)
         }
 
-        let feedbackEFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
-            feedbackEIsCalled = true
+        let effectEFunction = { (states: MockStream<MockState>) -> MockStream<MockAction> in
+            effectEIsCalled = true
             return MockStream<MockAction>(value: .toEmpty)
         }
 
@@ -244,19 +244,19 @@ final class AnySpinTests: XCTestCase {
 
         // When: building an AnySpin based on those feedbacks and reducer, with a declarative syntax
         _ = AnySpin(initialState: MockState(subState: 0), reducer: reducer) {
-            MockFeedback(feedback: feedbackAFunction)
-            MockFeedback(feedback: feedbackBFunction)
-            MockFeedback(feedback: feedbackCFunction)
-            MockFeedback(feedback: feedbackDFunction)
-            MockFeedback(feedback: feedbackEFunction)
+            MockFeedback(effect: effectAFunction)
+            MockFeedback(effect: effectBFunction)
+            MockFeedback(effect: effectCFunction)
+            MockFeedback(effect: effectDFunction)
+            MockFeedback(effect: effectEFunction)
         }
 
         // Then: the AnySpin initializer produces a reactive stream based on those elements
         XCTAssertTrue(reducer.reduceIsCalled)
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
-        XCTAssertTrue(feedbackCIsCalled)
-        XCTAssertTrue(feedbackDIsCalled)
-        XCTAssertTrue(feedbackEIsCalled)
+        XCTAssertTrue(effectAIsCalled)
+        XCTAssertTrue(effectBIsCalled)
+        XCTAssertTrue(effectCIsCalled)
+        XCTAssertTrue(effectDIsCalled)
+        XCTAssertTrue(effectEIsCalled)
     }
 }

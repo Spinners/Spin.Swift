@@ -18,7 +18,7 @@ final class CombineFeedbackTests: XCTestCase {
 
         // Given: a feedback with no Executer
         let nilExecuter: DispatchQueue? = nil
-        let sut = CombineFeedback(feedback: { (inputs: AnyPublisher<Int, Never>) -> AnyPublisher<String, Never> in
+        let sut = CombineFeedback(effect: { (inputs: AnyPublisher<Int, Never>) -> AnyPublisher<String, Never> in
             feedbackIsCalled = true
             return inputs.map {
                 receivedExecuterName = DispatchQueue.currentLabel
@@ -32,7 +32,7 @@ final class CombineFeedbackTests: XCTestCase {
             .eraseToAnyPublisher()
 
         // When: executing the feedback
-        let recorder = sut.feedbackStream(inputStream).record()
+        let recorder = sut.effect(inputStream).record()
         _ = try wait(for: recorder.completion, timeout: 5)
 
         // Then: the feedback is called
@@ -48,7 +48,7 @@ final class CombineFeedbackTests: XCTestCase {
         let expectedExecuterName = "FEEDBACK_QUEUE_\(UUID().uuidString)"
 
         // Given: a feedback with a dedicated Executer
-        let sut = CombineFeedback(feedback: { (inputs: AnyPublisher<Int, Never>) -> AnyPublisher<String, Never> in
+        let sut = CombineFeedback(effect: { (inputs: AnyPublisher<Int, Never>) -> AnyPublisher<String, Never> in
             feedbackIsCalled = true
             return inputs.map {
                 receivedExecuterName = DispatchQueue.currentLabel
@@ -62,7 +62,7 @@ final class CombineFeedbackTests: XCTestCase {
             .eraseToAnyPublisher()
 
         // When: executing the feedback
-        let recorder = sut.feedbackStream(inputStream).record()
+        let recorder = sut.effect(inputStream).record()
         _ = try wait(for: recorder.completion, timeout: 5)
 
         // Then: the feedback is called
@@ -141,143 +141,143 @@ final class CombineFeedbackTests: XCTestCase {
 
     func test_initialize_with_two_feedbacks_executes_the_original_feedbackFunctions() throws {
         // Given: 2 feedbacks based on a Stream<State> -> Stream<Event>
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
+        var effectAIsCalled = false
+        var effectBIsCalled = false
 
-        let feedbackAStream: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
-            feedbackAIsCalled = true
+        let effectA: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
+            effectAIsCalled = true
             return Just(0).eraseToAnyPublisher()
         }
-        let feedbackBStream: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
-            feedbackBIsCalled = true
+        let effectB: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
+            effectBIsCalled = true
             return Just(0).eraseToAnyPublisher()
         }
 
-        let sourceFeedbackA = DispatchQueueCombineFeedback(feedback: feedbackAStream)
-        let sourceFeedbackB = DispatchQueueCombineFeedback(feedback: feedbackBStream)
+        let sourceFeedbackA = DispatchQueueCombineFeedback(effect: effectA)
+        let sourceFeedbackB = DispatchQueueCombineFeedback(effect: effectB)
 
         // When: instantiating the feedback with already existing feedbacks
         // When: executing the feedback
         let sut = DispatchQueueCombineFeedback(feedbacks: sourceFeedbackA, sourceFeedbackB)
-        let recorder = sut.feedbackStream(Just(0).eraseToAnyPublisher()).collect(2).record()
+        let recorder = sut.effect(Just(0).eraseToAnyPublisher()).collect(2).record()
         _ = try wait(for: recorder.elements, timeout: 5)
 
         // Then: the original feedback streams are preserved
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
+        XCTAssertTrue(effectAIsCalled)
+        XCTAssertTrue(effectBIsCalled)
     }
 
     func test_initialize_with_three_feedbacks_executes_the_original_feedbackFunctions() throws {
         // Given: 3 feedbacks based on a Stream<State> -> Stream<Event>
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
-        var feedbackCIsCalled = false
+        var effectAIsCalled = false
+        var effectBIsCalled = false
+        var effectCIsCalled = false
 
-        let feedbackAStream: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
-            feedbackAIsCalled = true
+        let effectA: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
+            effectAIsCalled = true
             return Just(0).eraseToAnyPublisher()
         }
-        let feedbackBStream: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
-            feedbackBIsCalled = true
+        let effectB: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
+            effectBIsCalled = true
             return Just(0).eraseToAnyPublisher()
         }
-        let feedbackCStream: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
-            feedbackCIsCalled = true
+        let effectC: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
+            effectCIsCalled = true
             return Just(0).eraseToAnyPublisher()
         }
 
-        let sourceFeedbackA = DispatchQueueCombineFeedback(feedback: feedbackAStream)
-        let sourceFeedbackB = DispatchQueueCombineFeedback(feedback: feedbackBStream)
-        let sourceFeedbackC = DispatchQueueCombineFeedback(feedback: feedbackCStream)
+        let sourceFeedbackA = DispatchQueueCombineFeedback(effect: effectA)
+        let sourceFeedbackB = DispatchQueueCombineFeedback(effect: effectB)
+        let sourceFeedbackC = DispatchQueueCombineFeedback(effect: effectC)
 
         // When: instantiating the feedback with already existing feedbacks with function builder
         // When: executing the feedback
         let sut = DispatchQueueCombineFeedback(feedbacks: sourceFeedbackA, sourceFeedbackB, sourceFeedbackC)
-        let recorder = sut.feedbackStream(Just(0).eraseToAnyPublisher()).collect(3).record()
+        let recorder = sut.effect(Just(0).eraseToAnyPublisher()).collect(3).record()
         _ = try wait(for: recorder.elements, timeout: 5)
 
         // Then: the original feedback streams are preserved
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
-        XCTAssertTrue(feedbackCIsCalled)
+        XCTAssertTrue(effectAIsCalled)
+        XCTAssertTrue(effectBIsCalled)
+        XCTAssertTrue(effectCIsCalled)
     }
 
     func test_initialize_with_four_feedbacks_executes_the_original_feedbackFunctions() throws {
         // Given: 4 feedbacks based on a Stream<State> -> Stream<Event>
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
-        var feedbackCIsCalled = false
-        var feedbackDIsCalled = false
+        var effectAIsCalled = false
+        var effectBIsCalled = false
+        var effectCIsCalled = false
+        var effectDIsCalled = false
 
-        let feedbackAStream: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
-            feedbackAIsCalled = true
+        let effectA: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
+            effectAIsCalled = true
             return Just(0).eraseToAnyPublisher()
         }
-        let feedbackBStream: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
-            feedbackBIsCalled = true
+        let effectB: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
+            effectBIsCalled = true
             return Just(0).eraseToAnyPublisher()
         }
-        let feedbackCStream: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
-            feedbackCIsCalled = true
+        let effectC: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
+            effectCIsCalled = true
             return Just(0).eraseToAnyPublisher()
         }
-        let feedbackDStream: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
-            feedbackDIsCalled = true
+        let effectD: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
+            effectDIsCalled = true
             return Just(0).eraseToAnyPublisher()
         }
 
-        let sourceFeedbackA = DispatchQueueCombineFeedback(feedback: feedbackAStream)
-        let sourceFeedbackB = DispatchQueueCombineFeedback(feedback: feedbackBStream)
-        let sourceFeedbackC = DispatchQueueCombineFeedback(feedback: feedbackCStream)
-        let sourceFeedbackD = DispatchQueueCombineFeedback(feedback: feedbackDStream)
+        let sourceFeedbackA = DispatchQueueCombineFeedback(effect: effectA)
+        let sourceFeedbackB = DispatchQueueCombineFeedback(effect: effectB)
+        let sourceFeedbackC = DispatchQueueCombineFeedback(effect: effectC)
+        let sourceFeedbackD = DispatchQueueCombineFeedback(effect: effectD)
 
         // When: instantiating the feedback with already existing feedbacks with function builder
         // When: executing the feedback
         let sut = DispatchQueueCombineFeedback(feedbacks: sourceFeedbackA, sourceFeedbackB, sourceFeedbackC, sourceFeedbackD)
-        let recorder = sut.feedbackStream(Just(0).eraseToAnyPublisher()).collect(4).record()
+        let recorder = sut.effect(Just(0).eraseToAnyPublisher()).collect(4).record()
         _ = try wait(for: recorder.elements, timeout: 5)
 
         // Then: the original feedback streams are preserved
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
-        XCTAssertTrue(feedbackCIsCalled)
-        XCTAssertTrue(feedbackDIsCalled)
+        XCTAssertTrue(effectAIsCalled)
+        XCTAssertTrue(effectBIsCalled)
+        XCTAssertTrue(effectCIsCalled)
+        XCTAssertTrue(effectDIsCalled)
     }
 
     func test_initialize_with_five_feedbacks_executes_the_original_feedbackFunctions() throws {
         // Given: 5 feedbacks based on a Stream<State> -> Stream<Event>
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
-        var feedbackCIsCalled = false
-        var feedbackDIsCalled = false
-        var feedbackEIsCalled = false
+        var effectAIsCalled = false
+        var effectBIsCalled = false
+        var effectCIsCalled = false
+        var effectDIsCalled = false
+        var effectEIsCalled = false
 
-        let feedbackAStream: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
-            feedbackAIsCalled = true
+        let effectA: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
+            effectAIsCalled = true
             return Just(0).eraseToAnyPublisher()
         }
-        let feedbackBStream: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
-            feedbackBIsCalled = true
+        let effectB: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
+            effectBIsCalled = true
             return Just(0).eraseToAnyPublisher()
         }
-        let feedbackCStream: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
-            feedbackCIsCalled = true
+        let effectC: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
+            effectCIsCalled = true
             return Just(0).eraseToAnyPublisher()
         }
-        let feedbackDStream: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
-            feedbackDIsCalled = true
+        let effectD: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
+            effectDIsCalled = true
             return Just(0).eraseToAnyPublisher()
         }
-        let feedbackEStream: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
-            feedbackEIsCalled = true
+        let effectE: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
+            effectEIsCalled = true
             return Just(0).eraseToAnyPublisher()
         }
 
-        let sourceFeedbackA = DispatchQueueCombineFeedback(feedback: feedbackAStream)
-        let sourceFeedbackB = DispatchQueueCombineFeedback(feedback: feedbackBStream)
-        let sourceFeedbackC = DispatchQueueCombineFeedback(feedback: feedbackCStream)
-        let sourceFeedbackD = DispatchQueueCombineFeedback(feedback: feedbackDStream)
-        let sourceFeedbackE = DispatchQueueCombineFeedback(feedback: feedbackEStream)
+        let sourceFeedbackA = DispatchQueueCombineFeedback(effect: effectA)
+        let sourceFeedbackB = DispatchQueueCombineFeedback(effect: effectB)
+        let sourceFeedbackC = DispatchQueueCombineFeedback(effect: effectC)
+        let sourceFeedbackD = DispatchQueueCombineFeedback(effect: effectD)
+        let sourceFeedbackE = DispatchQueueCombineFeedback(effect: effectE)
 
         // When: instantiating the feedback with already existing feedbacks with function builder
         // When: executing the feedback
@@ -286,51 +286,51 @@ final class CombineFeedbackTests: XCTestCase {
                                                sourceFeedbackC,
                                                sourceFeedbackD,
                                                sourceFeedbackE)
-        let recorder = sut.feedbackStream(Just(0).eraseToAnyPublisher()).collect(5).record()
+        let recorder = sut.effect(Just(0).eraseToAnyPublisher()).collect(5).record()
         _ = try wait(for: recorder.elements, timeout: 5)
 
         // Then: the original feedback streams are preserved
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
-        XCTAssertTrue(feedbackCIsCalled)
-        XCTAssertTrue(feedbackDIsCalled)
-        XCTAssertTrue(feedbackEIsCalled)
+        XCTAssertTrue(effectAIsCalled)
+        XCTAssertTrue(effectBIsCalled)
+        XCTAssertTrue(effectCIsCalled)
+        XCTAssertTrue(effectDIsCalled)
+        XCTAssertTrue(effectEIsCalled)
     }
 
     func test_initialize_with_an_array_of_feedbacks_executes_the_original_feedbackFunctions() throws {
         // Given: 5 feedbacks based on a Stream<State> -> Stream<Event>
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
-        var feedbackCIsCalled = false
-        var feedbackDIsCalled = false
-        var feedbackEIsCalled = false
+        var effectAIsCalled = false
+        var effectBIsCalled = false
+        var effectCIsCalled = false
+        var effectDIsCalled = false
+        var effectEIsCalled = false
 
-        let feedbackAStream: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
-            feedbackAIsCalled = true
+        let effectA: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
+            effectAIsCalled = true
             return Just(0).eraseToAnyPublisher()
         }
-        let feedbackBStream: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
-            feedbackBIsCalled = true
+        let effectB: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
+            effectBIsCalled = true
             return Just(0).eraseToAnyPublisher()
         }
-        let feedbackCStream: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
-            feedbackCIsCalled = true
+        let effectC: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
+            effectCIsCalled = true
             return Just(0).eraseToAnyPublisher()
         }
-        let feedbackDStream: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
-            feedbackDIsCalled = true
+        let effectD: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
+            effectDIsCalled = true
             return Just(0).eraseToAnyPublisher()
         }
-        let feedbackEStream: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
-            feedbackEIsCalled = true
+        let effectE: (Int) -> AnyPublisher<Int, Never> = { states -> AnyPublisher<Int, Never> in
+            effectEIsCalled = true
             return Just(0).eraseToAnyPublisher()
         }
 
-        let sourceFeedbackA = DispatchQueueCombineFeedback(feedback: feedbackAStream)
-        let sourceFeedbackB = DispatchQueueCombineFeedback(feedback: feedbackBStream)
-        let sourceFeedbackC = DispatchQueueCombineFeedback(feedback: feedbackCStream)
-        let sourceFeedbackD = DispatchQueueCombineFeedback(feedback: feedbackDStream)
-        let sourceFeedbackE = DispatchQueueCombineFeedback(feedback: feedbackEStream)
+        let sourceFeedbackA = DispatchQueueCombineFeedback(effect: effectA)
+        let sourceFeedbackB = DispatchQueueCombineFeedback(effect: effectB)
+        let sourceFeedbackC = DispatchQueueCombineFeedback(effect: effectC)
+        let sourceFeedbackD = DispatchQueueCombineFeedback(effect: effectD)
+        let sourceFeedbackE = DispatchQueueCombineFeedback(effect: effectE)
 
         // When: instantiating the feedback with already existing feedbacks with function builder
         // When: executing the feedback
@@ -339,14 +339,14 @@ final class CombineFeedbackTests: XCTestCase {
                                                sourceFeedbackC,
                                                sourceFeedbackD,
                                                sourceFeedbackE])
-        let recorder = sut.feedbackStream(Just(0).eraseToAnyPublisher()).collect(5).record()
+        let recorder = sut.effect(Just(0).eraseToAnyPublisher()).collect(5).record()
         _ = try wait(for: recorder.elements, timeout: 5)
 
         // Then: the original feedback streams are preserved
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
-        XCTAssertTrue(feedbackCIsCalled)
-        XCTAssertTrue(feedbackDIsCalled)
-        XCTAssertTrue(feedbackEIsCalled)
+        XCTAssertTrue(effectAIsCalled)
+        XCTAssertTrue(effectBIsCalled)
+        XCTAssertTrue(effectCIsCalled)
+        XCTAssertTrue(effectDIsCalled)
+        XCTAssertTrue(effectEIsCalled)
     }
 }

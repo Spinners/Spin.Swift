@@ -13,17 +13,17 @@ public struct RxFeedback<State, Event>: Feedback {
     public typealias EventStream = Observable<Event>
     public typealias Executer = ImmediateSchedulerType
 
-    public let feedbackStream: (StateStream) -> EventStream
+    public let effect: (StateStream) -> EventStream
     public var feedbackExecuter: Executer?
 
-    public init(feedback: @escaping (StateStream) -> EventStream, on executer: Executer? = nil) {
+    public init(effect: @escaping (StateStream) -> EventStream, on executer: Executer? = nil) {
         guard let executer = executer else {
-            self.feedbackStream = feedback
+            self.effect = effect
             return
         }
 
-        self.feedbackStream = { stateStream in
-            return feedback(stateStream.observeOn(executer))
+        self.effect = { stateStream in
+            return effect(stateStream.observeOn(executer))
         }
     }
 
@@ -32,11 +32,11 @@ public struct RxFeedback<State, Event>: Feedback {
         FeedbackType.StateStream == StateStream,
         FeedbackType.EventStream == EventStream {
         let feedback = { (stateStream: FeedbackType.StateStream) -> FeedbackType.EventStream in
-            let eventStreams = feedbacks.map { $0.feedbackStream(stateStream) }
+            let eventStreams = feedbacks.map { $0.effect(stateStream) }
             return Observable.merge(eventStreams)
         }
 
-        self.init(feedback: feedback)
+        self.init(effect: feedback)
     }
 
     public init<FeedbackA, FeedbackB>(feedbacks feedbackA: FeedbackA, _ feedbackB: FeedbackB)
@@ -48,11 +48,11 @@ public struct RxFeedback<State, Event>: Feedback {
         FeedbackA.StateStream == StateStream,
         FeedbackA.EventStream == EventStream {
         let feedback = { stateStream in
-            return Observable.merge(feedbackA.feedbackStream(stateStream),
-                                    feedbackB.feedbackStream(stateStream))
+            return Observable.merge(feedbackA.effect(stateStream),
+                                    feedbackB.effect(stateStream))
         }
 
-        self.init(feedback: feedback)
+        self.init(effect: feedback)
     }
 
     public init<FeedbackA, FeedbackB, FeedbackC>(feedbacks feedbackA: FeedbackA,
@@ -69,12 +69,12 @@ public struct RxFeedback<State, Event>: Feedback {
         FeedbackA.StateStream == StateStream,
         FeedbackA.EventStream == EventStream {
         let feedback = { stateStream in
-            return Observable.merge(feedbackA.feedbackStream(stateStream),
-                                    feedbackB.feedbackStream(stateStream),
-                                    feedbackC.feedbackStream(stateStream))
+            return Observable.merge(feedbackA.effect(stateStream),
+                                    feedbackB.effect(stateStream),
+                                    feedbackC.effect(stateStream))
         }
 
-        self.init(feedback: feedback)
+        self.init(effect: feedback)
     }
 
     public init<FeedbackA, FeedbackB, FeedbackC, FeedbackD>(feedbacks feedbackA: FeedbackA,
@@ -95,13 +95,13 @@ public struct RxFeedback<State, Event>: Feedback {
         FeedbackA.StateStream == StateStream,
         FeedbackA.EventStream == EventStream {
         let feedback = { stateStream in
-            return Observable.merge(feedbackA.feedbackStream(stateStream),
-                                    feedbackB.feedbackStream(stateStream),
-                                    feedbackC.feedbackStream(stateStream),
-                                    feedbackD.feedbackStream(stateStream))
+            return Observable.merge(feedbackA.effect(stateStream),
+                                    feedbackB.effect(stateStream),
+                                    feedbackC.effect(stateStream),
+                                    feedbackD.effect(stateStream))
         }
 
-        self.init(feedback: feedback)
+        self.init(effect: feedback)
     }
 
     public init<FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE>(feedbacks feedbackA: FeedbackA,
@@ -126,14 +126,14 @@ public struct RxFeedback<State, Event>: Feedback {
         FeedbackA.StateStream == StateStream,
         FeedbackA.EventStream == EventStream {
         let feedback = { stateStream in
-            return Observable.merge(feedbackA.feedbackStream(stateStream),
-                                    feedbackB.feedbackStream(stateStream),
-                                    feedbackC.feedbackStream(stateStream),
-                                    feedbackD.feedbackStream(stateStream),
-                                    feedbackE.feedbackStream(stateStream))
+            return Observable.merge(feedbackA.effect(stateStream),
+                                    feedbackB.effect(stateStream),
+                                    feedbackC.effect(stateStream),
+                                    feedbackD.effect(stateStream),
+                                    feedbackE.effect(stateStream))
         }
 
-        self.init(feedback: feedback)
+        self.init(effect: feedback)
     }
 
     public static func make(from effect: @escaping (StateStream.Value) -> EventStream,

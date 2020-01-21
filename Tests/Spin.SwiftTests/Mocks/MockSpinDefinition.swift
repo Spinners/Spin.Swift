@@ -14,7 +14,7 @@ class MockSpinDefinition: SpinDefinition {
     var feedbackIsCalled = false
     var reducerIsCalled = false
 
-    lazy var feedbackFunction = { (state: MockStream<MockState>) -> MockStream<MockAction> in
+    lazy var effectFunction = { (state: MockStream<MockState>) -> MockStream<MockAction> in
         self.feedbackIsCalled = true
         return .empty()
     }
@@ -26,7 +26,7 @@ class MockSpinDefinition: SpinDefinition {
 
     var spin: AnySpin<MockStream<MockState>> {
         MockSpin(initialState: MockState(subState: 0), reducer: MockReducer(reducer: reducerFunction)) {
-            MockFeedback(feedback: feedbackFunction)
+            MockFeedback(effect: effectFunction)
         }
     }
 }

@@ -21,7 +21,7 @@ final class RxReducerTests: XCTestCase {
         let inputStreamScheduler = ConcurrentDispatchQueueScheduler(queue: DispatchQueue(label: expectedExecuterName,
                                                                                          qos: .userInitiated))
 
-        let feedback = RxFeedback(feedback: { (inputs: Observable<Int>) -> Observable<String> in
+        let feedback = RxFeedback(effect: { (inputs: Observable<Int>) -> Observable<String> in
             return Observable<String>.just("").observeOn(inputStreamScheduler)
         })
 
@@ -33,7 +33,7 @@ final class RxReducerTests: XCTestCase {
 
         // When: reducing without specifying an Executer for the reduce operation
         _ = RxReducer(reducer: reducerFunction)
-            .apply(on: 0, after: feedback.feedbackStream)
+            .apply(on: 0, after: feedback.effect)
             .take(2)
             .toBlocking()
             .materialize()
@@ -55,7 +55,7 @@ final class RxReducerTests: XCTestCase {
                                                                                          qos: .userInitiated))
         let reducerScheduler = ConcurrentDispatchQueueScheduler(queue: DispatchQueue(label: expectedExecuterName, qos: .userInitiated))
 
-        let feedback = RxFeedback(feedback: { (inputs: Observable<Int>) -> Observable<String> in
+        let feedback = RxFeedback(effect: { (inputs: Observable<Int>) -> Observable<String> in
             return Observable<String>.just("").observeOn(inputStreamScheduler)
         })
 
@@ -67,7 +67,7 @@ final class RxReducerTests: XCTestCase {
 
         // When: reducing with specifying an Executer for the reduce operation
         _ = RxReducer(reducer: reducerFunction, on: reducerScheduler)
-            .apply(on: 0, after: feedback.feedbackStream)
+            .apply(on: 0, after: feedback.effect)
             .take(2)
             .toBlocking()
             .materialize()
@@ -82,7 +82,7 @@ final class RxReducerTests: XCTestCase {
         // Given: a feedback that outputs an Error
         var reduceIsCalled = false
 
-        let feedback = RxFeedback(feedback: { (inputs: Observable<Int>) -> Observable<String> in
+        let feedback = RxFeedback(effect: { (inputs: Observable<Int>) -> Observable<String> in
             return .error(NSError(domain: "feedback", code: 0))
         })
 
@@ -93,7 +93,7 @@ final class RxReducerTests: XCTestCase {
 
         // When: reducing the feedback loop
         let events = RxReducer(reducer: reducerFunction)
-            .apply(on: 0, after: feedback.feedbackStream)
+            .apply(on: 0, after: feedback.effect)
             .toBlocking()
             .materialize()
 
@@ -109,12 +109,12 @@ final class RxReducerTests: XCTestCase {
         var receivedInitialStateInFeedbackA = 0
         var receivedInitialStateInFeedbackB = 0
 
-        let feedbackA = RxFeedback(feedback: { (input: Int) -> Observable<String> in
+        let feedbackA = RxFeedback(effect: { (input: Int) -> Observable<String> in
             receivedInitialStateInFeedbackA = input
             return .just("")
         })
 
-        let feedbackB = RxFeedback(feedback: { (input: Int) -> Observable<String> in
+        let feedbackB = RxFeedback(effect: { (input: Int) -> Observable<String> in
             receivedInitialStateInFeedbackB = input
             return .just("")
         })
@@ -125,7 +125,7 @@ final class RxReducerTests: XCTestCase {
 
         // When: reducing the feedbacks
         _ = RxReducer(reducer: reducerFunction)
-            .apply(on: initialState, after: RxFeedback(feedbacks: feedbackA, feedbackB).feedbackStream)
+            .apply(on: initialState, after: RxFeedback(feedbacks: feedbackA, feedbackB).effect)
             .take(1)
             .toBlocking()
             .materialize()

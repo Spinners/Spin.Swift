@@ -22,7 +22,7 @@ final class ReactiveReducerTests: XCTestCase {
 
         let inputStreamScheduler = QueueScheduler(qos: .background, name: "INPUT_STREAM_QUEUE_\(UUID().uuidString)")
 
-        let feedback = ReactiveFeedback(feedback: { (inputs: SignalProducer<Int, Never>) -> SignalProducer<String, Never> in
+        let feedback = ReactiveFeedback(effect: { (inputs: SignalProducer<Int, Never>) -> SignalProducer<String, Never> in
             return inputs.map { _ in return "" }.observe(on: inputStreamScheduler)
         })
 
@@ -35,7 +35,7 @@ final class ReactiveReducerTests: XCTestCase {
 
         // When: reducing without specifying an Executer for the reduce operation
         _ = ReactiveReducer(reducer: reducerFunction)
-            .apply(on: 0, after: feedback.feedbackStream)
+            .apply(on: 0, after: feedback.effect)
             .take(first: 2)
             .spin()
             .disposed(by: disposeBag)
@@ -57,7 +57,7 @@ final class ReactiveReducerTests: XCTestCase {
         let inputStreamScheduler = QueueScheduler(qos: .background, name: "INPUT_STREAM_QUEUE_\(UUID().uuidString)")
         let reducerScheduler = QueueScheduler(qos: .background, name: expectedExecuterName)
 
-        let feedback = ReactiveFeedback(feedback: { (inputs: SignalProducer<Int, Never>) -> SignalProducer<String, Never> in
+        let feedback = ReactiveFeedback(effect: { (inputs: SignalProducer<Int, Never>) -> SignalProducer<String, Never> in
             return inputs.map { _ in return "" }.observe(on: inputStreamScheduler)
         })
 
@@ -69,7 +69,7 @@ final class ReactiveReducerTests: XCTestCase {
 
         // When: reducing with specifying an Executer for the reduce operation
         _ = ReactiveReducer(reducer: reducerFunction, on: reducerScheduler)
-            .apply(on: 0, after: feedback.feedbackStream)
+            .apply(on: 0, after: feedback.effect)
             .take(first: 2)
             .collect()
             .first()
@@ -86,12 +86,12 @@ final class ReactiveReducerTests: XCTestCase {
         var receivedInitialStateInFeedbackA = 0
         var receivedInitialStateInFeedbackB = 0
 
-        let feedbackA = ReactiveFeedback(feedback: { (input: Int) -> SignalProducer<String, Never> in
+        let feedbackA = ReactiveFeedback(effect: { (input: Int) -> SignalProducer<String, Never> in
             receivedInitialStateInFeedbackA = input
             return SignalProducer<String, Never>(value: "")
         })
 
-        let feedbackB = ReactiveFeedback(feedback: { (input: Int) -> SignalProducer<String, Never> in
+        let feedbackB = ReactiveFeedback(effect: { (input: Int) -> SignalProducer<String, Never> in
             receivedInitialStateInFeedbackB = input
             return SignalProducer<String, Never>(value: "")
         })
@@ -102,7 +102,7 @@ final class ReactiveReducerTests: XCTestCase {
 
         // When: reducing the feedbacks
         _ = ReactiveReducer(reducer: reducerFunction)
-            .apply(on: initialState, after: ReactiveFeedback(feedbacks: feedbackA, feedbackB).feedbackStream)
+            .apply(on: initialState, after: ReactiveFeedback(feedbacks: feedbackA, feedbackB).effect)
             .take(first: 1)
             .collect()
             .first()

@@ -16,16 +16,16 @@ fileprivate enum StringAction {
 
 fileprivate struct SutSpin: SpinDefinition {
 
-    let feedbackAFunction: (String) -> Observable<StringAction>
-    let feedbackBFunction: (String) -> Observable<StringAction>
-    let feedbackCFunction: (String) -> Observable<StringAction>
+    let effectA: (String) -> Observable<StringAction>
+    let effectB: (String) -> Observable<StringAction>
+    let effectC: (String) -> Observable<StringAction>
     let reducerFunction: (String, StringAction) -> String
 
     var spin: RxSpin<String> {
         RxSpin(initialState: "initialState", reducer: RxReducer(reducer: reducerFunction)) {
-            RxFeedback(feedback: feedbackAFunction)
-            RxFeedback(feedback: feedbackBFunction)
-            RxFeedback(feedback: feedbackCFunction)
+            RxFeedback(effect: effectA)
+            RxFeedback(effect: effectB)
+            RxFeedback(effect: effectC)
         }
     }
 }
@@ -38,21 +38,21 @@ final class RxSpinIntegrationTests: XCTestCase {
 
         // Given: an initial state, feedbacks and a reducer
         var counterA = 0
-        let feedbackAFunction = { (state: String) -> Observable<StringAction> in
+        let effectA = { (state: String) -> Observable<StringAction> in
             counterA += 1
             let counter = counterA
             return .just(.append("_a\(counter)"))
         }
 
         var counterB = 0
-        let feedbackBFunction = { (state: String) -> Observable<StringAction> in
+        let effectB = { (state: String) -> Observable<StringAction> in
             counterB += 1
             let counter = counterB
             return .just(.append("_b\(counter)"))
         }
 
         var counterC = 0
-        let feedbackCFunction = { (state: String) -> Observable<StringAction> in
+        let effectC = { (state: String) -> Observable<StringAction> in
             counterC += 1
             let counter = counterC
             return .just(.append("_c\(counter)"))
@@ -68,9 +68,9 @@ final class RxSpinIntegrationTests: XCTestCase {
         // When: spinning the feedbacks and the reducer on the default executer
         let receivedStates = try Spinner
             .from(initialState: "initialState")
-            .add(feedback: RxFeedback(feedback: feedbackAFunction))
-            .add(feedback: RxFeedback(feedback: feedbackBFunction))
-            .add(feedback: RxFeedback(feedback: feedbackCFunction))
+            .add(feedback: RxFeedback(effect: effectA))
+            .add(feedback: RxFeedback(effect: effectB))
+            .add(feedback: RxFeedback(effect: effectC))
             .reduce(with: RxReducer(reducer: reducerFunction))
             .toReactiveStream()
             .take(7)
@@ -91,21 +91,21 @@ final class RxSpinIntegrationTests: XCTestCase {
 
         // Given: an initial state, feedbacks and a reducer
         var counterA = 0
-        let feedbackAFunction = { (state: String) -> Observable<StringAction> in
+        let effectA = { (state: String) -> Observable<StringAction> in
             counterA += 1
             let counter = counterA
             return .just(.append("_a\(counter)"))
         }
 
         var counterB = 0
-        let feedbackBFunction = { (state: String) -> Observable<StringAction> in
+        let effectB = { (state: String) -> Observable<StringAction> in
             counterB += 1
             let counter = counterB
             return .just(.append("_b\(counter)"))
         }
 
         var counterC = 0
-        let feedbackCFunction = { (state: String) -> Observable<StringAction> in
+        let effectC = { (state: String) -> Observable<StringAction> in
             counterC += 1
             let counter = counterC
             return .just(.append("_c\(counter)"))
@@ -119,9 +119,9 @@ final class RxSpinIntegrationTests: XCTestCase {
         }
 
         // When: spinning the feedbacks and the reducer on the default executer
-        let receivedStates = try SutSpin(feedbackAFunction: feedbackAFunction,
-                                         feedbackBFunction: feedbackBFunction,
-                                         feedbackCFunction: feedbackCFunction,
+        let receivedStates = try SutSpin(effectA: effectA,
+                                         effectB: effectB,
+                                         effectC: effectC,
                                          reducerFunction: reducerFunction)
             .toReactiveStream()
             .take(7)

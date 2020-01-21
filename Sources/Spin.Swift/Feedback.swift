@@ -16,21 +16,22 @@ public enum ExecutionStrategy: Equatable {
 
 /// A feedback is basically a function transforming a reactive stream of `State` to a reactive stream of `Event`
 /// while eventually performing side effects. The feedback can be executed on a dedicated `Executer`. If no `Executer`
-/// is provided, then the feedback will be executer on the current `Executer`
+/// is provided, then the feedback will be executed on the current `Executer`
 public protocol Feedback {
     associatedtype StateStream: ReactiveStream
     associatedtype EventStream: ReactiveStream
     associatedtype Executer
 
-    var feedbackStream: (StateStream) -> EventStream { get }
+    var effect: (StateStream) -> EventStream { get }
 
     static func make(from effect: @escaping (StateStream.Value) -> EventStream,
                      applying strategy: ExecutionStrategy) -> (StateStream) -> EventStream
 
-    init(feedback: @escaping (StateStream) -> EventStream,
-         on executer: Executer?)
+    init(effect: @escaping (StateStream) -> EventStream, on executer: Executer?)
 
-    init<FeedbackType: Feedback>(feedbacks: [FeedbackType]) where   FeedbackType.StateStream == StateStream,
+    init<FeedbackType: Feedback>(feedbacks: [FeedbackType])
+        where
+        FeedbackType.StateStream == StateStream,
         FeedbackType.EventStream == EventStream
 
     init<FeedbackA, FeedbackB>(feedbacks feedbackA: FeedbackA,

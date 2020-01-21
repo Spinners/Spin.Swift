@@ -38,7 +38,7 @@ public struct SpinnerFeedback<StateStream: ReactiveStream, EventStream: Reactive
         where
         FeedbackType.StateStream == StateStream,
         FeedbackType.EventStream == EventStream {
-            self.init(initialState: state, feedbackStreams: [feedback.feedbackStream])
+            self.init(initialState: state, feedbackStreams: [feedback.effect])
     }
 
     public func add<NewFeedbackType>(feedback: NewFeedbackType) -> SpinnerFeedback<StateStream, EventStream>
@@ -46,7 +46,7 @@ public struct SpinnerFeedback<StateStream: ReactiveStream, EventStream: Reactive
         NewFeedbackType: Feedback,
         NewFeedbackType.StateStream == StateStream,
         NewFeedbackType.EventStream == EventStream {
-            let newFeedbackStreams = self.feedbackStreams + [feedback.feedbackStream]
+            let newFeedbackStreams = self.feedbackStreams + [feedback.effect]
             return SpinnerFeedback<StateStream, EventStream>(initialState: self.initialState,
                                                              feedbackStreams: newFeedbackStreams)
     }

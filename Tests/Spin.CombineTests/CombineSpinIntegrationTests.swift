@@ -16,16 +16,16 @@ fileprivate enum StringAction {
 
 fileprivate struct SutSpin: SpinDefinition {
 
-    let feedbackAFunction: (String) -> AnyPublisher<StringAction, Never>
-    let feedbackBFunction: (String) -> AnyPublisher<StringAction, Never>
-    let feedbackCFunction: (String) -> AnyPublisher<StringAction, Never>
+    let effectA: (String) -> AnyPublisher<StringAction, Never>
+    let effectB: (String) -> AnyPublisher<StringAction, Never>
+    let effectC: (String) -> AnyPublisher<StringAction, Never>
     let reducerFunction: (String, StringAction) -> String
 
     fileprivate var spin: CombineSpin<String> {
         CombineSpin(initialState: "initialState", reducer: DispatchQueueCombineReducer(reducer: reducerFunction)) {
-            CombineFeedback(feedback: feedbackAFunction).execute(on: DispatchQueue.main.eraseToAnyScheduler())
-            CombineFeedback(feedback: feedbackBFunction).execute(on: DispatchQueue.main.eraseToAnyScheduler())
-            CombineFeedback(feedback: feedbackCFunction).execute(on: DispatchQueue.main.eraseToAnyScheduler())
+            CombineFeedback(effect: effectA).execute(on: DispatchQueue.main.eraseToAnyScheduler())
+            CombineFeedback(effect: effectB).execute(on: DispatchQueue.main.eraseToAnyScheduler())
+            CombineFeedback(effect: effectC).execute(on: DispatchQueue.main.eraseToAnyScheduler())
         }
     }
 }
@@ -36,21 +36,21 @@ final class CombineSpinIntegrationTests: XCTestCase {
 
         // Given: an initial state, feedbacks and a reducer
         var counterA = 0
-        let feedbackAFunction = { (state: String) -> AnyPublisher<StringAction, Never> in
+        let effectA = { (state: String) -> AnyPublisher<StringAction, Never> in
             counterA += 1
             let counter = counterA
             return Just<StringAction>(.append("_a\(counter)")).eraseToAnyPublisher()
         }
 
         var counterB = 0
-        let feedbackBFunction = { (state: String) -> AnyPublisher<StringAction, Never> in
+        let effectB = { (state: String) -> AnyPublisher<StringAction, Never> in
             counterB += 1
             let counter = counterB
             return Just<StringAction>(.append("_b\(counter)")).eraseToAnyPublisher()
         }
 
         var counterC = 0
-        let feedbackCFunction = { (state: String) -> AnyPublisher<StringAction, Never> in
+        let effectC = { (state: String) -> AnyPublisher<StringAction, Never> in
             counterC += 1
             let counter = counterC
             return Just<StringAction>(.append("_c\(counter)")).eraseToAnyPublisher()
@@ -66,9 +66,9 @@ final class CombineSpinIntegrationTests: XCTestCase {
         // When: spinning the feedbacks and the reducer on the default executer
         let recorder = Spinner
             .from(initialState: "initialState")
-            .add(feedback: DispatchQueueCombineFeedback(feedback: feedbackAFunction))
-            .add(feedback: DispatchQueueCombineFeedback(feedback: feedbackBFunction))
-            .add(feedback: DispatchQueueCombineFeedback(feedback: feedbackCFunction))
+            .add(feedback: DispatchQueueCombineFeedback(effect: effectA))
+            .add(feedback: DispatchQueueCombineFeedback(effect: effectB))
+            .add(feedback: DispatchQueueCombineFeedback(effect: effectC))
             .reduce(with: CombineReducer(reducer: reducerFunction))
             .toReactiveStream()
             .output(in: (0...6))
@@ -90,21 +90,21 @@ final class CombineSpinIntegrationTests: XCTestCase {
 
         // Given: an initial state, feedbacks and a reducer
         var counterA = 0
-        let feedbackAFunction = { (state: String) -> AnyPublisher<StringAction, Never> in
+        let effectA = { (state: String) -> AnyPublisher<StringAction, Never> in
             counterA += 1
             let counter = counterA
             return Just<StringAction>(.append("_a\(counter)")).eraseToAnyPublisher()
         }
 
         var counterB = 0
-        let feedbackBFunction = { (state: String) -> AnyPublisher<StringAction, Never> in
+        let effectB = { (state: String) -> AnyPublisher<StringAction, Never> in
             counterB += 1
             let counter = counterB
             return Just<StringAction>(.append("_b\(counter)")).eraseToAnyPublisher()
         }
 
         var counterC = 0
-        let feedbackCFunction = { (state: String) -> AnyPublisher<StringAction, Never> in
+        let effectC = { (state: String) -> AnyPublisher<StringAction, Never> in
             counterC += 1
             let counter = counterC
             return Just<StringAction>(.append("_c\(counter)")).eraseToAnyPublisher()
@@ -118,9 +118,9 @@ final class CombineSpinIntegrationTests: XCTestCase {
         }
 
         // When: spinning the feedbacks and the reducer on the default executer
-        let recorder = SutSpin(feedbackAFunction: feedbackAFunction,
-                               feedbackBFunction: feedbackBFunction,
-                               feedbackCFunction: feedbackCFunction,
+        let recorder = SutSpin(effectA: effectA,
+                               effectB: effectB,
+                               effectC: effectC,
             reducerFunction: reducerFunction)
             .toReactiveStream()
             .output(in: (0...6))

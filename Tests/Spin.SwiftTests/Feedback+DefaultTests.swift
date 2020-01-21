@@ -14,24 +14,24 @@ fileprivate struct SpyFeedback<State: CanBeEmpty, Event: CanBeEmpty>: Feedback {
     fileprivate typealias EventStream = MockStream<Event>
     fileprivate typealias Executer = MockExecuter
 
-    fileprivate var feedbackStream: (StateStream) -> EventStream
+    fileprivate var effect: (StateStream) -> EventStream
     fileprivate var feedbackExecuter: Executer?
 
     fileprivate var initIsCalled = false
 
-    fileprivate init(feedback: @escaping (StateStream) -> EventStream, on executer: Executer? = nil) {
-        self.feedbackStream = feedback
+    fileprivate init(effect: @escaping (StateStream) -> EventStream, on executer: Executer? = nil) {
+        self.effect = effect
         self.feedbackExecuter = executer
         self.initIsCalled = true
     }
 
     fileprivate init<FeedbackType: Feedback>(feedbacks: [FeedbackType]) where FeedbackType.StateStream == StateStream, FeedbackType.EventStream == EventStream {
         let feedback = { (stateStream: FeedbackType.StateStream) -> FeedbackType.EventStream in
-            _ = feedbacks.map { $0.feedbackStream(stateStream) }
+            _ = feedbacks.map { $0.effect(stateStream) }
             return .emptyStream()
         }
 
-        self.init(feedback: feedback)
+        self.init(effect: feedback)
     }
 
     fileprivate init<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback>(feedbacks feedbackA: FeedbackTypeA, _ feedbackB: FeedbackTypeB)
@@ -41,12 +41,12 @@ fileprivate struct SpyFeedback<State: CanBeEmpty, Event: CanBeEmpty>: Feedback {
                  FeedbackTypeA.EventStream == EventStream {
 
         let feedback: (StateStream) -> EventStream = { stateStream in
-            _ = feedbackA.feedbackStream(stateStream)
-            _ = feedbackB.feedbackStream(stateStream)
+            _ = feedbackA.effect(stateStream)
+            _ = feedbackB.effect(stateStream)
             return .emptyStream()
         }
 
-        self.init(feedback: feedback)
+        self.init(effect: feedback)
      }
 
     fileprivate init<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback, FeedbackTypeC: Feedback>(feedbacks feedbackA: FeedbackTypeA, _ feedbackB: FeedbackTypeB, _ feedbackC: FeedbackTypeC)
@@ -58,14 +58,14 @@ fileprivate struct SpyFeedback<State: CanBeEmpty, Event: CanBeEmpty>: Feedback {
                  FeedbackTypeA.EventStream == EventStream {
 
          let feedback: (StateStream) -> EventStream = { stateStream in
-            _ = feedbackA.feedbackStream(stateStream)
-            _ = feedbackB.feedbackStream(stateStream)
-            _ = feedbackC.feedbackStream(stateStream)
+            _ = feedbackA.effect(stateStream)
+            _ = feedbackB.effect(stateStream)
+            _ = feedbackC.effect(stateStream)
 
             return .emptyStream()
          }
 
-         self.init(feedback: feedback)
+         self.init(effect: feedback)
      }
 
     fileprivate init<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback, FeedbackTypeC: Feedback, FeedbackTypeD: Feedback>(feedbacks feedbackA: FeedbackTypeA,
@@ -82,15 +82,15 @@ fileprivate struct SpyFeedback<State: CanBeEmpty, Event: CanBeEmpty>: Feedback {
                  FeedbackTypeA.EventStream == EventStream {
 
          let feedback: (StateStream) -> EventStream = { stateStream in
-            _ = feedbackA.feedbackStream(stateStream)
-            _ = feedbackB.feedbackStream(stateStream)
-            _ = feedbackC.feedbackStream(stateStream)
-            _ = feedbackD.feedbackStream(stateStream)
+            _ = feedbackA.effect(stateStream)
+            _ = feedbackB.effect(stateStream)
+            _ = feedbackC.effect(stateStream)
+            _ = feedbackD.effect(stateStream)
 
             return .emptyStream()
          }
 
-         self.init(feedback: feedback)
+         self.init(effect: feedback)
      }
 
     fileprivate init<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback, FeedbackTypeC: Feedback, FeedbackTypeD: Feedback, FeedbackTypeE: Feedback>(feedbacks feedbackA: FeedbackTypeA,
@@ -110,16 +110,16 @@ fileprivate struct SpyFeedback<State: CanBeEmpty, Event: CanBeEmpty>: Feedback {
                  FeedbackTypeA.EventStream == EventStream {
 
          let feedback: (StateStream) -> EventStream = { stateStream in
-            _ = feedbackA.feedbackStream(stateStream)
-            _ = feedbackB.feedbackStream(stateStream)
-            _ = feedbackC.feedbackStream(stateStream)
-            _ = feedbackD.feedbackStream(stateStream)
-            _ = feedbackE.feedbackStream(stateStream)
+            _ = feedbackA.effect(stateStream)
+            _ = feedbackB.effect(stateStream)
+            _ = feedbackC.effect(stateStream)
+            _ = feedbackD.effect(stateStream)
+            _ = feedbackE.effect(stateStream)
 
             return .emptyStream()
          }
 
-         self.init(feedback: feedback)
+         self.init(effect: feedback)
      }
 
     fileprivate static func make(from effect: @escaping (StateStream.Value) -> EventStream, applying strategy: ExecutionStrategy) -> (StateStream) -> EventStream {
@@ -148,35 +148,35 @@ final class Feedback_DefaultTests: XCTestCase {
 
     func test_initializer_is_called_with_nil_executer_when_instantiated_with_a_stream_but_without_executer() {
         // Given: a feedback stream based on a Stream<State> -> Stream<Event>
-        var feedbackIsCalled = false
-        let feedbackStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
-            feedbackIsCalled = true
+        var effectIsCalled = false
+        let effect: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
+            effectIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
 
         // When: instantiating the feedback with the stream, and no Executer
         // When: executing the feedback
-        let sut = SpyFeedback(feedback: feedbackStream)
-        let receivedMockActionStream = sut.feedbackStream(MockStream<MockState>(value: .toEmpty))
+        let sut = SpyFeedback(effect: effect)
+        let receivedMockActionStream = sut.effect(MockStream<MockState>(value: .toEmpty))
 
         // Then: the default initializer of the feedback is called
         // Then: the Executer inside the feedback is nil
         // Then: the feedback closure given to the feedback is executed and gives the expected result
         XCTAssertTrue(sut.initIsCalled)
         XCTAssertNil(sut.feedbackExecuter)
-        XCTAssertTrue(feedbackIsCalled)
+        XCTAssertTrue(effectIsCalled)
         XCTAssertEqual(receivedMockActionStream.value, MockAction(value: 10))
     }
 
     func test_executeOn_creates_a_feedback_with_the_expected_executer() {
         // Given: a Feedback without an initial Executer
-        let feedbackStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
+        let effect: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
 
         // When: applying a new Executer to the Feedback
         let executer = MockExecuter()
-        let sut = SpyFeedback(feedback: feedbackStream).execute(on: executer)
+        let sut = SpyFeedback(effect: effect).execute(on: executer)
 
         // Then: the created feedback has the expected Executer
         XCTAssertEqual(executer, sut.feedbackExecuter)
@@ -184,18 +184,18 @@ final class Feedback_DefaultTests: XCTestCase {
 
     func test_initializer_is_called_with_nil_executer_and_default_executionStrategy_when_instantiated_with_an_effect_but_without_executer_and_without_an_executionStrategy() {
         // Given: a feedback stream based on a State -> Stream<Event>
-        var feedbackIsCalled = false
-        var feedbackIsCalledWithState: MockState?
-        let feedbackStream: (MockState) -> MockStream<MockAction> = { state -> MockStream<MockAction> in
-            feedbackIsCalled = true
-            feedbackIsCalledWithState = state
+        var effectIsCalled = false
+        var effectIsCalledWithState: MockState?
+        let effect: (MockState) -> MockStream<MockAction> = { state -> MockStream<MockAction> in
+            effectIsCalled = true
+            effectIsCalledWithState = state
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
 
         // When: instantiating the feedback with the effect, and no Executer, and no execution strategy
         // When: executing the feedback
-        let sut = SpyFeedback(feedback: feedbackStream)
-        let receivedMockActionStream = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 0)))
+        let sut = SpyFeedback(effect: effect)
+        let receivedMockActionStream = sut.effect(MockStream<MockState>(value: MockState(subState: 0)))
 
         // Then: the default initializer of the feedback is called
         // Then: the Executer inside the feedback is nil
@@ -204,27 +204,27 @@ final class Feedback_DefaultTests: XCTestCase {
         // Then: the feedback closure given to the feedback is executed and gives the expected result
         XCTAssertTrue(sut.initIsCalled)
         XCTAssertNil(sut.feedbackExecuter)
-        XCTAssertTrue(feedbackIsCalled)
+        XCTAssertTrue(effectIsCalled)
         XCTAssertEqual(spyExecutionStrategy, MockFeedback<MockState, MockAction>.defaultExecutionStrategy)
-        XCTAssertEqual(feedbackIsCalledWithState, MockState(subState: 0))
+        XCTAssertEqual(effectIsCalledWithState, MockState(subState: 0))
         XCTAssertEqual(receivedMockActionStream.value, MockAction(value: 10))
     }
 
     func test_initializer_is_called_with_nil_executer_and_default_executionStrategy_when_instantiated_with_a_filtered_effect_but_without_executer_and_without_an_executionStrategy() {
         // Given: a feedback stream based on a State -> Stream<Event>
-        var feedbackIsCalled = false
-        var feedbackIsCalledWithState: MockState?
-        let feedbackStream: (MockState) -> MockStream<MockAction> = { state -> MockStream<MockAction> in
-            feedbackIsCalled = true
-            feedbackIsCalledWithState = state
+        var effectIsCalled = false
+        var effectIsCalledWithState: MockState?
+        let effect: (MockState) -> MockStream<MockAction> = { state -> MockStream<MockAction> in
+            effectIsCalled = true
+            effectIsCalledWithState = state
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
 
         // When: instantiating the feedback with the effect, a filter, and no Executer, and no execution strategy
         // When: executing the feedback
-        let sut = SpyFeedback(feedback: feedbackStream, filteredBy: { $0.subState > 10 })
-        let receivedMockActionStream = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 15)))
-        let receivedMockActionStreamWhenFilteredIsFalse = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 5)))
+        let sut = SpyFeedback(effect: effect, filteredBy: { $0.subState > 10 })
+        let receivedMockActionStream = sut.effect(MockStream<MockState>(value: MockState(subState: 15)))
+        let receivedMockActionStreamWhenFilteredIsFalse = sut.effect(MockStream<MockState>(value: MockState(subState: 5)))
 
         // Then: the default initializer of the feedback is called
         // Then: the Executer inside the feedback is nil
@@ -234,34 +234,34 @@ final class Feedback_DefaultTests: XCTestCase {
         // Then: the received element from the feedback when the filter is false is an empty stream
         XCTAssertTrue(sut.initIsCalled)
         XCTAssertNil(sut.feedbackExecuter)
-        XCTAssertTrue(feedbackIsCalled)
+        XCTAssertTrue(effectIsCalled)
         XCTAssertEqual(spyExecutionStrategy, MockFeedback<MockState, MockAction>.defaultExecutionStrategy)
-        XCTAssertEqual(feedbackIsCalledWithState, MockState(subState: 15))
+        XCTAssertEqual(effectIsCalledWithState, MockState(subState: 15))
         XCTAssertEqual(receivedMockActionStream.value, MockAction(value: 10))
         XCTAssertEqual(receivedMockActionStreamWhenFilteredIsFalse.value, MockAction.toEmpty)
     }
 
     func test_feedback_is_called_with_substate_when_filteredResult_is_passed_in_the_initializer() {
         // Given: a feedback stream based on a State -> Stream<Event>
-        var feedbackIsCalled = false
-        var feedbackIsCalledWithSubState: Int?
-        let feedbackStream: (Int) -> MockStream<MockAction> = { subState -> MockStream<MockAction> in
-            feedbackIsCalled = true
-            feedbackIsCalledWithSubState = subState
+        var effectIsCalled = false
+        var effectIsCalledWithSubState: Int?
+        let effect: (Int) -> MockStream<MockAction> = { subState -> MockStream<MockAction> in
+            effectIsCalled = true
+            effectIsCalledWithSubState = subState
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
 
         // When: instantiating the feedback with the effect, a Result filter, and no Executer, and no execution strategy
         // When: executing the feedback
-        let sut = SpyFeedback<MockState, MockAction>(feedback: feedbackStream, filteredByResult: { state in
+        let sut = SpyFeedback<MockState, MockAction>(effect: effect, filteredByResult: { state in
             if state.subState > 10 {
             return .success(state.subState)
             }
 
             return .failure(.effectIsNotExecuted)
         })
-        let receivedMockActionStream = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 15)))
-        let receivedMockActionStreamWhenFilteredIsFalse = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 5)))
+        let receivedMockActionStream = sut.effect(MockStream<MockState>(value: MockState(subState: 15)))
+        let receivedMockActionStreamWhenFilteredIsFalse = sut.effect(MockStream<MockState>(value: MockState(subState: 5)))
 
         // Then: the default initializer of the feedback is called
         // Then: the Executer inside the feedback is nil
@@ -271,27 +271,27 @@ final class Feedback_DefaultTests: XCTestCase {
         // Then: the received element from the feedback when the filter is false is an empty stream
         XCTAssertTrue(sut.initIsCalled)
         XCTAssertNil(sut.feedbackExecuter)
-        XCTAssertTrue(feedbackIsCalled)
+        XCTAssertTrue(effectIsCalled)
         XCTAssertEqual(spyExecutionStrategy, MockFeedback<MockState, MockAction>.defaultExecutionStrategy)
-        XCTAssertEqual(feedbackIsCalledWithSubState, 15)
+        XCTAssertEqual(effectIsCalledWithSubState, 15)
         XCTAssertEqual(receivedMockActionStream.value, MockAction(value: 10))
         XCTAssertEqual(receivedMockActionStreamWhenFilteredIsFalse.value, MockAction.toEmpty)
     }
 
     func test_initializer_is_called_with_nil_executer_when_instantiated_with_a_voidEvent_effect_but_without_executer() {
         // Given: a feedback stream based on a State -> Void
-        var feedbackIsCalled = false
-        var feedbackIsCalledWithState: MockState?
-        let feedbackStream: (MockState) -> Void = { state -> Void in
-            feedbackIsCalled = true
-            feedbackIsCalledWithState = state
+        var effectIsCalled = false
+        var effectIsCalledWithState: MockState?
+        let effect: (MockState) -> Void = { state -> Void in
+            effectIsCalled = true
+            effectIsCalledWithState = state
             return ()
         }
 
         // When: instantiating the feedback with the effect, and no Executer
         // When: executing the feedback
-        let sut = SpyFeedback<MockState, MockAction>(feedback: feedbackStream)
-        let receivedMockActionStream = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 10)))
+        let sut = SpyFeedback<MockState, MockAction>(effect: effect)
+        let receivedMockActionStream = sut.effect(MockStream<MockState>(value: MockState(subState: 10)))
 
         // Then: the default initializer of the feedback is called
         // Then: the Executer inside the feedback is nil
@@ -300,24 +300,24 @@ final class Feedback_DefaultTests: XCTestCase {
         // Then: the feedback closure given to the feedback is executed and gives an empty stream
         XCTAssertTrue(sut.initIsCalled)
         XCTAssertNil(sut.feedbackExecuter)
-        XCTAssertTrue(feedbackIsCalled)
+        XCTAssertTrue(effectIsCalled)
         XCTAssertEqual(spyExecutionStrategy, MockFeedback<MockState, MockAction>.defaultExecutionStrategy)
-        XCTAssertEqual(feedbackIsCalledWithState, MockState(subState: 10))
+        XCTAssertEqual(effectIsCalledWithState, MockState(subState: 10))
         XCTAssertEqual(receivedMockActionStream.value, MockAction.toEmpty)
     }
 
     func test_initializer_is_called_with_nil_executer_when_instantiated_with_a_voidState_effect_but_without_executer() {
         // Given: a feedback stream based on a () -> Stream<Event>
-        var feedbackIsCalled = false
-        let feedbackStream: () -> MockStream<MockAction> = { () -> MockStream<MockAction> in
-            feedbackIsCalled = true
+        var effectIsCalled = false
+        let effect: () -> MockStream<MockAction> = { () -> MockStream<MockAction> in
+            effectIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
 
         // When: instantiating the feedback with the effect, and no Executer
         // When: executing the feedback
-        let sut = SpyFeedback<MockState, MockAction>(feedback: feedbackStream)
-        let receivedMockActionStream = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 10)))
+        let sut = SpyFeedback<MockState, MockAction>(effect: effect)
+        let receivedMockActionStream = sut.effect(MockStream<MockState>(value: MockState(subState: 10)))
 
         // Then: the default initializer of the feedback is called
         // Then: the Executer inside the feedback is nil
@@ -325,7 +325,7 @@ final class Feedback_DefaultTests: XCTestCase {
         // Then: the feedback closure given to the feedback is executed and gives a event stream with the awaited MockAction
         XCTAssertTrue(sut.initIsCalled)
         XCTAssertNil(sut.feedbackExecuter)
-        XCTAssertTrue(feedbackIsCalled)
+        XCTAssertTrue(effectIsCalled)
         XCTAssertNil(spyExecutionStrategy)
         XCTAssertEqual(receivedMockActionStream.value, MockAction(value: 10))
     }
@@ -351,8 +351,8 @@ final class Feedback_DefaultTests: XCTestCase {
 
         // When: instantiating the feedback with the ui feedbacks, and no Executer
         // When: executing the feedback
-        let sut = SpyFeedback<MockState, MockAction>(uiFeedbacks: stateFeedbackStream, eventFeedbackStream)
-        _ = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 10)))
+        let sut = SpyFeedback<MockState, MockAction>(uiEffects: stateFeedbackStream, eventFeedbackStream)
+        _ = sut.effect(MockStream<MockState>(value: MockState(subState: 10)))
 
         // Then: the default initializer of the feedback is called
         // Then: the Executer inside the feedback is nil
@@ -367,18 +367,18 @@ final class Feedback_DefaultTests: XCTestCase {
 
     func test_initializer_is_called_with_nil_executer_and_default_executionStrategy_when_instantiated_with_a_substated_effect_but_without_executer_and_without_an_executionStrategy() {
         // Given: a feedback stream based on a State -> Stream<Event>
-        var feedbackIsCalled = false
-        var feedbackIsCalledWithSubState: Int?
-        let feedbackStream: (Int) -> MockStream<MockAction> = { subState -> MockStream<MockAction> in
-            feedbackIsCalled = true
-            feedbackIsCalledWithSubState = subState
+        var effectIsCalled = false
+        var effectIsCalledWithSubState: Int?
+        let effect: (Int) -> MockStream<MockAction> = { subState -> MockStream<MockAction> in
+            effectIsCalled = true
+            effectIsCalledWithSubState = subState
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
 
         // When: instantiating the feedback with the effect, a lense, and no Executer, and no execution strategy
         // When: executing the feedback
-        let sut = SpyFeedback<MockState, MockAction>(feedback: feedbackStream, lensingOn: { $0.subState })
-        let receivedMockActionStream = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 15)))
+        let sut = SpyFeedback<MockState, MockAction>(effect: effect, lensingOn: { $0.subState })
+        let receivedMockActionStream = sut.effect(MockStream<MockState>(value: MockState(subState: 15)))
 
         // Then: the default initializer of the feedback is called
         // Then: the Executer inside the feedback is nil
@@ -387,27 +387,27 @@ final class Feedback_DefaultTests: XCTestCase {
         // Then: the feedback closure given to the feedback is executed and gives the expected result
         XCTAssertTrue(sut.initIsCalled)
         XCTAssertNil(sut.feedbackExecuter)
-        XCTAssertTrue(feedbackIsCalled)
+        XCTAssertTrue(effectIsCalled)
         XCTAssertEqual(spyExecutionStrategy, MockFeedback<MockState, MockAction>.defaultExecutionStrategy)
-        XCTAssertEqual(feedbackIsCalledWithSubState, 15)
+        XCTAssertEqual(effectIsCalledWithSubState, 15)
         XCTAssertEqual(receivedMockActionStream.value, MockAction(value: 10))
     }
 
     func test_initializer_is_called_with_nil_executer_and_default_executionStrategy_when_instantiated_with_a_substated_filtered_effect_but_without_executer_and_without_an_executionStrategy() {
         // Given: a feedback stream based on a State -> Stream<Event>
-        var feedbackIsCalled = false
-        var feedbackIsCalledWithSubState: Int?
-        let feedbackStream: (Int) -> MockStream<MockAction> = { subState -> MockStream<MockAction> in
-            feedbackIsCalled = true
-            feedbackIsCalledWithSubState = subState
+        var effectIsCalled = false
+        var effectIsCalledWithSubState: Int?
+        let effect: (Int) -> MockStream<MockAction> = { subState -> MockStream<MockAction> in
+            effectIsCalled = true
+            effectIsCalledWithSubState = subState
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
 
         // When: instantiating the feedback with the effect, a lense, and no Executer, and no execution strategy
         // When: executing the feedback
-        let sut = SpyFeedback<MockState, MockAction>(feedback: feedbackStream, lensingOn: { $0.subState }, filteredBy: { $0 > 10 })
-        let receivedMockActionStream = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 15)))
-        let receivedMockActionStreamWhenFilteredIsFalse = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 5)))
+        let sut = SpyFeedback<MockState, MockAction>(effect: effect, lensingOn: { $0.subState }, filteredBy: { $0 > 10 })
+        let receivedMockActionStream = sut.effect(MockStream<MockState>(value: MockState(subState: 15)))
+        let receivedMockActionStreamWhenFilteredIsFalse = sut.effect(MockStream<MockState>(value: MockState(subState: 5)))
 
         // Then: the default initializer of the feedback is called
         // Then: the Executer inside the feedback is nil
@@ -417,43 +417,43 @@ final class Feedback_DefaultTests: XCTestCase {
         // Then: the received element from the feedback when the filter is false is an empty stream
         XCTAssertTrue(sut.initIsCalled)
         XCTAssertNil(sut.feedbackExecuter)
-        XCTAssertTrue(feedbackIsCalled)
+        XCTAssertTrue(effectIsCalled)
         XCTAssertEqual(spyExecutionStrategy, MockFeedback<MockState, MockAction>.defaultExecutionStrategy)
-        XCTAssertEqual(feedbackIsCalledWithSubState, 15)
+        XCTAssertEqual(effectIsCalledWithSubState, 15)
         XCTAssertEqual(receivedMockActionStream.value, MockAction(value: 10))
         XCTAssertEqual(receivedMockActionStreamWhenFilteredIsFalse.value, MockAction.toEmpty)
     }
 
     func test_initialize_with_a_previous_feedback_executes_the_original_feedbackFunction() {
         // Given: a feedback based on a Stream<State> -> Stream<Event>
-        var feedbackIsCalled = false
-        let feedbackStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
-            feedbackIsCalled = true
+        var effectIsCalled = false
+        let effect: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
+            effectIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
-        let sourceFeedback = SpyFeedback(feedback: feedbackStream)
+        let sourceFeedback = SpyFeedback(effect: effect)
 
         // When: instantiating the feedback with an already existing feedback
         // When: executing the feedback
         let sut = SpyFeedback(sourceFeedback)
-        _ = sut.feedbackStream(MockStream<MockState>(value: .toEmpty))
+        _ = sut.effect(MockStream<MockState>(value: .toEmpty))
 
         // Then: the default init of the Feedback is called
         // Then: the Executer passed to the init is nil
         // Then: the original feedback stream is preserved
         XCTAssertTrue(sut.initIsCalled)
         XCTAssertNil(sut.feedbackExecuter)
-        XCTAssertTrue(feedbackIsCalled)
+        XCTAssertTrue(effectIsCalled)
     }
 
     func test_initialize_with_functionBuilder_with_a_previous_feedback_executes_the_original_feedbackFunction() {
         // Given: a feedback based on a Stream<State> -> Stream<Event>
-        var feedbackIsCalled = false
-        let feedbackStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
-            feedbackIsCalled = true
+        var effectIsCalled = false
+        let effectStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
+            effectIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
-        let sourceFeedback = SpyFeedback(feedback: feedbackStream)
+        let sourceFeedback = SpyFeedback(effect: effectStream)
 
         // When: instantiating the feedback with an already existing feedback with function builder
         // When: executing the feedback
@@ -461,32 +461,32 @@ final class Feedback_DefaultTests: XCTestCase {
             sourceFeedback
         }
 
-        _ = sut.feedbackStream(MockStream<MockState>(value: .toEmpty))
+        _ = sut.effect(MockStream<MockState>(value: .toEmpty))
 
         // Then: the default init of the Feedback is called
         // Then: the Executer passed to the init is nil
         // Then: the original feedback stream is preserved
         XCTAssertTrue(sut.initIsCalled)
         XCTAssertNil(sut.feedbackExecuter)
-        XCTAssertTrue(feedbackIsCalled)
+        XCTAssertTrue(effectIsCalled)
     }
 
     func test_initialize_with_functionBuilder_with_two_feedbacks_executes_the_original_feedbackFunctions() {
         // Given: 2 feedbacks based on a Stream<State> -> Stream<Event>
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
+        var effectAIsCalled = false
+        var effectBIsCalled = false
 
-        let feedbackAStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
-            feedbackAIsCalled = true
+        let effectAStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
+            effectAIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
-        let feedbackBStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
-            feedbackBIsCalled = true
+        let effectBStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
+            effectBIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
 
-        let sourceFeedbackA = SpyFeedback(feedback: feedbackAStream)
-        let sourceFeedbackB = SpyFeedback(feedback: feedbackBStream)
+        let sourceFeedbackA = SpyFeedback(effect: effectAStream)
+        let sourceFeedbackB = SpyFeedback(effect: effectBStream)
 
         // When: instantiating the feedback with already existing feedbacks with function builder
         // When: executing the feedback
@@ -495,39 +495,39 @@ final class Feedback_DefaultTests: XCTestCase {
             sourceFeedbackB
         }
 
-        _ = sut.feedbackStream(MockStream<MockState>(value: .toEmpty))
+        _ = sut.effect(MockStream<MockState>(value: .toEmpty))
 
         // Then: the default init of the Feedback is called
         // Then: the Executer passed to the init is nil
         // Then: the original feedback streams are preserved
         XCTAssertTrue(sut.initIsCalled)
         XCTAssertNil(sut.feedbackExecuter)
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
+        XCTAssertTrue(effectAIsCalled)
+        XCTAssertTrue(effectBIsCalled)
     }
 
     func test_initialize_with_functionBuilder_with_three_feedbacks_executes_the_original_feedbackFunctions() {
         // Given: 3 feedbacks based on a Stream<State> -> Stream<Event>
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
-        var feedbackCIsCalled = false
+        var effectAIsCalled = false
+        var effectBIsCalled = false
+        var effectCIsCalled = false
 
-        let feedbackAStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
-            feedbackAIsCalled = true
+        let effectAStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
+            effectAIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
-        let feedbackBStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
-            feedbackBIsCalled = true
+        let effectBStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
+            effectBIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
-        let feedbackCStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
-            feedbackCIsCalled = true
+        let effectCStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
+            effectCIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
 
-        let sourceFeedbackA = SpyFeedback(feedback: feedbackAStream)
-        let sourceFeedbackB = SpyFeedback(feedback: feedbackBStream)
-        let sourceFeedbackC = SpyFeedback(feedback: feedbackCStream)
+        let sourceFeedbackA = SpyFeedback(effect: effectAStream)
+        let sourceFeedbackB = SpyFeedback(effect: effectBStream)
+        let sourceFeedbackC = SpyFeedback(effect: effectCStream)
 
         // When: instantiating the feedback with already existing feedbacks with function builder
         // When: executing the feedback
@@ -537,46 +537,46 @@ final class Feedback_DefaultTests: XCTestCase {
             sourceFeedbackC
         }
 
-        _ = sut.feedbackStream(MockStream<MockState>(value: .toEmpty))
+        _ = sut.effect(MockStream<MockState>(value: .toEmpty))
 
         // Then: the default init of the Feedback is called
         // Then: the Executer passed to the init is nil
         // Then: the original feedback streams are preserved
         XCTAssertTrue(sut.initIsCalled)
         XCTAssertNil(sut.feedbackExecuter)
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
-        XCTAssertTrue(feedbackCIsCalled)
+        XCTAssertTrue(effectAIsCalled)
+        XCTAssertTrue(effectBIsCalled)
+        XCTAssertTrue(effectCIsCalled)
     }
 
     func test_initialize_with_functionBuilder_with_four_feedbacks_executes_the_original_feedbackFunctions() {
         // Given: 4 feedbacks based on a Stream<State> -> Stream<Event>
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
-        var feedbackCIsCalled = false
-        var feedbackDIsCalled = false
+        var effectAIsCalled = false
+        var effectBIsCalled = false
+        var effectCIsCalled = false
+        var effectDIsCalled = false
 
-        let feedbackAStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
-            feedbackAIsCalled = true
+        let effectAStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
+            effectAIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
-        let feedbackBStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
-            feedbackBIsCalled = true
+        let effectBStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
+            effectBIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
-        let feedbackCStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
-            feedbackCIsCalled = true
+        let effectCStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
+            effectCIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
-        let feedbackDStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
-            feedbackDIsCalled = true
+        let effectDStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
+            effectDIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
 
-        let sourceFeedbackA = SpyFeedback(feedback: feedbackAStream)
-        let sourceFeedbackB = SpyFeedback(feedback: feedbackBStream)
-        let sourceFeedbackC = SpyFeedback(feedback: feedbackCStream)
-        let sourceFeedbackD = SpyFeedback(feedback: feedbackDStream)
+        let sourceFeedbackA = SpyFeedback(effect: effectAStream)
+        let sourceFeedbackB = SpyFeedback(effect: effectBStream)
+        let sourceFeedbackC = SpyFeedback(effect: effectCStream)
+        let sourceFeedbackD = SpyFeedback(effect: effectDStream)
 
         // When: instantiating the feedback with already existing feedbacks with function builder
         // When: executing the feedback
@@ -587,53 +587,53 @@ final class Feedback_DefaultTests: XCTestCase {
             sourceFeedbackD
         }
 
-        _ = sut.feedbackStream(MockStream<MockState>(value: .toEmpty))
+        _ = sut.effect(MockStream<MockState>(value: .toEmpty))
 
         // Then: the default init of the Feedback is called
         // Then: the Executer passed to the init is nil
         // Then: the original feedback streams are preserved
         XCTAssertTrue(sut.initIsCalled)
         XCTAssertNil(sut.feedbackExecuter)
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
-        XCTAssertTrue(feedbackCIsCalled)
-        XCTAssertTrue(feedbackDIsCalled)
+        XCTAssertTrue(effectAIsCalled)
+        XCTAssertTrue(effectBIsCalled)
+        XCTAssertTrue(effectCIsCalled)
+        XCTAssertTrue(effectDIsCalled)
     }
 
     func test_initialize_with_functionBuilder_with_five_feedbacks_executes_the_original_feedbackFunctions() {
         // Given: 5 feedbacks based on a Stream<State> -> Stream<Event>
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
-        var feedbackCIsCalled = false
-        var feedbackDIsCalled = false
-        var feedbackEIsCalled = false
+        var effectAIsCalled = false
+        var effectBIsCalled = false
+        var effectCIsCalled = false
+        var effectDIsCalled = false
+        var effectEIsCalled = false
 
-        let feedbackAStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
-            feedbackAIsCalled = true
+        let effectA: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
+            effectAIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
-        let feedbackBStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
-            feedbackBIsCalled = true
+        let effectB: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
+            effectBIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
-        let feedbackCStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
-            feedbackCIsCalled = true
+        let effectC: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
+            effectCIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
-        let feedbackDStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
-            feedbackDIsCalled = true
+        let effectD: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
+            effectDIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
-        let feedbackEStream: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
-            feedbackEIsCalled = true
+        let effectE: (MockStream<MockState>) -> MockStream<MockAction> = { states -> MockStream<MockAction> in
+            effectEIsCalled = true
             return MockStream<MockAction>(value: MockAction(value: 10))
         }
 
-        let sourceFeedbackA = SpyFeedback(feedback: feedbackAStream)
-        let sourceFeedbackB = SpyFeedback(feedback: feedbackBStream)
-        let sourceFeedbackC = SpyFeedback(feedback: feedbackCStream)
-        let sourceFeedbackD = SpyFeedback(feedback: feedbackDStream)
-        let sourceFeedbackE = SpyFeedback(feedback: feedbackEStream)
+        let sourceFeedbackA = SpyFeedback(effect: effectA)
+        let sourceFeedbackB = SpyFeedback(effect: effectB)
+        let sourceFeedbackC = SpyFeedback(effect: effectC)
+        let sourceFeedbackD = SpyFeedback(effect: effectD)
+        let sourceFeedbackE = SpyFeedback(effect: effectE)
 
         // When: instantiating the feedback with already existing feedbacks with function builder
         // When: executing the feedback
@@ -645,18 +645,18 @@ final class Feedback_DefaultTests: XCTestCase {
             sourceFeedbackE
         }
 
-        _ = sut.feedbackStream(MockStream<MockState>(value: .toEmpty))
+        _ = sut.effect(MockStream<MockState>(value: .toEmpty))
 
         // Then: the default init of the Feedback is called
         // Then: the Executer passed to the init is nil
         // Then: the original feedback streams are preserved
         XCTAssertTrue(sut.initIsCalled)
         XCTAssertNil(sut.feedbackExecuter)
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
-        XCTAssertTrue(feedbackCIsCalled)
-        XCTAssertTrue(feedbackDIsCalled)
-        XCTAssertTrue(feedbackEIsCalled)
+        XCTAssertTrue(effectAIsCalled)
+        XCTAssertTrue(effectBIsCalled)
+        XCTAssertTrue(effectCIsCalled)
+        XCTAssertTrue(effectDIsCalled)
+        XCTAssertTrue(effectEIsCalled)
     }
 
     func test_initialize_when_called_with_two_partial_feedbacks_executes_the_original_feedbackFunctions() throws {
@@ -676,10 +676,10 @@ final class Feedback_DefaultTests: XCTestCase {
         }
 
         // Given: a full stream built based on the partial ones
-        let sut = MockFeedback(uiFeedbacks: stateStream, eventStream)
+        let sut = MockFeedback(uiEffects: stateStream, eventStream)
 
         // When: feeding this stream with 1 input
-        _ = sut.feedbackStream(MockStream<MockState>(value: MockState(subState: 1701)))
+        _ = sut.effect(MockStream<MockState>(value: MockState(subState: 1701)))
 
         // Then: the stream triggers the 2 partials feedbacks
         XCTAssertTrue(stateFeedbackIsCalled)
