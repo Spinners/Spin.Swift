@@ -125,11 +125,19 @@ fileprivate struct SpyFeedback<State: CanBeEmpty, Event: CanBeEmpty>: Feedback {
     fileprivate static func make(from effect: @escaping (StateStream.Value) -> EventStream, applying strategy: ExecutionStrategy) -> (StateStream) -> EventStream {
         spyExecutionStrategy = strategy
 
-        let feedbackFromEffectStream: (StateStream) -> EventStream = { states in
+        let fullEffect: (StateStream) -> EventStream = { states in
             return states.flatMap(effect)
         }
 
-        return feedbackFromEffectStream
+        return fullEffect
+    }
+
+    static func make(from directEffect: @escaping (StateStream.Value) -> EventStream.Value) -> (StateStream) -> EventStream {
+        let fullEffect: (StateStream) -> EventStream = { states in
+            return states.map(directEffect)
+        }
+
+        return fullEffect
     }
 }
 
@@ -200,12 +208,40 @@ final class Feedback_DefaultTests: XCTestCase {
         // Then: the default initializer of the feedback is called
         // Then: the Executer inside the feedback is nil
         // Then: the ExecutionStrategy is the default one
-        // Then: the received state in the feedback closure is the one passed to the feedback.execute function
+        // Then: the received state in the feedback closure is the one passed to the feedback.effect function
         // Then: the feedback closure given to the feedback is executed and gives the expected result
         XCTAssertTrue(sut.initIsCalled)
         XCTAssertNil(sut.feedbackExecuter)
         XCTAssertTrue(effectIsCalled)
         XCTAssertEqual(spyExecutionStrategy, MockFeedback<MockState, MockAction>.defaultExecutionStrategy)
+        XCTAssertEqual(effectIsCalledWithState, MockState(subState: 0))
+        XCTAssertEqual(receivedMockActionStream.value, MockAction(value: 10))
+    }
+
+    func test_initializer_is_called_with_nil_executer_and_nil_executionStrategy_when_instantiated_with_a_directEffect() {
+        // Given: a feedback stream based on a State -> Event
+        var effectIsCalled = false
+        var effectIsCalledWithState: MockState?
+        let effect: (MockState) -> MockAction = { state -> MockAction in
+            effectIsCalled = true
+            effectIsCalledWithState = state
+            return MockAction(value: 10)
+        }
+
+        // When: instantiating the feedback with the effect, and no Executer, and no execution strategy
+        // When: executing the feedback
+        let sut = SpyFeedback(directEffect: effect)
+        let receivedMockActionStream = sut.effect(MockStream<MockState>(value: MockState(subState: 0)))
+
+        // Then: the default initializer of the feedback is called
+        // Then: the Executer inside the feedback is nil
+        // Then: the ExecutionStrategy is nil since this is not applicable to a directEffect
+        // Then: the received state in the feedback closure is the one passed to the feedback.effect function
+        // Then: the feedback closure given to the feedback is executed and gives the expected result
+        XCTAssertTrue(sut.initIsCalled)
+        XCTAssertNil(sut.feedbackExecuter)
+        XCTAssertTrue(effectIsCalled)
+        XCTAssertNil(spyExecutionStrategy)
         XCTAssertEqual(effectIsCalledWithState, MockState(subState: 0))
         XCTAssertEqual(receivedMockActionStream.value, MockAction(value: 10))
     }
@@ -229,7 +265,7 @@ final class Feedback_DefaultTests: XCTestCase {
         // Then: the default initializer of the feedback is called
         // Then: the Executer inside the feedback is nil
         // Then: the ExecutionStrategy is the default one
-        // Then: the received state in the feedback closure is the one passed to the feedback.execute function
+        // Then: the received state in the feedback closure is the one passed to the feedback.effect function
         // Then: the feedback closure given to the feedback is executed and gives the expected result
         // Then: the received element from the feedback when the filter is false is an empty stream
         XCTAssertTrue(sut.initIsCalled)
@@ -296,7 +332,7 @@ final class Feedback_DefaultTests: XCTestCase {
         // Then: the default initializer of the feedback is called
         // Then: the Executer inside the feedback is nil
         // Then: the ExecutionStrategy is the default one
-        // Then: the received state in the feedback closure is the one passed to the feedback.execute function
+        // Then: the received state in the feedback closure is the one passed to the feedback.effect function
         // Then: the feedback closure given to the feedback is executed and gives an empty stream
         XCTAssertTrue(sut.initIsCalled)
         XCTAssertNil(sut.feedbackExecuter)
@@ -383,7 +419,7 @@ final class Feedback_DefaultTests: XCTestCase {
         // Then: the default initializer of the feedback is called
         // Then: the Executer inside the feedback is nil
         // Then: the ExecutionStrategy is the default one
-        // Then: the received state in the feedback closure is the one passed to the feedback.execute function
+        // Then: the received state in the feedback closure is the one passed to the feedback.effect function
         // Then: the feedback closure given to the feedback is executed and gives the expected result
         XCTAssertTrue(sut.initIsCalled)
         XCTAssertNil(sut.feedbackExecuter)
@@ -412,7 +448,7 @@ final class Feedback_DefaultTests: XCTestCase {
         // Then: the default initializer of the feedback is called
         // Then: the Executer inside the feedback is nil
         // Then: the ExecutionStrategy is the default one
-        // Then: the received state in the feedback closure is the one passed to the feedback.execute function
+        // Then: the received state in the feedback closure is the one passed to the feedback.effect function
         // Then: the feedback closure given to the feedback is executed and gives the expected result
         // Then: the received element from the feedback when the filter is false is an empty stream
         XCTAssertTrue(sut.initIsCalled)

@@ -147,6 +147,12 @@ public extension Feedback {
         self.init(effect: effect, on: executer)
     }
 
+    init(directEffect: @escaping (StateStream.Value) -> EventStream.Value,
+         on executer: Executer? = nil) {
+        let effect = Self.make(from: directEffect)
+        self.init(effect: effect, on: executer)
+    }
+
     /// Initialize the feedback with a: State -> ReactiveStream<Event> stream, dismissing the `State` values that
     /// don't match the filter
     /// - Parameters:

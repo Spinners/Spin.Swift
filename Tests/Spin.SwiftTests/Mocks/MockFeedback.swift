@@ -118,10 +118,18 @@ struct MockFeedback<State: CanBeEmpty, Event: CanBeEmpty>: Feedback {
      }
 
     static func make(from effect: @escaping (StateStream.Value) -> EventStream, applying strategy: ExecutionStrategy) -> (StateStream) -> EventStream {
-        let feedbackFromEffectStream: (StateStream) -> EventStream = { states in
+        let fullEffect: (StateStream) -> EventStream = { states in
             return states.flatMap(effect)
         }
 
-        return feedbackFromEffectStream
+        return fullEffect
+    }
+
+    static func make(from directEffect: @escaping (StateStream.Value) -> EventStream.Value) -> (StateStream) -> EventStream {
+        let fullEffect: (StateStream) -> EventStream = { states in
+            return states.map(directEffect)
+        }
+
+        return fullEffect
     }
 }

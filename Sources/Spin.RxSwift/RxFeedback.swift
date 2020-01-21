@@ -142,7 +142,7 @@ public struct RxFeedback<State, Event>: Feedback {
             return effect(state).catchError { _ in return .empty() }
         }
 
-        let feedbackFromEffectStream: (StateStream) -> EventStream = { states in
+        let fullEffect: (StateStream) -> EventStream = { states in
             switch strategy {
             case .continueOnNewEvent:
                 return states.flatMap(effectStream)
@@ -151,6 +151,14 @@ public struct RxFeedback<State, Event>: Feedback {
             }
         }
 
-        return feedbackFromEffectStream
+        return fullEffect
+    }
+
+    public static func make(from directEffect: @escaping (StateStream.Value) -> EventStream.Value) -> (StateStream) -> EventStream {
+        let fullEffect: (StateStream) -> EventStream = { states in
+            return states.map(directEffect)
+        }
+
+        return fullEffect
     }
 }

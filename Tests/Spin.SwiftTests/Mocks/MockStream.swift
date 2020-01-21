@@ -22,6 +22,10 @@ class MockStream<Event: CanBeEmpty> {
         return function(self.value)
     }
 
+    func map<Output>(_ function: (Event) -> Output) -> MockStream<Output> {
+        return MockStream<Output>(value: function(self.value))
+    }
+
     static func empty() -> MockStream<Event> {
         return MockStream<Event>(value: Event.toEmpty)
     }

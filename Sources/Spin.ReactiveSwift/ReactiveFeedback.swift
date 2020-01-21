@@ -136,7 +136,7 @@ public struct ReactiveFeedback<State, Event>: Feedback {
 
     public static func make(from effect: @escaping (StateStream.Value) -> EventStream,
                             applying strategy: ExecutionStrategy) -> (StateStream) -> EventStream {
-        let feedbackFromEffectStream: (StateStream) -> EventStream = { states in
+        let fullEffect: (StateStream) -> EventStream = { states in
             switch strategy {
             case .continueOnNewEvent:
                 return states.flatMap(.merge, effect)
@@ -145,6 +145,14 @@ public struct ReactiveFeedback<State, Event>: Feedback {
             }
         }
 
-        return feedbackFromEffectStream
+        return fullEffect
+    }
+
+    public static func make(from directEffect: @escaping (StateStream.Value) -> EventStream.Value) -> (StateStream) -> EventStream {
+        let fullEffect: (StateStream) -> EventStream = { states in
+            return states.map(directEffect)
+        }
+
+        return fullEffect
     }
 }
