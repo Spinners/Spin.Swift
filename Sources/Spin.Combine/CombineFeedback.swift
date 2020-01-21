@@ -28,6 +28,29 @@ public struct CombineFeedback<State, Event, SchedulerTime, SchedulerOptions>: Fe
         }
     }
 
+    public init(effect: @escaping (StateStream.Value) -> EventStream,
+                on executer: Executer? = nil,
+                applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
+        let fullEffect: (StateStream) -> EventStream = { states in
+            switch strategy {
+            case .continueOnNewEvent:
+                return states.flatMap(effect).eraseToAnyPublisher()
+            case .cancelOnNewEvent:
+                return states.map(effect).switchToLatest().eraseToAnyPublisher()
+            }
+        }
+
+        self.init(effect: fullEffect, on: executer)
+    }
+
+    public init(directEffect: @escaping (StateStream.Value) -> EventStream.Value, on executer: Executer? = nil) {
+        let fullEffect: (StateStream) -> EventStream = { states in
+            return states.map(directEffect).eraseToAnyPublisher()
+        }
+
+        self.init(effect: fullEffect, on: executer)
+    }
+
     public init<FeedbackType>(feedbacks: [FeedbackType])
         where
         FeedbackType: Feedback,
@@ -140,28 +163,6 @@ public struct CombineFeedback<State, Event, SchedulerTime, SchedulerOptions>: Fe
             }
 
             self.init(effect: feedback)
-    }
-
-    public static func make(from effect: @escaping (StateStream.Value) -> EventStream,
-                            applying strategy: ExecutionStrategy) -> (StateStream) -> EventStream {
-        let fullEffect: (StateStream) -> EventStream = { states in
-            switch strategy {
-            case .continueOnNewEvent:
-                return states.flatMap(effect).eraseToAnyPublisher()
-            case .cancelOnNewEvent:
-                return states.map(effect).switchToLatest().eraseToAnyPublisher()
-            }
-        }
-
-        return fullEffect
-    }
-
-    public static func make(from directEffect: @escaping (StateStream.Value) -> EventStream.Value) -> (StateStream) -> EventStream {
-        let fullEffect: (StateStream) -> EventStream = { states in
-            return states.map(directEffect).eraseToAnyPublisher()
-        }
-
-        return fullEffect
     }
 }
 

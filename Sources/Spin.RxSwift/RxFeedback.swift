@@ -27,6 +27,34 @@ public struct RxFeedback<State, Event>: Feedback {
         }
     }
 
+
+    public init(effect: @escaping (StateStream.Value) -> EventStream,
+                on executer: Executer? = nil,
+                applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
+        let effectStream = { (state: StateStream.Value) -> EventStream in
+            return effect(state).catchError { _ in return .empty() }
+        }
+
+        let fullEffect: (StateStream) -> EventStream = { states in
+            switch strategy {
+            case .continueOnNewEvent:
+                return states.flatMap(effectStream)
+            case .cancelOnNewEvent:
+                return states.flatMapLatest(effectStream)
+            }
+        }
+
+        self.init(effect: fullEffect, on: executer)
+    }
+
+    public init(directEffect: @escaping (StateStream.Value) -> EventStream.Value, on executer: Executer? = nil) {
+        let fullEffect: (StateStream) -> EventStream = { states in
+            return states.map(directEffect)
+        }
+
+        self.init(effect: fullEffect, on: executer)
+    }
+
     public init<FeedbackType: Feedback>(feedbacks: [FeedbackType])
         where
         FeedbackType.StateStream == StateStream,
@@ -134,31 +162,5 @@ public struct RxFeedback<State, Event>: Feedback {
         }
 
         self.init(effect: feedback)
-    }
-
-    public static func make(from effect: @escaping (StateStream.Value) -> EventStream,
-                            applying strategy: ExecutionStrategy) -> (StateStream) -> EventStream {
-        let effectStream = { (state: StateStream.Value) -> EventStream in
-            return effect(state).catchError { _ in return .empty() }
-        }
-
-        let fullEffect: (StateStream) -> EventStream = { states in
-            switch strategy {
-            case .continueOnNewEvent:
-                return states.flatMap(effectStream)
-            case .cancelOnNewEvent:
-                return states.flatMapLatest(effectStream)
-            }
-        }
-
-        return fullEffect
-    }
-
-    public static func make(from directEffect: @escaping (StateStream.Value) -> EventStream.Value) -> (StateStream) -> EventStream {
-        let fullEffect: (StateStream) -> EventStream = { states in
-            return states.map(directEffect)
-        }
-
-        return fullEffect
     }
 }

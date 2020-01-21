@@ -103,7 +103,7 @@ final class RxFeedbackTests: XCTestCase {
         }
 
         // Given: this stream being applied a "continueOnNewEvent" strategy
-        let sut = RxFeedback.make(from: stream, applying: .continueOnNewEvent)
+        let sut = RxFeedback(effect: stream, applying: .continueOnNewEvent).effect
 
         // When: feeding this stream with 2 events: 1 and 2
         let received = try sut(.from([1, 2])).toBlocking().toArray()
@@ -123,7 +123,7 @@ final class RxFeedbackTests: XCTestCase {
         }
 
         // Given: this stream being applied a "continueOnNewEvent" strategy
-        let sut = RxFeedback.make(from: stream, applying: .continueOnNewEvent)
+        let sut = RxFeedback(effect: stream, applying: .continueOnNewEvent).effect
 
         // When: feeding this stream with 2 events: 1 and 2
         let received = try sut(.from([1, 2])).toBlocking().toArray()
@@ -153,7 +153,7 @@ final class RxFeedbackTests: XCTestCase {
         }
 
         // Given: this stream being applied a "cancelOnNewEvent" strategy
-        let sut = RxFeedback.make(from: stream, applying: .cancelOnNewEvent)
+        let sut = RxFeedback(effect: stream, applying: .cancelOnNewEvent).effect
 
         // When: feeding this stream with 2 events: 1 and 2
         let received = try sut(.from([1, 2])).toBlocking().toArray()
@@ -174,7 +174,7 @@ final class RxFeedbackTests: XCTestCase {
         }
 
         // Given: this stream being applied a "continueOnNewEvent" strategy
-        let sut = RxFeedback.make(from: stream, applying: .cancelOnNewEvent)
+        let sut = RxFeedback(effect: stream, applying: .cancelOnNewEvent).effect
 
         // When: feeding this stream with 2 events: 1 and 2
         let received = try sut(.from([1, 2])).toBlocking().toArray()

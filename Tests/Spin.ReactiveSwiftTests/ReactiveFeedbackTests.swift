@@ -89,7 +89,7 @@ final class ReactiveFeedbackTests: XCTestCase {
         }
 
         // Given: this stream being applied a "continueOnNewEvent" strategy
-        let sut = ReactiveFeedback.make(from: stream, applying: .continueOnNewEvent)
+        let sut = ReactiveFeedback(effect: stream, applying: .continueOnNewEvent).effect
 
         // When: feeding this stream with 2 events: 1 and 2
         let received = try sut(SignalProducer<Int, Never>([1, 2])).take(first: 2).collect().first()!.get()
@@ -121,7 +121,7 @@ final class ReactiveFeedbackTests: XCTestCase {
         }
 
         // Given: this stream being applied a "cancelOnNewEvent" strategy
-        let sut = ReactiveFeedback.make(from: stream, applying: .cancelOnNewEvent)
+        let sut = ReactiveFeedback(effect: stream, applying: .cancelOnNewEvent).effect
 
         // When: feeding this stream with 2 events: 1 and 2
         let received = try sut(SignalProducer<Int, Never>([1, 2])).take(first: 2).collect().first()!.get()

@@ -24,12 +24,9 @@ public protocol Feedback {
 
     var effect: (StateStream) -> EventStream { get }
 
-    static func make(from effect: @escaping (StateStream.Value) -> EventStream,
-                     applying strategy: ExecutionStrategy) -> (StateStream) -> EventStream
-
-    static func make(from directEffect: @escaping (StateStream.Value) -> EventStream.Value) -> (StateStream) -> EventStream
-
     init(effect: @escaping (StateStream) -> EventStream, on executer: Executer?)
+    init(effect: @escaping (StateStream.Value) -> EventStream, on executer: Executer?, applying strategy: ExecutionStrategy)
+    init(directEffect: @escaping (StateStream.Value) -> EventStream.Value, on executer: Executer?)
 
     init<FeedbackType: Feedback>(feedbacks: [FeedbackType])
         where

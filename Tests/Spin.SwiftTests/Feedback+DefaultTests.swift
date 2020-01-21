@@ -25,6 +25,26 @@ fileprivate struct SpyFeedback<State: CanBeEmpty, Event: CanBeEmpty>: Feedback {
         self.initIsCalled = true
     }
 
+    fileprivate init(effect: @escaping (StateStream.Value) -> EventStream,
+                on executer: Executer? = nil,
+                applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
+        spyExecutionStrategy = strategy
+
+        let fullEffect: (StateStream) -> EventStream = { states in
+            return states.flatMap(effect)
+        }
+
+        self.init(effect: fullEffect, on: executer)
+    }
+
+    fileprivate init(directEffect: @escaping (StateStream.Value) -> EventStream.Value, on executer: Executer? = nil) {
+        let fullEffect: (StateStream) -> EventStream = { states in
+            return states.map(directEffect)
+        }
+
+        self.init(effect: fullEffect, on: executer)
+    }
+
     fileprivate init<FeedbackType: Feedback>(feedbacks: [FeedbackType]) where FeedbackType.StateStream == StateStream, FeedbackType.EventStream == EventStream {
         let feedback = { (stateStream: FeedbackType.StateStream) -> FeedbackType.EventStream in
             _ = feedbacks.map { $0.effect(stateStream) }
@@ -121,24 +141,6 @@ fileprivate struct SpyFeedback<State: CanBeEmpty, Event: CanBeEmpty>: Feedback {
 
          self.init(effect: feedback)
      }
-
-    fileprivate static func make(from effect: @escaping (StateStream.Value) -> EventStream, applying strategy: ExecutionStrategy) -> (StateStream) -> EventStream {
-        spyExecutionStrategy = strategy
-
-        let fullEffect: (StateStream) -> EventStream = { states in
-            return states.flatMap(effect)
-        }
-
-        return fullEffect
-    }
-
-    static func make(from directEffect: @escaping (StateStream.Value) -> EventStream.Value) -> (StateStream) -> EventStream {
-        let fullEffect: (StateStream) -> EventStream = { states in
-            return states.map(directEffect)
-        }
-
-        return fullEffect
-    }
 }
 
 private var spyExecutionStrategy: ExecutionStrategy? = nil

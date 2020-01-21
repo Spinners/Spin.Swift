@@ -29,6 +29,24 @@ struct MockFeedback<State: CanBeEmpty, Event: CanBeEmpty>: Feedback {
         self.init(effect: feedback)
     }
 
+    init(effect: @escaping (StateStream.Value) -> EventStream,
+                on executer: Executer? = nil,
+                applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
+        let fullEffect: (StateStream) -> EventStream = { states in
+            return states.flatMap(effect)
+        }
+
+        self.init(effect: fullEffect, on: executer)
+    }
+
+    init(directEffect: @escaping (StateStream.Value) -> EventStream.Value, on executer: Executer? = nil) {
+        let fullEffect: (StateStream) -> EventStream = { states in
+            return states.map(directEffect)
+        }
+
+        self.init(effect: fullEffect, on: executer)
+    }
+
     init<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback>(feedbacks feedbackA: FeedbackTypeA, _ feedbackB: FeedbackTypeB)
          where   FeedbackTypeA.StateStream == FeedbackTypeB.StateStream,
                  FeedbackTypeA.EventStream == FeedbackTypeB.EventStream,
@@ -116,20 +134,4 @@ struct MockFeedback<State: CanBeEmpty, Event: CanBeEmpty>: Feedback {
 
          self.init(effect: feedback)
      }
-
-    static func make(from effect: @escaping (StateStream.Value) -> EventStream, applying strategy: ExecutionStrategy) -> (StateStream) -> EventStream {
-        let fullEffect: (StateStream) -> EventStream = { states in
-            return states.flatMap(effect)
-        }
-
-        return fullEffect
-    }
-
-    static func make(from directEffect: @escaping (StateStream.Value) -> EventStream.Value) -> (StateStream) -> EventStream {
-        let fullEffect: (StateStream) -> EventStream = { states in
-            return states.map(directEffect)
-        }
-
-        return fullEffect
-    }
 }

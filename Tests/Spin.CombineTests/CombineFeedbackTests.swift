@@ -95,7 +95,7 @@ final class CombineFeedbackTests: XCTestCase {
         }
 
         // Given: this stream being applied a "continueOnNewEvent" strategy
-        let sut = DispatchQueueCombineFeedback<Int, String>.make(from: stream, applying: .continueOnNewEvent)
+        let sut = DispatchQueueCombineFeedback<Int, String>(effect: stream, applying: .continueOnNewEvent).effect
 
         // When: feeding this stream with 2 events: 1 and 2
         let recorder = sut([1, 2].publisher.eraseToAnyPublisher()).record()
@@ -128,7 +128,7 @@ final class CombineFeedbackTests: XCTestCase {
         }
 
         // Given: this stream being applied a "cancelOnNewEvent" strategy
-        let sut = DispatchQueueCombineFeedback<Int, String>.make(from: stream, applying: .cancelOnNewEvent)
+        let sut = DispatchQueueCombineFeedback<Int, String>(effect: stream, applying: .cancelOnNewEvent).effect
 
         // When: feeding this stream with 2 events: 1 and 2
         let recorder = sut([1, 2].publisher.eraseToAnyPublisher()).record()

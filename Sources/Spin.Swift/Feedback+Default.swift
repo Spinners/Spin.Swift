@@ -134,25 +134,6 @@ public extension Feedback {
             self.init(feedbacks: feedbackA, feedbackB, feedbackC, feedbackD, feedbackE)
     }
 
-    /// Initialize the feedback with a: State -> ReactiveStream<Event> stream
-    /// - Parameters:
-    ///   - effect: the function transforming a `State` to a reactive stream of `Event`
-    ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
-    ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while
-    ///   the previous execution is still in progress
-    init(effect: @escaping (StateStream.Value) -> EventStream,
-         on executer: Executer? = nil,
-         applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
-        let effect = Self.make(from: effect, applying: strategy)
-        self.init(effect: effect, on: executer)
-    }
-
-    init(directEffect: @escaping (StateStream.Value) -> EventStream.Value,
-         on executer: Executer? = nil) {
-        let effect = Self.make(from: directEffect)
-        self.init(effect: effect, on: executer)
-    }
-
     /// Initialize the feedback with a: State -> ReactiveStream<Event> stream, dismissing the `State` values that
     /// don't match the filter
     /// - Parameters:
