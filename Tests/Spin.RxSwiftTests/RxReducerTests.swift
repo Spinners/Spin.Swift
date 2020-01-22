@@ -12,8 +12,8 @@ import XCTest
 
 final class RxReducerTests: XCTestCase {
 
-    func test_reduce_is_performed_on_current_executer_when_no_executer_is_specified() {
-        // Given: a feedback switching on a specified Executer after being executed
+    func test_apply_is_performed_on_default_executer_when_no_executer_is_specified() {
+        // Given: an effect switching on a specified Executer after being executed
         var reduceIsCalled = false
         let expectedExecuterName = "INPUT_STREAM_QUEUE_\(UUID().uuidString)"
         var receivedExecuterName = ""
@@ -33,7 +33,7 @@ final class RxReducerTests: XCTestCase {
 
         // When: reducing without specifying an Executer for the reduce operation
         _ = RxReducer(reducer: reducerFunction)
-            .apply(on: 0, after: feedback.effect)
+            .apply(on: 0, after: [feedback.effect])
             .take(2)
             .toBlocking()
             .materialize()
@@ -44,8 +44,8 @@ final class RxReducerTests: XCTestCase {
         XCTAssertEqual(receivedExecuterName, expectedExecuterName)
     }
 
-    func test_reduce_is_performed_on_dedicated_executer_when_executer_is_specified() {
-        // Given: a feedback switching on a specified Executer after being executed
+    func test_apply_is_performed_on_dedicated_executer_when_executer_is_specified() {
+        // Given: an effect switching on a specified Executer after being executed
         var reduceIsCalled = false
         let expectedExecuterName = "REDUCER_QUEUE_\(UUID().uuidString)"
         var receivedExecuterName = ""
@@ -67,7 +67,7 @@ final class RxReducerTests: XCTestCase {
 
         // When: reducing with specifying an Executer for the reduce operation
         _ = RxReducer(reducer: reducerFunction, on: reducerScheduler)
-            .apply(on: 0, after: feedback.effect)
+            .apply(on: 0, after: [feedback.effect])
             .take(2)
             .toBlocking()
             .materialize()
@@ -79,7 +79,7 @@ final class RxReducerTests: XCTestCase {
     }
 
     func test_reduce_outputs_no_error_and_complete_when_feedback_stream_fails() {
-        // Given: a feedback that outputs an Error
+        // Given: an effect that outputs an Error
         var reduceIsCalled = false
 
         let feedback = RxFeedback(effect: { (inputs: Observable<Int>) -> Observable<String> in
@@ -93,7 +93,7 @@ final class RxReducerTests: XCTestCase {
 
         // When: reducing the feedback loop
         let events = RxReducer(reducer: reducerFunction)
-            .apply(on: 0, after: feedback.effect)
+            .apply(on: 0, after: [feedback.effect])
             .toBlocking()
             .materialize()
 
@@ -106,18 +106,22 @@ final class RxReducerTests: XCTestCase {
     func test_initialState_is_the_first_state_given_to_the_feedbacks() {
         // Given: 2 feedbacks
         let initialState = 1701
-        var receivedInitialStateInFeedbackA = 0
-        var receivedInitialStateInFeedbackB = 0
+        var receivedInitialStateInEffectA = 0
+        var receivedInitialStateInEffectB = 0
 
-        let feedbackA = RxFeedback(effect: { (input: Int) -> Observable<String> in
-            receivedInitialStateInFeedbackA = input
-            return .just("")
-        })
+        let effectA = { (inputs: Observable<Int>) -> Observable<String> in
+            return inputs.map { input in
+                receivedInitialStateInEffectA = input
+                return "\(input)"
+            }
+        }
 
-        let feedbackB = RxFeedback(effect: { (input: Int) -> Observable<String> in
-            receivedInitialStateInFeedbackB = input
-            return .just("")
-        })
+        let effectB = { (inputs: Observable<Int>) -> Observable<String> in
+            return inputs.map { input in
+                receivedInitialStateInEffectB = input
+                return "\(input)"
+            }
+        }
 
         let reducerFunction = { (state: Int, action: String) -> Int in
             return 0
@@ -125,43 +129,13 @@ final class RxReducerTests: XCTestCase {
 
         // When: reducing the feedbacks
         _ = RxReducer(reducer: reducerFunction)
-            .apply(on: initialState, after: RxFeedback(feedbacks: feedbackA, feedbackB).effect)
+            .apply(on: initialState, after: [effectA, effectB])
             .take(1)
             .toBlocking()
             .materialize()
 
-        // Then: the initial states received in the feedbacks are the one specified in the Reducer
-        XCTAssertEqual(receivedInitialStateInFeedbackA, initialState)
-        XCTAssertEqual(receivedInitialStateInFeedbackB, initialState)
-    }
-
-    func test_reduce_with_an_array_of_streams_preserves_the_streams() throws {
-        // Given: 2 feedback streams
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
-
-        let feedbackAFunction = { (inputs: Observable<Int>) -> Observable<String> in
-            feedbackAIsCalled = true
-            return .just("")
-        }
-        let feedbackBFunction = { (inputs: Observable<Int>) -> Observable<String> in
-            feedbackBIsCalled = true
-            return .just("")
-        }
-
-        let reducerFunction = { (state: Int, action: String) -> Int in
-            return 0
-        }
-
-        // When: reducing with those feedback streams
-        _ = RxReducer(reducer: reducerFunction)
-            .apply(on: 0, after: [feedbackAFunction, feedbackBFunction])
-            .take(2)
-            .toBlocking()
-            .materialize()
-
-        // Then: the 2 feedbacks are executed
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
+        // Then: the initial states received in the effects are the one specified in the Reducer
+        XCTAssertEqual(receivedInitialStateInEffectA, initialState)
+        XCTAssertEqual(receivedInitialStateInEffectB, initialState)
     }
 }

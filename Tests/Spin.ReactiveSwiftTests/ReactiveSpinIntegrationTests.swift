@@ -14,22 +14,6 @@ fileprivate enum StringAction {
     case append(String)
 }
 
-fileprivate struct SutSpin: SpinDefinition {
-
-    let effectA: (String) -> SignalProducer<StringAction, Never>
-    let effectB: (String) -> SignalProducer<StringAction, Never>
-    let effectC: (String) -> SignalProducer<StringAction, Never>
-    let reducerFunction: (String, StringAction) -> String
-
-    var spin: ReactiveSpin<String> {
-        ReactiveSpin(initialState: "initialState", reducer: ReactiveReducer(reducer: reducerFunction)) {
-            ReactiveFeedback(effect: effectA)
-            ReactiveFeedback(effect: effectB)
-            ReactiveFeedback(effect: effectC)
-        }
-    }
-}
-
 final class ReactiveSpinIntegrationTests: XCTestCase {
 
     private let disposeBag = CompositeDisposable()
@@ -128,11 +112,14 @@ final class ReactiveSpinIntegrationTests: XCTestCase {
             }
         }
 
+        let sut = ReactiveSpin<String>(initialState: "initialState", reducer: ReactiveReducer(reducer: reducerFunction)) {
+            ReactiveFeedback(effect: effectA).execute(on: UIScheduler())
+            ReactiveFeedback(effect: effectB).execute(on: UIScheduler())
+            ReactiveFeedback(effect: effectC).execute(on: UIScheduler())
+        }
+
         // When: spinning the feedbacks and the reducer on the default executer
-        SutSpin(effectA: effectA,
-                effectB: effectB,
-                effectC: effectC,
-                reducerFunction: reducerFunction)
+        sut
             .toReactiveStream()
             .take(first: 7)
             .collect()

@@ -51,118 +51,13 @@ public struct CombineFeedback<State, Event, SchedulerTime, SchedulerOptions>: Fe
         self.init(effect: fullEffect, on: executer)
     }
 
-    public init<FeedbackType>(feedbacks: [FeedbackType])
-        where
-        FeedbackType: Feedback,
-        FeedbackType.StateStream == StateStream,
-        FeedbackType.EventStream == EventStream {
-            let feedback = { (stateStream: FeedbackType.StateStream) -> FeedbackType.EventStream in
-                let eventStreams = feedbacks.map { $0.effect(stateStream) }
-                return Publishers.MergeMany(eventStreams).eraseToAnyPublisher()
-            }
+    public init(effects: [(StateStream) -> EventStream]) {
+        let fullEffect: (StateStream) -> EventStream = { states in
+            let eventStreams = effects.map { $0(states) }
+            return Publishers.MergeMany(eventStreams).eraseToAnyPublisher()
+        }
 
-            self.init(effect: feedback)
-    }
-
-    public init<FeedbackA, FeedbackB>(feedbacks feedbackA: FeedbackA, _ feedbackB: FeedbackB)
-        where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
-        FeedbackA.StateStream == FeedbackB.StateStream,
-        FeedbackA.EventStream == FeedbackB.EventStream,
-        FeedbackA.StateStream == StateStream,
-        FeedbackA.EventStream == EventStream {
-            let feedback = { stateStream in
-                return Publishers.Merge(feedbackA.effect(stateStream),
-                                        feedbackB.effect(stateStream))
-                    .eraseToAnyPublisher()
-            }
-
-            self.init(effect: feedback)
-    }
-
-    public init<FeedbackA, FeedbackB, FeedbackC>(feedbacks feedbackA: FeedbackA,
-                                                 _ feedbackB: FeedbackB,
-                                                 _ feedbackC: FeedbackC)
-        where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
-        FeedbackC: Feedback,
-        FeedbackA.StateStream == FeedbackB.StateStream,
-        FeedbackA.EventStream == FeedbackB.EventStream,
-        FeedbackB.StateStream == FeedbackC.StateStream,
-        FeedbackB.EventStream == FeedbackC.EventStream,
-        FeedbackA.StateStream == StateStream,
-        FeedbackA.EventStream == EventStream {
-            let feedback = { stateStream in
-                return Publishers.Merge3(feedbackA.effect(stateStream),
-                                         feedbackB.effect(stateStream),
-                                         feedbackC.effect(stateStream))
-                    .eraseToAnyPublisher()
-            }
-
-            self.init(effect: feedback)
-    }
-
-    public init<FeedbackA, FeedbackB, FeedbackC, FeedbackD>(feedbacks feedbackA: FeedbackA,
-                                                            _ feedbackB: FeedbackB,
-                                                            _ feedbackC: FeedbackC,
-                                                            _ feedbackD: FeedbackD)
-        where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
-        FeedbackC: Feedback,
-        FeedbackD: Feedback,
-        FeedbackA.StateStream == FeedbackB.StateStream,
-        FeedbackA.EventStream == FeedbackB.EventStream,
-        FeedbackB.StateStream == FeedbackC.StateStream,
-        FeedbackB.EventStream == FeedbackC.EventStream,
-        FeedbackC.StateStream == FeedbackD.StateStream,
-        FeedbackC.EventStream == FeedbackD.EventStream,
-        FeedbackA.StateStream == StateStream,
-        FeedbackA.EventStream == EventStream {
-            let feedback = { stateStream in
-                return Publishers.Merge4(feedbackA.effect(stateStream),
-                                         feedbackB.effect(stateStream),
-                                         feedbackC.effect(stateStream),
-                                         feedbackD.effect(stateStream))
-                    .eraseToAnyPublisher()
-            }
-
-            self.init(effect: feedback)
-    }
-
-    public init<FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE>(feedbacks feedbackA: FeedbackA,
-                                                                       _ feedbackB: FeedbackB,
-                                                                       _ feedbackC: FeedbackC,
-                                                                       _ feedbackD: FeedbackD,
-                                                                       _ feedbackE: FeedbackE)
-        where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
-        FeedbackC: Feedback,
-        FeedbackD: Feedback,
-        FeedbackE: Feedback,
-        FeedbackA.StateStream == FeedbackB.StateStream,
-        FeedbackA.EventStream == FeedbackB.EventStream,
-        FeedbackB.StateStream == FeedbackC.StateStream,
-        FeedbackB.EventStream == FeedbackC.EventStream,
-        FeedbackC.StateStream == FeedbackD.StateStream,
-        FeedbackC.EventStream == FeedbackD.EventStream,
-        FeedbackD.StateStream == FeedbackE.StateStream,
-        FeedbackD.EventStream == FeedbackE.EventStream,
-        FeedbackA.StateStream == StateStream,
-        FeedbackA.EventStream == EventStream {
-            let feedback = { stateStream in
-                return Publishers.Merge5(feedbackA.effect(stateStream),
-                                         feedbackB.effect(stateStream),
-                                         feedbackC.effect(stateStream),
-                                         feedbackD.effect(stateStream),
-                                         feedbackE.effect(stateStream))
-                    .eraseToAnyPublisher()
-            }
-
-            self.init(effect: feedback)
+        self.init(effect: fullEffect, on: nil)
     }
 }
 

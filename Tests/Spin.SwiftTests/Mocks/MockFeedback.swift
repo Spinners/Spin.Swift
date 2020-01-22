@@ -20,24 +20,17 @@ struct MockFeedback<State: CanBeEmpty, Event: CanBeEmpty>: Feedback {
         self.feedbackExecuter = executer
     }
 
-    init<FeedbackType: Feedback>(feedbacks: [FeedbackType]) where FeedbackType.StateStream == StateStream, FeedbackType.EventStream == EventStream {
-        let feedback = { (stateStream: FeedbackType.StateStream) -> FeedbackType.EventStream in
-            _ = feedbacks.map { $0.effect(stateStream) }
-            return .emptyStream()
-        }
-
-        self.init(effect: feedback)
-    }
-
     init(effect: @escaping (StateStream.Value) -> EventStream,
-                on executer: Executer? = nil,
-                applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
+         on executer: Executer? = nil,
+         applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
         let fullEffect: (StateStream) -> EventStream = { states in
             return states.flatMap(effect)
         }
 
         self.init(effect: fullEffect, on: executer)
     }
+
+
 
     init(directEffect: @escaping (StateStream.Value) -> EventStream.Value, on executer: Executer? = nil) {
         let fullEffect: (StateStream) -> EventStream = { states in
@@ -47,91 +40,13 @@ struct MockFeedback<State: CanBeEmpty, Event: CanBeEmpty>: Feedback {
         self.init(effect: fullEffect, on: executer)
     }
 
-    init<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback>(feedbacks feedbackA: FeedbackTypeA, _ feedbackB: FeedbackTypeB)
-         where   FeedbackTypeA.StateStream == FeedbackTypeB.StateStream,
-                 FeedbackTypeA.EventStream == FeedbackTypeB.EventStream,
-                 FeedbackTypeA.StateStream == StateStream,
-                 FeedbackTypeA.EventStream == EventStream {
 
-        let feedback: (StateStream) -> EventStream = { stateStream in
-            _ = feedbackA.effect(stateStream)
-            _ = feedbackB.effect(stateStream)
+    init(effects: [(StateStream) -> EventStream]) {
+        let effect: (StateStream) -> EventStream = { states in
+            _ = effects.map { $0(states) }
             return .emptyStream()
         }
 
-        self.init(effect: feedback)
+        self.init(effect: effect, on: nil)
     }
-
-    init<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback, FeedbackTypeC: Feedback>(feedbacks feedbackA: FeedbackTypeA, _ feedbackB: FeedbackTypeB, _ feedbackC: FeedbackTypeC)
-         where   FeedbackTypeA.StateStream == FeedbackTypeB.StateStream,
-                 FeedbackTypeA.EventStream == FeedbackTypeB.EventStream,
-                 FeedbackTypeB.StateStream == FeedbackTypeC.StateStream,
-                 FeedbackTypeB.EventStream == FeedbackTypeC.EventStream,
-                 FeedbackTypeA.StateStream == StateStream,
-                 FeedbackTypeA.EventStream == EventStream {
-
-         let feedback: (StateStream) -> EventStream = { stateStream in
-            _ = feedbackA.effect(stateStream)
-            _ = feedbackB.effect(stateStream)
-            _ = feedbackC.effect(stateStream)
-
-            return .emptyStream()
-         }
-
-         self.init(effect: feedback)
-     }
-
-    init<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback, FeedbackTypeC: Feedback, FeedbackTypeD: Feedback>(feedbacks feedbackA: FeedbackTypeA,
-                                                                                                                     _ feedbackB: FeedbackTypeB,
-                                                                                                                     _ feedbackC: FeedbackTypeC,
-                                                                                                                     _ feedbackD: FeedbackTypeD)
-         where   FeedbackTypeA.StateStream == FeedbackTypeB.StateStream,
-                 FeedbackTypeA.EventStream == FeedbackTypeB.EventStream,
-                 FeedbackTypeB.StateStream == FeedbackTypeC.StateStream,
-                 FeedbackTypeB.EventStream == FeedbackTypeC.EventStream,
-                 FeedbackTypeC.StateStream == FeedbackTypeD.StateStream,
-                 FeedbackTypeC.EventStream == FeedbackTypeD.EventStream,
-                 FeedbackTypeA.StateStream == StateStream,
-                 FeedbackTypeA.EventStream == EventStream {
-
-         let feedback: (StateStream) -> EventStream = { stateStream in
-            _ = feedbackA.effect(stateStream)
-            _ = feedbackB.effect(stateStream)
-            _ = feedbackC.effect(stateStream)
-            _ = feedbackD.effect(stateStream)
-
-            return .emptyStream()
-         }
-
-         self.init(effect: feedback)
-     }
-
-    init<FeedbackTypeA: Feedback, FeedbackTypeB: Feedback, FeedbackTypeC: Feedback, FeedbackTypeD: Feedback, FeedbackTypeE: Feedback>(feedbacks feedbackA: FeedbackTypeA,
-                                                                                                                                              _ feedbackB: FeedbackTypeB,
-                                                                                                                                              _ feedbackC: FeedbackTypeC,
-                                                                                                                                              _ feedbackD: FeedbackTypeD,
-                                                                                                                                              _ feedbackE: FeedbackTypeE)
-         where   FeedbackTypeA.StateStream == FeedbackTypeB.StateStream,
-                 FeedbackTypeA.EventStream == FeedbackTypeB.EventStream,
-                 FeedbackTypeB.StateStream == FeedbackTypeC.StateStream,
-                 FeedbackTypeB.EventStream == FeedbackTypeC.EventStream,
-                 FeedbackTypeC.StateStream == FeedbackTypeD.StateStream,
-                 FeedbackTypeC.EventStream == FeedbackTypeD.EventStream,
-                 FeedbackTypeD.StateStream == FeedbackTypeE.StateStream,
-                 FeedbackTypeD.EventStream == FeedbackTypeE.EventStream,
-                 FeedbackTypeA.StateStream == StateStream,
-                 FeedbackTypeA.EventStream == EventStream {
-
-         let feedback: (StateStream) -> EventStream = { stateStream in
-            _ = feedbackA.effect(stateStream)
-            _ = feedbackB.effect(stateStream)
-            _ = feedbackC.effect(stateStream)
-            _ = feedbackD.effect(stateStream)
-            _ = feedbackE.effect(stateStream)
-
-            return .emptyStream()
-         }
-
-         self.init(effect: feedback)
-     }
 }

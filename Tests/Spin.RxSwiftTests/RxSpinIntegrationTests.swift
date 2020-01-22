@@ -14,22 +14,6 @@ fileprivate enum StringAction {
     case append(String)
 }
 
-fileprivate struct SutSpin: SpinDefinition {
-
-    let effectA: (String) -> Observable<StringAction>
-    let effectB: (String) -> Observable<StringAction>
-    let effectC: (String) -> Observable<StringAction>
-    let reducerFunction: (String, StringAction) -> String
-
-    var spin: RxSpin<String> {
-        RxSpin(initialState: "initialState", reducer: RxReducer(reducer: reducerFunction)) {
-            RxFeedback(effect: effectA)
-            RxFeedback(effect: effectB)
-            RxFeedback(effect: effectC)
-        }
-    }
-}
-
 final class RxSpinIntegrationTests: XCTestCase {
 
     private let disposeBag = DisposeBag()
@@ -118,11 +102,14 @@ final class RxSpinIntegrationTests: XCTestCase {
             }
         }
 
+        let sut = RxSpin<String>(initialState: "initialState", reducer: RxReducer(reducer: reducerFunction)) {
+            RxFeedback(effect: effectA).execute(on: MainScheduler.instance)
+            RxFeedback(effect: effectB).execute(on: MainScheduler.instance)
+            RxFeedback(effect: effectC).execute(on: MainScheduler.instance)
+        }
+
         // When: spinning the feedbacks and the reducer on the default executer
-        let receivedStates = try SutSpin(effectA: effectA,
-                                         effectB: effectB,
-                                         effectC: effectC,
-                                         reducerFunction: reducerFunction)
+        let receivedStates = try sut
             .toReactiveStream()
             .take(7)
             .toBlocking()

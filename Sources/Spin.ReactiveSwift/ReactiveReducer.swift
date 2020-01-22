@@ -23,24 +23,19 @@ public struct ReactiveReducer<State, Event>: Reducer {
     }
 
     public func apply(on initialState: StateStream.Value,
-                      after feedback: @escaping (StateStream) -> EventStream) -> StateStream {
+                      after effects: [(StateStream) -> EventStream]) -> StateStream {
         return SignalProducer.deferred {
             let currentState = MutableProperty<State>(initialState)
 
-            return feedback(currentState.producer)
+            // merging all the effects into one event stream
+            let eventStreams = effects.map { $0(currentState.producer) }
+            let eventStream = SignalProducer.merge(eventStreams)
+
+            return eventStream
                 .observe(on: self.executer)
                 .scan(initialState, self.reducer)
                 .prefix(value: initialState)
                 .on(value: { currentState.swap($0) })
         }
-    }
-
-    public func apply(on initialState: StateStream.Value,
-                      after feedbacks: [(StateStream) -> EventStream]) -> StateStream {
-        let feedback = { stateStream in
-            return SignalProducer.merge(feedbacks.map { $0(stateStream) })
-        }
-
-        return self.apply(on: initialState, after: feedback)
     }
 }
