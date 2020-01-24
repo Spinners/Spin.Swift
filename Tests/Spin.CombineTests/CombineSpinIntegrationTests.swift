@@ -14,27 +14,11 @@ fileprivate enum StringAction {
     case append(String)
 }
 
-fileprivate struct SutSpin: SpinDefinition {
-
-    let effectA: (String) -> AnyPublisher<StringAction, Never>
-    let effectB: (String) -> AnyPublisher<StringAction, Never>
-    let effectC: (String) -> AnyPublisher<StringAction, Never>
-    let reducerFunction: (String, StringAction) -> String
-
-    fileprivate var spin: CombineSpin<String> {
-        CombineSpin(initialState: "initialState", reducer: DispatchQueueCombineReducer(reducer: reducerFunction)) {
-            CombineFeedback(effect: effectA).execute(on: DispatchQueue.main.eraseToAnyScheduler())
-            CombineFeedback(effect: effectB).execute(on: DispatchQueue.main.eraseToAnyScheduler())
-            CombineFeedback(effect: effectC).execute(on: DispatchQueue.main.eraseToAnyScheduler())
-        }
-    }
-}
-
 final class CombineSpinIntegrationTests: XCTestCase {
 
     func test_multiple_feedbacks_produces_incremental_states_while_executed_on_default_executer() throws {
 
-        // Given: an initial state, feedbacks and a reducer
+        // Given: an initial state, effects and a reducer
         var counterA = 0
         let effectA = { (state: String) -> AnyPublisher<StringAction, Never> in
             counterA += 1
@@ -88,7 +72,7 @@ final class CombineSpinIntegrationTests: XCTestCase {
 
     func test_multiple_feedbacks_produces_incremental_states_while_executed_on_default_executer_using_declarative_syntax() throws {
 
-        // Given: an initial state, feedbacks and a reducer
+        // Given: an initial state, effect and a reducer
         var counterA = 0
         let effectA = { (state: String) -> AnyPublisher<StringAction, Never> in
             counterA += 1
@@ -117,11 +101,14 @@ final class CombineSpinIntegrationTests: XCTestCase {
             }
         }
 
+        let sut = CombineSpin<String>(initialState: "initialState", reducer: CombineReducer(reducer: reducerFunction)) {
+            CombineFeedback(effect: effectA).execute(on: DispatchQueue.main.eraseToAnyScheduler())
+            CombineFeedback(effect: effectB).execute(on: DispatchQueue.main.eraseToAnyScheduler())
+            CombineFeedback(effect: effectC).execute(on: DispatchQueue.main.eraseToAnyScheduler())
+        }
+
         // When: spinning the feedbacks and the reducer on the default executer
-        let recorder = SutSpin(effectA: effectA,
-                               effectB: effectB,
-                               effectC: effectC,
-            reducerFunction: reducerFunction)
+        let recorder = sut
             .toReactiveStream()
             .output(in: (0...6))
             .record()

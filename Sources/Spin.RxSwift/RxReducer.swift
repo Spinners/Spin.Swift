@@ -24,25 +24,20 @@ public struct RxReducer<State, Event>: Reducer {
     }
 
     public func apply(on initialState: StateStream.Value,
-                      after feedback: @escaping (StateStream) -> EventStream) -> StateStream {
+                      after effects: [(StateStream) -> EventStream]) -> StateStream {
         return Observable<StateStream.Value>.deferred {
             let currentState = ReplaySubject<State>.create(bufferSize: 1)
 
-            return feedback(currentState.asObservable())
+            // merging all the effects into one event stream
+            let eventStreams = effects.map { $0(currentState.asObservable()) }
+            let eventStream = Observable.merge(eventStreams)
+
+            return eventStream
                 .catchError { _ in return .empty() }
                 .observeOn(self.executer)
                 .scan(initialState, accumulator: self.reducer)
                 .startWith(initialState)
                 .do(onNext: { currentState.onNext($0) })
         }
-    }
-
-    public func apply(on initialState: StateStream.Value,
-                      after feedbacks: [(StateStream) -> EventStream]) -> StateStream {
-        let feedback = { stateStream in
-            return Observable.merge(feedbacks.map { $0(stateStream) })
-        }
-
-        return self.apply(on: initialState, after: feedback)
     }
 }

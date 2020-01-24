@@ -20,120 +20,7 @@ public extension Feedback {
         let newFeedback = Self(effect: self.effect, on: executer)
         return newFeedback
     }
-
-    init<StateStreamType, EventStreamType>(_ effects: [(StateStream) -> EventStream])
-        where
-        StateStreamType == StateStream,
-        EventStreamType == EventStream {
-            let feedbacks = effects.map { Self(effect: $0, on: nil) }
-            self.init(feedbacks: feedbacks)
-    }
-
-    init<FeedbackType>(_ feedback: FeedbackType)
-        where
-        FeedbackType: Feedback,
-        FeedbackType.StateStream == StateStream,
-        FeedbackType.EventStream == EventStream,
-        FeedbackType.Executer == Executer {
-            self.init(effect: feedback.effect, on: nil)
-    }
-
-    init<FeedbackType>(@FeedbackBuilder builder: () -> FeedbackType)
-        where
-        FeedbackType: Feedback,
-        FeedbackType.StateStream == StateStream,
-        FeedbackType.EventStream == EventStream {
-            let feedback = builder()
-            self.init(effect: feedback.effect, on: nil)
-    }
-
-    init<FeedbackA, FeedbackB>(@FeedbackBuilder builder: () -> (FeedbackA, FeedbackB))
-        where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
-        FeedbackA.StateStream == FeedbackB.StateStream,
-        FeedbackA.EventStream == FeedbackB.EventStream,
-        FeedbackA.StateStream == StateStream,
-        FeedbackA.EventStream == EventStream {
-            let feedbacks = builder()
-            let feedbackA = feedbacks.0
-            let feedbackB = feedbacks.1
-            self.init(feedbacks: feedbackA, feedbackB)
-    }
-
-    init<FeedbackA, FeedbackB, FeedbackC>(@FeedbackBuilder builder: () -> (FeedbackA, FeedbackB, FeedbackC))
-        where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
-        FeedbackC: Feedback,
-        FeedbackA.StateStream == FeedbackB.StateStream,
-        FeedbackA.EventStream == FeedbackB.EventStream,
-        FeedbackB.StateStream == FeedbackC.StateStream,
-        FeedbackB.EventStream == FeedbackC.EventStream,
-        FeedbackA.StateStream == StateStream,
-        FeedbackA.EventStream == EventStream {
-            let feedbacks = builder()
-            let feedbackA = feedbacks.0
-            let feedbackB = feedbacks.1
-            let feedbackC = feedbacks.2
-            self.init(feedbacks: feedbackA, feedbackB, feedbackC)
-    }
-
-    init<FeedbackA, FeedbackB, FeedbackC, FeedbackD>(@FeedbackBuilder builder: () -> (  FeedbackA,
-        FeedbackB,
-        FeedbackC,
-        FeedbackD))
-        where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
-        FeedbackC: Feedback,
-        FeedbackD: Feedback,
-        FeedbackA.StateStream == FeedbackB.StateStream,
-        FeedbackA.EventStream == FeedbackB.EventStream,
-        FeedbackB.StateStream == FeedbackC.StateStream,
-        FeedbackB.EventStream == FeedbackC.EventStream,
-        FeedbackC.StateStream == FeedbackD.StateStream,
-        FeedbackC.EventStream == FeedbackD.EventStream,
-        FeedbackA.StateStream == StateStream,
-        FeedbackA.EventStream == EventStream {
-            let feedbacks = builder()
-            let feedbackA = feedbacks.0
-            let feedbackB = feedbacks.1
-            let feedbackC = feedbacks.2
-            let feedbackD = feedbacks.3
-            self.init(feedbacks: feedbackA, feedbackB, feedbackC, feedbackD)
-    }
-
-    init<FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE>(@FeedbackBuilder builder: () -> (   FeedbackA,
-        FeedbackB,
-        FeedbackC,
-        FeedbackD,
-        FeedbackE))
-        where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
-        FeedbackC: Feedback,
-        FeedbackD: Feedback,
-        FeedbackE: Feedback,
-        FeedbackA.StateStream == FeedbackB.StateStream,
-        FeedbackA.EventStream == FeedbackB.EventStream,
-        FeedbackB.StateStream == FeedbackC.StateStream,
-        FeedbackB.EventStream == FeedbackC.EventStream,
-        FeedbackC.StateStream == FeedbackD.StateStream,
-        FeedbackC.EventStream == FeedbackD.EventStream,
-        FeedbackD.StateStream == FeedbackE.StateStream,
-        FeedbackD.EventStream == FeedbackE.EventStream,
-        FeedbackA.StateStream == StateStream,
-        FeedbackA.EventStream == EventStream {
-            let feedbacks = builder()
-            let feedbackA = feedbacks.0
-            let feedbackB = feedbacks.1
-            let feedbackC = feedbacks.2
-            let feedbackD = feedbacks.3
-            let feedbackE = feedbacks.4
-            self.init(feedbacks: feedbackA, feedbackB, feedbackC, feedbackD, feedbackE)
-    }
-
+ 
     /// Initialize the feedback with a: State -> ReactiveStream<Event> stream, dismissing the `State` values that
     /// don't match the filter
     /// - Parameters:
@@ -206,18 +93,18 @@ public extension Feedback {
         self.init(effect: effectFromEventStream, on: executer)
     }
 
-    /// Initialize the feedback with 2 partial feedbacks. Those 2 partial feedbacks will be concatenated to become a
-    /// complete ReactiveStream<State> -> ReactiveStream<Event> feedback
+    /// Initialize the feedback with 2 separate uiEffects
     /// - Parameters:
-    ///   - stateInterpret: the function transforming a `State` to a Void output
-    ///   - eventEmitter: the function transforming a Void input to a ReactiveStream<Event> output
-    ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
-    init(uiEffects stateInterpret: @escaping (StateStream.Value) -> Void,
-         _ eventEmitter: @escaping () -> EventStream, on executer: Executer? = nil) {
-        let stateFeedback = Self(effect: stateInterpret, on: executer)
-        let eventFeedback = Self(effect: eventEmitter, on: executer)
+    ///   - stateEffect: the effect when receiving a new State
+    ///   - eventEffect: the effect outputing new Events
+    ///   - executer: the `Executer` upon which the 2 feedbacks will be executed (default is nil)
+    init(uiEffects stateEffect: @escaping (StateStream.Value) -> Void,
+         _ eventEffect: @escaping () -> EventStream,
+         on executer: Executer? = nil) {
+        let stateFeedback = Self(effect: stateEffect, on: executer)
+        let eventFeedback = Self(effect: eventEffect, on: executer)
 
-        self.init(feedbacks: stateFeedback, eventFeedback)
+        self.init(effects: [stateFeedback.effect, eventFeedback.effect])
     }
 
     /// Initialize the feedback with a: `SubState` -> ReactiveStream<Event> stream
@@ -263,82 +150,5 @@ public extension Feedback {
         }
 
         self.init(effect: effectFromSubState, filteredBy: filterState, on: executer, applying: strategy)
-    }
-}
-
-@_functionBuilder
-public struct FeedbackBuilder {
-    public static func buildBlock<FeedbackType: Feedback>(_ feedback: FeedbackType) -> FeedbackType {
-        return feedback
-    }
-
-    public static func buildBlock<FeedbackA, FeedbackB>(_ feedbackA: FeedbackA,
-                                                        _ feedbackB: FeedbackB) -> (FeedbackA, FeedbackB)
-        where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
-        FeedbackA.StateStream == FeedbackB.StateStream,
-        FeedbackA.EventStream == FeedbackB.EventStream {
-            return (feedbackA, feedbackB)
-    }
-
-    public static func buildBlock<FeedbackA, FeedbackB, FeedbackC>(_ feedbackA: FeedbackA,
-                                                                   _ feedbackB: FeedbackB,
-                                                                   _ feedbackC: FeedbackC) -> ( FeedbackA,
-                                                                                                FeedbackB,
-                                                                                                FeedbackC)
-        where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
-        FeedbackC: Feedback,
-        FeedbackA.StateStream == FeedbackB.StateStream,
-        FeedbackA.EventStream == FeedbackB.EventStream,
-        FeedbackB.StateStream == FeedbackC.StateStream,
-        FeedbackB.EventStream == FeedbackC.EventStream {
-            return (feedbackA, feedbackB, feedbackC)
-    }
-
-    public static func buildBlock<FeedbackA, FeedbackB, FeedbackC, FeedbackD>(_ feedbackA: FeedbackA,
-                                                                              _ feedbackB: FeedbackB,
-                                                                              _ feedbackC: FeedbackC,
-                                                                              _ feedbackD: FeedbackD) -> (  FeedbackA,
-                                                                                                            FeedbackB,
-                                                                                                            FeedbackC,
-                                                                                                            FeedbackD)
-        where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
-        FeedbackC: Feedback,
-        FeedbackD: Feedback,
-        FeedbackA.StateStream == FeedbackB.StateStream,
-        FeedbackA.EventStream == FeedbackB.EventStream,
-        FeedbackB.StateStream == FeedbackC.StateStream,
-        FeedbackB.EventStream == FeedbackC.EventStream,
-        FeedbackC.StateStream == FeedbackD.StateStream,
-        FeedbackC.EventStream == FeedbackD.EventStream {
-            return (feedbackA, feedbackB, feedbackC, feedbackD)
-    }
-
-    public static func buildBlock<FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE>(_ feedbackA: FeedbackA,
-                                                                                         _ feedbackB: FeedbackB,
-                                                                                         _ feedbackC: FeedbackC,
-                                                                                         _ feedbackD: FeedbackD,
-                                                                                         _ feedbackE: FeedbackE)
-        -> (FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE)
-        where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
-        FeedbackC: Feedback,
-        FeedbackD: Feedback,
-        FeedbackE: Feedback,
-        FeedbackA.StateStream == FeedbackB.StateStream,
-        FeedbackA.EventStream == FeedbackB.EventStream,
-        FeedbackB.StateStream == FeedbackC.StateStream,
-        FeedbackB.EventStream == FeedbackC.EventStream,
-        FeedbackC.StateStream == FeedbackD.StateStream,
-        FeedbackC.EventStream == FeedbackD.EventStream,
-        FeedbackD.StateStream == FeedbackE.StateStream,
-        FeedbackD.EventStream == FeedbackE.EventStream {
-            return (feedbackA, feedbackB, feedbackC, feedbackD, feedbackE)
     }
 }

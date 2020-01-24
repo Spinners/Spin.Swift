@@ -17,11 +17,7 @@ public protocol Reducer {
 
     init(reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value, on executer: Executer)
 
-    func apply(on initialState: StateStream.Value,
-               after feedback: @escaping (StateStream) -> EventStream) -> StateStream
-
-    func apply(on initialState: StateStream.Value,
-               after feedbacks: [(StateStream) -> EventStream]) -> StateStream
+    func apply(on initialState: StateStream.Value, after effects: [(StateStream) -> EventStream]) -> StateStream
 }
 
 public extension Reducer {

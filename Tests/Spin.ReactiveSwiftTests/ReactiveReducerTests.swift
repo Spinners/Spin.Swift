@@ -13,8 +13,8 @@ final class ReactiveReducerTests: XCTestCase {
 
     private let disposeBag = CompositeDisposable()
 
-    func test_reduce_is_performed_on_default_executer_when_no_executer_is_specified() {
-        // Given: a feedback switching on a specified Executer after being executed
+    func test_apply_is_performed_on_default_executer_when_no_executer_is_specified() {
+        // Given: an effect switching on a specified Executer after being executed
         let exp = expectation(description: "default executer for reducer")
         var reduceIsCalled = false
         let expectedExecuterName = "com.apple.main-thread"
@@ -35,7 +35,7 @@ final class ReactiveReducerTests: XCTestCase {
 
         // When: reducing without specifying an Executer for the reduce operation
         _ = ReactiveReducer(reducer: reducerFunction)
-            .apply(on: 0, after: feedback.effect)
+            .apply(on: 0, after: [feedback.effect])
             .take(first: 2)
             .spin()
             .disposed(by: disposeBag)
@@ -48,8 +48,8 @@ final class ReactiveReducerTests: XCTestCase {
         XCTAssertEqual(receivedExecuterName, expectedExecuterName)
     }
 
-    func test_reduce_is_performed_on_dedicated_executer_when_executer_is_specified() {
-        // Given: a feedback switching on a specified Executer after being executed
+    func test_apply_is_performed_on_dedicated_executer_when_executer_is_specified() {
+        // Given: an effect switching on a specified Executer after being executed
         var reduceIsCalled = false
         let expectedExecuterName = "REDUCER_QUEUE_\(UUID().uuidString)"
         var receivedExecuterName = ""
@@ -69,32 +69,36 @@ final class ReactiveReducerTests: XCTestCase {
 
         // When: reducing with specifying an Executer for the reduce operation
         _ = ReactiveReducer(reducer: reducerFunction, on: reducerScheduler)
-            .apply(on: 0, after: feedback.effect)
+            .apply(on: 0, after: [feedback.effect])
             .take(first: 2)
             .collect()
             .first()
 
         // Then: the reduce is performed
-        // Then: the reduce is performed on the current executer, ie the one set by the feedback
+        // Then: the reduce is performed on the current executer, ie the one set by the effect
         XCTAssertTrue(reduceIsCalled)
         XCTAssertEqual(receivedExecuterName, expectedExecuterName)
     }
 
     func test_initialState_is_the_first_state_given_to_the_feedbacks() {
-        // Given: 2 feedbacks
+        // Given: 2 effect
         let initialState = 1701
-        var receivedInitialStateInFeedbackA = 0
-        var receivedInitialStateInFeedbackB = 0
+        var receivedInitialStateInEffectA = 0
+        var receivedInitialStateInEffectB = 0
 
-        let feedbackA = ReactiveFeedback(effect: { (input: Int) -> SignalProducer<String, Never> in
-            receivedInitialStateInFeedbackA = input
-            return SignalProducer<String, Never>(value: "")
-        })
+        let effectA = { (inputs: SignalProducer<Int, Never>) -> SignalProducer<String, Never> in
+            return inputs.map { input in
+                receivedInitialStateInEffectA = input
+                return "\(input)"
+            }
+        }
 
-        let feedbackB = ReactiveFeedback(effect: { (input: Int) -> SignalProducer<String, Never> in
-            receivedInitialStateInFeedbackB = input
-            return SignalProducer<String, Never>(value: "")
-        })
+        let effectB = { (inputs: SignalProducer<Int, Never>) -> SignalProducer<String, Never> in
+            return inputs.map { input in
+                receivedInitialStateInEffectB = input
+                return "\(input)"
+            }
+        }
 
         let reducerFunction = { (state: Int, action: String) -> Int in
             return 0
@@ -102,44 +106,13 @@ final class ReactiveReducerTests: XCTestCase {
 
         // When: reducing the feedbacks
         _ = ReactiveReducer(reducer: reducerFunction)
-            .apply(on: initialState, after: ReactiveFeedback(feedbacks: feedbackA, feedbackB).effect)
+            .apply(on: initialState, after: [effectA, effectB])
             .take(first: 1)
             .collect()
             .first()
 
-        // Then: the initial states received in the feedbacks are the one specified in the Reducer
-        XCTAssertEqual(receivedInitialStateInFeedbackA, initialState)
-        XCTAssertEqual(receivedInitialStateInFeedbackB, initialState)
-    }
-
-    func test_reduce_with_an_array_of_streams_preserves_the_streams() throws {
-        // Given: 2 feedback streams
-        var feedbackAIsCalled = false
-        var feedbackBIsCalled = false
-
-        let feedbackAFunction = { (inputs: SignalProducer<Int, Never>) -> SignalProducer<String, Never> in
-            feedbackAIsCalled = true
-            return SignalProducer(value: "")
-        }
-        let feedbackBFunction = { (inputs: SignalProducer<Int, Never>) -> SignalProducer<String, Never> in
-            feedbackBIsCalled = true
-            return SignalProducer(value: "")
-        }
-
-        let reducerFunction = { (state: Int, action: String) -> Int in
-            return 0
-        }
-
-        // When: reducing with those feedback streams
-        _ = try ReactiveReducer(reducer: reducerFunction)
-            .apply(on: 0, after: [feedbackAFunction, feedbackBFunction])
-            .take(first: 1)
-            .collect()
-            .first()?
-            .get()
-
-        // Then: the 2 feedbacks are executed
-        XCTAssertTrue(feedbackAIsCalled)
-        XCTAssertTrue(feedbackBIsCalled)
+        // Then: the initial states received in the effect are the one specified in the Reducer
+        XCTAssertEqual(receivedInitialStateInEffectA, initialState)
+        XCTAssertEqual(receivedInitialStateInEffectB, initialState)
     }
 }

@@ -14,14 +14,14 @@ final class RxFeedbackTests: XCTestCase {
 
     private let disposeBag = DisposeBag()
 
-    func test_output_observes_on_current_executer_when_nilExecuter_is_passed_to_initializer() {
-        var feedbackIsCalled = false
+    func test_effect_observes_on_current_executer_when_nilExecuter_is_passed_to_initializer() {
+        var effectIsCalled = false
         var receivedExecuterName = ""
         let expectedExecuterName = "FEEDBACK_QUEUE_\(UUID().uuidString)"
 
         // Given: a feedback with no Executer
         let sut = RxFeedback(effect: { (inputs: Observable<Int>) -> Observable<String> in
-            feedbackIsCalled = true
+            effectIsCalled = true
             return inputs.map {
                 receivedExecuterName = DispatchQueue.currentLabel
                 return "\($0)"
@@ -39,15 +39,15 @@ final class RxFeedbackTests: XCTestCase {
         // When: executing the feedback
         _ = sut.effect(inputStream).toBlocking().materialize()
 
-        // Then: the feedback is called
-        // Then: the feedback happens on the dedicated Executer specified on the inputStream, since no Executer has been
+        // Then: the effect is called
+        // Then: the effect happens on the dedicated Executer specified on the inputStream, since no Executer has been
         // given in the Feedback initializer
-        XCTAssertTrue(feedbackIsCalled)
+        XCTAssertTrue(effectIsCalled)
         XCTAssertEqual(receivedExecuterName, expectedExecuterName)
     }
 
-    func test_output_observes_on_an_executer_when_one_is_passed_to_initializer() {
-        var feedbackIsCalled = false
+    func test_effect_observes_on_an_executer_when_one_is_passed_to_initializer() {
+        var effectIsCalled = false
         var receivedExecuterName = ""
         let expectedExecuterName = "FEEDBACK_QUEUE_\(UUID().uuidString)"
 
@@ -56,7 +56,7 @@ final class RxFeedbackTests: XCTestCase {
                                                                                       qos: .userInitiated))
 
         let sut = RxFeedback(effect: { (inputs: Observable<Int>) -> Observable<String> in
-            feedbackIsCalled = true
+            effectIsCalled = true
             return inputs.map {
                 receivedExecuterName = DispatchQueue.currentLabel
                 return "\($0)"
@@ -75,20 +75,20 @@ final class RxFeedbackTests: XCTestCase {
         // When: executing the feedback
         _ = sut.effect(inputStream).toBlocking().materialize()
 
-        // Then: the feedback is called
-        // Then: the feedback happens on the dedicated Executer given in the Feedback initializer, not on the one defined on
+        // Then: the effect is called
+        // Then: the effect happens on the dedicated Executer given in the Feedback initializer, not on the one defined on
         // the inputStream
-        XCTAssertTrue(feedbackIsCalled)
+        XCTAssertTrue(effectIsCalled)
         XCTAssertEqual(receivedExecuterName, expectedExecuterName)
     }
 
-    func test_make_produces_a_non_cancellable_stream_when_called_with_continueOnNewEvent_strategy() throws {
-        // Given: a stream that performs a long operation when given 1 as an input, and an immediate operation otherwise
+    func test_init_produces_a_non_cancellable_stream_when_called_with_continueOnNewEvent_strategy() throws {
+        // Given: a effect that performs a long operation when given 1 as an input, and an immediate operation otherwise
         let longOperationSchedulerQueueLabel = "LONG_OPERATION_QUEUE_\(UUID().uuidString)"
         let longOperationScheduler = ConcurrentDispatchQueueScheduler(queue: DispatchQueue(label: longOperationSchedulerQueueLabel,
                                                                                            qos: .userInitiated))
 
-        let stream = { (input: Int) -> Observable<String> in
+        let effect = { (input: Int) -> Observable<String> in
             if input == 1 {
                 return Observable<String>.create { (observer) -> Disposable in
                     observer.onNext("\(input)")
@@ -103,18 +103,18 @@ final class RxFeedbackTests: XCTestCase {
         }
 
         // Given: this stream being applied a "continueOnNewEvent" strategy
-        let sut = RxFeedback(effect: stream, applying: .continueOnNewEvent).effect
+        let sut = RxFeedback(effect: effect, applying: .continueOnNewEvent).effect
 
-        // When: feeding this stream with 2 events: 1 and 2
+        // When: feeding this effect with 2 events: 1 and 2
         let received = try sut(.from([1, 2])).toBlocking().toArray()
 
         // Then: the stream waits for the long operation to end before completing
         XCTAssertEqual(received, ["2", "1"])
     }
 
-    func test_make_produces_a_non_failable_stream_when_called_with_continueOnNewEvent_strategy() throws {
-        // Given: a stream that performs a long operation when given 1 as an input, and an immediate operation otherwise
-        let stream = { (input: Int) -> Observable<String> in
+    func test_init_produces_a_non_failable_stream_when_called_with_continueOnNewEvent_strategy() throws {
+        // Given: an effect that performs a long operation when given 1 as an input, and an immediate operation otherwise
+        let effect = { (input: Int) -> Observable<String> in
             if input == 1 {
                 return .error(NSError(domain: "feedback", code: 0))
             }
@@ -122,23 +122,23 @@ final class RxFeedbackTests: XCTestCase {
             return .just("\(input)")
         }
 
-        // Given: this stream being applied a "continueOnNewEvent" strategy
-        let sut = RxFeedback(effect: stream, applying: .continueOnNewEvent).effect
+        // Given: this effect being applied a "continueOnNewEvent" strategy
+        let sut = RxFeedback(effect: effect, applying: .continueOnNewEvent).effect
 
-        // When: feeding this stream with 2 events: 1 and 2
+        // When: feeding this effect with 2 events: 1 and 2
         let received = try sut(.from([1, 2])).toBlocking().toArray()
 
         // Then: the stream waits for the long operation to end before completing
         XCTAssertEqual(received, ["2"])
     }
 
-    func test_make_produces_a_cancellable_stream_when_called_with_cancelOnNewEvent_strategy() throws {
-        // Given: a stream that performs a long operation when given 1 as an input, and an immediate operation otherwise
+    func test_init_produces_a_cancellable_stream_when_called_with_cancelOnNewEvent_strategy() throws {
+        // Given: an effect that performs a long operation when given 1 as an input, and an immediate operation otherwise
         let longOperationSchedulerQueueLabel = "LONG_OPERATION_QUEUE_\(UUID().uuidString)"
         let longOperationScheduler = ConcurrentDispatchQueueScheduler(queue: DispatchQueue(label: longOperationSchedulerQueueLabel,
                                                                                            qos: .userInitiated))
 
-        let stream = { (input: Int) -> Observable<String> in
+        let effect = { (input: Int) -> Observable<String> in
             if input == 1 {
                 return Observable<String>.create { (observer) -> Disposable in
                     observer.onNext("\(input)")
@@ -152,10 +152,10 @@ final class RxFeedbackTests: XCTestCase {
             return .just("\(input)")
         }
 
-        // Given: this stream being applied a "cancelOnNewEvent" strategy
-        let sut = RxFeedback(effect: stream, applying: .cancelOnNewEvent).effect
+        // Given: this effect being applied a "cancelOnNewEvent" strategy
+        let sut = RxFeedback(effect: effect, applying: .cancelOnNewEvent).effect
 
-        // When: feeding this stream with 2 events: 1 and 2
+        // When: feeding this effect with 2 events: 1 and 2
         let received = try sut(.from([1, 2])).toBlocking().toArray()
 
         // Then: the stream does not wait for the long operation to end before completing, the first operation is cancelled
@@ -163,9 +163,9 @@ final class RxFeedbackTests: XCTestCase {
         XCTAssertEqual(received, ["2"])
     }
 
-    func test_make_produces_a_non_failable_stream_when_called_with_cancelOnNewEvent_strategy() throws {
-        // Given: a stream that performs a long operation when given 1 as an input, and an immediate operation otherwise
-        let stream = { (input: Int) -> Observable<String> in
+    func test_init_produces_a_non_failable_stream_when_called_with_cancelOnNewEvent_strategy() throws {
+        // Given: an effect that performs a long operation when given 1 as an input, and an immediate operation otherwise
+        let effect = { (input: Int) -> Observable<String> in
             if input == 1 {
                 return .error(NSError(domain: "feedback", code: 0))
             }
@@ -173,218 +173,55 @@ final class RxFeedbackTests: XCTestCase {
             return .just("\(input)")
         }
 
-        // Given: this stream being applied a "continueOnNewEvent" strategy
-        let sut = RxFeedback(effect: stream, applying: .cancelOnNewEvent).effect
+        // Given: this effect being applied a "continueOnNewEvent" strategy
+        let sut = RxFeedback(effect: effect, applying: .cancelOnNewEvent).effect
 
-        // When: feeding this stream with 2 events: 1 and 2
+        // When: feeding this effect with 2 events: 1 and 2
         let received = try sut(.from([1, 2])).toBlocking().toArray()
 
         // Then: the stream waits for the long operation to end before completing
         XCTAssertEqual(received, ["2"])
     }
 
-    func test_initialize_with_two_feedbacks_executes_the_original_feedbackFunctions() {
-        // Given: 2 feedbacks based on a Stream<State> -> Stream<Event>
-        var effectAIsCalled = false
-        var effectBIsCalled = false
+    func test_directEffect_is_used() {
+        var effectIsCalled = false
 
-        let effectA: (Int) -> Observable<Int> = { states -> Observable<Int> in
-            effectAIsCalled = true
-            return .just(0)
-        }
-        let effectB: (Int) -> Observable<Int> = { states -> Observable<Int> in
-            effectBIsCalled = true
-            return .just(0)
-        }
+        // Given: a feedback from a directEffect
+        let sut = RxFeedback(directEffect: { (input: Int) -> String in
+            effectIsCalled = true
+            return "\(input)"
+        }, on: nil)
 
-        let sourceFeedbackA = RxFeedback(effect: effectA)
-        let sourceFeedbackB = RxFeedback(effect: effectB)
-
-        // When: instantiating the feedback with already existing feedbacks
         // When: executing the feedback
-        let sut = RxFeedback(feedbacks: sourceFeedbackA, sourceFeedbackB)
-        _ = sut.effect(.just(0)).take(2).toBlocking().materialize()
+        let inputStream = Observable.just(1701)
+        _ = sut.effect(inputStream).take(1).toBlocking().materialize()
 
-        // Then: the original feedback streams are preserved
-        XCTAssertTrue(effectAIsCalled)
-        XCTAssertTrue(effectBIsCalled)
+        // Then: the directEffect is called
+        XCTAssertTrue(effectIsCalled)
     }
 
-    func test_initialize_with_three_feedbacks_executes_the_original_feedbackFunctions() {
-        // Given: 3 feedbacks based on a Stream<State> -> Stream<Event>
+    func test_effects_are_used() throws {
         var effectAIsCalled = false
         var effectBIsCalled = false
-        var effectCIsCalled = false
 
-        let effectA: (Int) -> Observable<Int> = { states -> Observable<Int> in
+        // Given: a feedback from 2 effects
+        let effectA = { (inputs: Observable<Int>) -> Observable<String> in
             effectAIsCalled = true
-            return .just(0)
+            return inputs.map { "\($0)" }
         }
-        let effectB: (Int) -> Observable<Int> = { states -> Observable<Int> in
+        let effectB = { (inputs: Observable<Int>) -> Observable<String> in
             effectBIsCalled = true
-            return .just(0)
-        }
-        let effectC: (Int) -> Observable<Int> = { states -> Observable<Int> in
-            effectCIsCalled = true
-            return .just(0)
+            return inputs.map { "\($0)" }
         }
 
-        let sourceFeedbackA = RxFeedback(effect: effectA)
-        let sourceFeedbackB = RxFeedback(effect: effectB)
-        let sourceFeedbackC = RxFeedback(effect: effectC)
+        let sut = RxFeedback(effects: [effectA, effectB])
 
-        // When: instantiating the feedback with already existing feedbacks
         // When: executing the feedback
-        let sut = RxFeedback(feedbacks: sourceFeedbackA, sourceFeedbackB, sourceFeedbackC)
-        _ = sut.effect(.just(0)).take(3).toBlocking().materialize()
+        let inputStream = Observable.just(1701)
+        _ = sut.effect(inputStream).take(1).toBlocking().materialize()
 
-        // Then: the original feedback streams are preserved
+        // Then: the effects are called
         XCTAssertTrue(effectAIsCalled)
         XCTAssertTrue(effectBIsCalled)
-        XCTAssertTrue(effectCIsCalled)
-    }
-
-    func test_initialize_with_four_feedbacks_executes_the_original_feedbackFunctions() {
-        // Given: 4 feedbacks based on a Stream<State> -> Stream<Event>
-        var effectAIsCalled = false
-        var effectBIsCalled = false
-        var effectCIsCalled = false
-        var effectDIsCalled = false
-
-        let effectA: (Int) -> Observable<Int> = { states -> Observable<Int> in
-            effectAIsCalled = true
-            return .just(0)
-        }
-        let effectB: (Int) -> Observable<Int> = { states -> Observable<Int> in
-            effectBIsCalled = true
-            return .just(0)
-        }
-        let effectC: (Int) -> Observable<Int> = { states -> Observable<Int> in
-            effectCIsCalled = true
-            return .just(0)
-        }
-        let effectD: (Int) -> Observable<Int> = { states -> Observable<Int> in
-            effectDIsCalled = true
-            return .just(0)
-        }
-
-        let sourceFeedbackA = RxFeedback(effect: effectA)
-        let sourceFeedbackB = RxFeedback(effect: effectB)
-        let sourceFeedbackC = RxFeedback(effect: effectC)
-        let sourceFeedbackD = RxFeedback(effect: effectD)
-
-        // When: instantiating the feedback with already existing feedbacks
-        // When: executing the feedback
-        let sut = RxFeedback(feedbacks: sourceFeedbackA, sourceFeedbackB, sourceFeedbackC, sourceFeedbackD)
-        _ = sut.effect(.just(0)).take(4).toBlocking().materialize()
-
-        // Then: the original feedback streams are preserved
-        XCTAssertTrue(effectAIsCalled)
-        XCTAssertTrue(effectBIsCalled)
-        XCTAssertTrue(effectCIsCalled)
-        XCTAssertTrue(effectDIsCalled)
-    }
-
-    func test_initialize_with_five_feedbacks_executes_the_original_feedbackFunctions() {
-        // Given: 5 feedbacks based on a Stream<State> -> Stream<Event>
-        var effectAIsCalled = false
-        var effectBIsCalled = false
-        var effectCIsCalled = false
-        var effectDIsCalled = false
-        var effectEIsCalled = false
-
-        let effectA: (Int) -> Observable<Int> = { states -> Observable<Int> in
-            effectAIsCalled = true
-            return .just(0)
-        }
-        let effectB: (Int) -> Observable<Int> = { states -> Observable<Int> in
-            effectBIsCalled = true
-            return .just(0)
-        }
-        let effectC: (Int) -> Observable<Int> = { states -> Observable<Int> in
-            effectCIsCalled = true
-            return .just(0)
-        }
-        let effectD: (Int) -> Observable<Int> = { states -> Observable<Int> in
-            effectDIsCalled = true
-            return .just(0)
-        }
-        let effectE: (Int) -> Observable<Int> = { states -> Observable<Int> in
-            effectEIsCalled = true
-            return .just(0)
-        }
-
-        let sourceFeedbackA = RxFeedback(effect: effectA)
-        let sourceFeedbackB = RxFeedback(effect: effectB)
-        let sourceFeedbackC = RxFeedback(effect: effectC)
-        let sourceFeedbackD = RxFeedback(effect: effectD)
-        let sourceFeedbackE = RxFeedback(effect: effectE)
-
-        // When: instantiating the feedback with already existing feedbacks
-        // When: executing the feedback
-        let sut = RxFeedback(feedbacks: sourceFeedbackA, sourceFeedbackB, sourceFeedbackC, sourceFeedbackD, sourceFeedbackE)
-        _ = sut.effect(.just(0)).take(5).toBlocking().materialize()
-
-        // Then: the original feedback streams are preserved
-        XCTAssertTrue(effectAIsCalled)
-        XCTAssertTrue(effectBIsCalled)
-        XCTAssertTrue(effectCIsCalled)
-        XCTAssertTrue(effectDIsCalled)
-        XCTAssertTrue(effectEIsCalled)
-    }
-
-    func test_initialize_with_an_array_of_feedbacks_executes_the_original_feedbackFunctions() throws {
-        let exp = expectation(description: "toto")
-        // Given: 5 feedbacks based on a Stream<State> -> Stream<Event>
-        var effectAIsCalled = false
-        var effectBIsCalled = false
-        var effectCIsCalled = false
-        var effectDIsCalled = false
-        var effectEIsCalled = false
-
-        let effectA: (Int) -> Observable<Int> = { states -> Observable<Int> in
-            effectAIsCalled = true
-            return .just(0)
-        }
-        let effectB: (Int) -> Observable<Int> = { states -> Observable<Int> in
-            effectBIsCalled = true
-            return .just(0)
-        }
-        let effectC: (Int) -> Observable<Int> = { states -> Observable<Int> in
-            effectCIsCalled = true
-            return .just(0)
-        }
-        let effectD: (Int) -> Observable<Int> = { states -> Observable<Int> in
-            effectDIsCalled = true
-            return .just(0)
-        }
-        let effectE: (Int) -> Observable<Int> = { states -> Observable<Int> in
-            effectEIsCalled = true
-            return .just(0)
-        }
-
-        let sourceFeedbackA = RxFeedback(effect: effectA)
-        let sourceFeedbackB = RxFeedback(effect: effectB)
-        let sourceFeedbackC = RxFeedback(effect: effectC)
-        let sourceFeedbackD = RxFeedback(effect: effectD)
-        let sourceFeedbackE = RxFeedback(effect: effectE)
-
-        // When: instantiating the feedback with already existing feedbacks with function builder
-        // When: executing the feedback
-        let sut = RxFeedback(feedbacks: [sourceFeedbackA,
-                                               sourceFeedbackB,
-                                               sourceFeedbackC,
-                                               sourceFeedbackD,
-                                               sourceFeedbackE])
-        sut.effect(.just(0)).take(5).toArray().do(onSuccess: { _ in exp.fulfill() }).subscribe().disposed(by: self.disposeBag)
-
-        waitForExpectations(timeout: 5)
-
-        // Then: the original feedback streams are preserved
-        XCTAssertTrue(effectAIsCalled)
-        XCTAssertTrue(effectBIsCalled)
-        XCTAssertTrue(effectCIsCalled)
-        XCTAssertTrue(effectDIsCalled)
-        XCTAssertTrue(effectEIsCalled)
     }
 }

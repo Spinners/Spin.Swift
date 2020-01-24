@@ -11,22 +11,13 @@ public struct AnySpin<StateStream: ReactiveStream>: Spin {
     public let stream: StateStream
 
     public init<EventStream, ReducerType>(initialState: StateStream.Value,
-                                          feedbackStream: @escaping (StateStream) -> EventStream,
+                                          effects: [(StateStream) -> EventStream],
                                           reducer: ReducerType)
         where
         ReducerType: Reducer,
-        EventStream == ReducerType.EventStream,
-        ReducerType.StateStream == StateStream {
-            self.stream = reducer.apply(on: initialState, after: feedbackStream)
-    }
-
-    public init<EventStream, ReducerType>(initialState: StateStream.Value,
-                                          feedbackStreams: [(StateStream) -> EventStream], reducer: ReducerType)
-        where
-        ReducerType: Reducer,
-        EventStream == ReducerType.EventStream,
-        ReducerType.StateStream == StateStream {
-            self.stream = reducer.apply(on: initialState, after: feedbackStreams)
+        ReducerType.StateStream == StateStream,
+        EventStream == ReducerType.EventStream {
+            self.stream = reducer.apply(on: initialState, after: effects)
     }
 
     public init<FeedbackType, ReducerType>(initialState: StateStream.Value,
@@ -39,7 +30,8 @@ public struct AnySpin<StateStream: ReactiveStream>: Spin {
         FeedbackType.StateStream.Value == StateStream.Value,
         FeedbackType.StateStream == ReducerType.StateStream,
         FeedbackType.EventStream == ReducerType.EventStream {
-            self.stream = reducer.apply(on: initialState, after: feedback.effect)
+            let effects = [feedback.effect]
+            self.init(initialState: initialState, effects: effects, reducer: reducer)
     }
 
     public init<FeedbackType, ReducerType>(initialState: StateStream.Value,
@@ -50,7 +42,8 @@ public struct AnySpin<StateStream: ReactiveStream>: Spin {
         FeedbackType.StateStream == ReducerType.StateStream,
         FeedbackType.EventStream == ReducerType.EventStream,
         FeedbackType.StateStream == StateStream {
-            self.init(initialState: initialState, feedback: feedbackBuilder(), reducer: reducer)
+            let effects = [feedbackBuilder().effect]
+            self.init(initialState: initialState, effects: effects, reducer: reducer)
     }
 
     public init<FeedbackA, FeedbackB, ReducerType>(initialState: StateStream.Value,
@@ -66,8 +59,8 @@ public struct AnySpin<StateStream: ReactiveStream>: Spin {
         FeedbackA.EventStream == FeedbackB.EventStream,
         FeedbackA.StateStream == StateStream {
             let feedbacks = builder()
-            let feedback = FeedbackA(feedbacks: feedbacks.0, feedbacks.1)
-            self.init(initialState: initialState, feedback: feedback, reducer: reducer)
+            let effects = [feedbacks.0.effect, feedbacks.1.effect]
+            self.init(initialState: initialState, effects: effects, reducer: reducer)
     }
 
     public init<FeedbackA, FeedbackB, FeedbackC, ReducerType>(initialState: StateStream.Value,
@@ -88,8 +81,8 @@ public struct AnySpin<StateStream: ReactiveStream>: Spin {
         FeedbackB.EventStream == FeedbackC.EventStream,
         FeedbackA.StateStream == StateStream {
             let feedbacks = builder()
-            let feedback = FeedbackA(feedbacks: feedbacks.0, feedbacks.1, feedbacks.2)
-            self.init(initialState: initialState, feedback: feedback, reducer: reducer)
+            let effects = [feedbacks.0.effect, feedbacks.1.effect, feedbacks.2.effect]
+            self.init(initialState: initialState, effects: effects, reducer: reducer)
     }
 
     public init<FeedbackA, FeedbackB, FeedbackC, FeedbackD, ReducerType>(initialState: StateStream.Value,
@@ -114,8 +107,8 @@ public struct AnySpin<StateStream: ReactiveStream>: Spin {
         FeedbackC.EventStream == FeedbackD.EventStream,
         FeedbackA.StateStream == StateStream {
             let feedbacks = builder()
-            let feedback = FeedbackA(feedbacks: feedbacks.0, feedbacks.1, feedbacks.2, feedbacks.3)
-            self.init(initialState: initialState, feedback: feedback, reducer: reducer)
+            let effects = [feedbacks.0.effect, feedbacks.1.effect, feedbacks.2.effect, feedbacks.3.effect]
+            self.init(initialState: initialState, effects: effects, reducer: reducer)
     }
 
     public init<FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE, ReducerType>(initialState: StateStream.Value,
@@ -144,7 +137,84 @@ public struct AnySpin<StateStream: ReactiveStream>: Spin {
         FeedbackD.EventStream == FeedbackE.EventStream,
         FeedbackA.StateStream == StateStream {
             let feedbacks = builder()
-            let feedback = FeedbackA(feedbacks: feedbacks.0, feedbacks.1, feedbacks.2, feedbacks.3, feedbacks.4)
-            self.init(initialState: initialState, feedback: feedback, reducer: reducer)
+            let effects = [feedbacks.0.effect, feedbacks.1.effect, feedbacks.2.effect, feedbacks.3.effect, feedbacks.4.effect]
+            self.init(initialState: initialState, effects: effects, reducer: reducer)
+    }
+}
+
+@_functionBuilder
+public struct FeedbackBuilder {
+    public static func buildBlock<FeedbackType: Feedback>(_ feedback: FeedbackType) -> FeedbackType {
+        return feedback
+    }
+
+    public static func buildBlock<FeedbackA, FeedbackB>(_ feedbackA: FeedbackA,
+                                                        _ feedbackB: FeedbackB) -> (FeedbackA, FeedbackB)
+        where
+        FeedbackA: Feedback,
+        FeedbackB: Feedback,
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream {
+            return (feedbackA, feedbackB)
+    }
+
+    public static func buildBlock<FeedbackA, FeedbackB, FeedbackC>(_ feedbackA: FeedbackA,
+                                                                   _ feedbackB: FeedbackB,
+                                                                   _ feedbackC: FeedbackC) -> ( FeedbackA,
+                                                                                                FeedbackB,
+                                                                                                FeedbackC)
+        where
+        FeedbackA: Feedback,
+        FeedbackB: Feedback,
+        FeedbackC: Feedback,
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream,
+        FeedbackB.StateStream == FeedbackC.StateStream,
+        FeedbackB.EventStream == FeedbackC.EventStream {
+            return (feedbackA, feedbackB, feedbackC)
+    }
+
+    public static func buildBlock<FeedbackA, FeedbackB, FeedbackC, FeedbackD>(_ feedbackA: FeedbackA,
+                                                                              _ feedbackB: FeedbackB,
+                                                                              _ feedbackC: FeedbackC,
+                                                                              _ feedbackD: FeedbackD) -> (  FeedbackA,
+                                                                                                            FeedbackB,
+                                                                                                            FeedbackC,
+                                                                                                            FeedbackD)
+        where
+        FeedbackA: Feedback,
+        FeedbackB: Feedback,
+        FeedbackC: Feedback,
+        FeedbackD: Feedback,
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream,
+        FeedbackB.StateStream == FeedbackC.StateStream,
+        FeedbackB.EventStream == FeedbackC.EventStream,
+        FeedbackC.StateStream == FeedbackD.StateStream,
+        FeedbackC.EventStream == FeedbackD.EventStream {
+            return (feedbackA, feedbackB, feedbackC, feedbackD)
+    }
+
+    public static func buildBlock<FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE>(_ feedbackA: FeedbackA,
+                                                                                         _ feedbackB: FeedbackB,
+                                                                                         _ feedbackC: FeedbackC,
+                                                                                         _ feedbackD: FeedbackD,
+                                                                                         _ feedbackE: FeedbackE)
+        -> (FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE)
+        where
+        FeedbackA: Feedback,
+        FeedbackB: Feedback,
+        FeedbackC: Feedback,
+        FeedbackD: Feedback,
+        FeedbackE: Feedback,
+        FeedbackA.StateStream == FeedbackB.StateStream,
+        FeedbackA.EventStream == FeedbackB.EventStream,
+        FeedbackB.StateStream == FeedbackC.StateStream,
+        FeedbackB.EventStream == FeedbackC.EventStream,
+        FeedbackC.StateStream == FeedbackD.StateStream,
+        FeedbackC.EventStream == FeedbackD.EventStream,
+        FeedbackD.StateStream == FeedbackE.StateStream,
+        FeedbackD.EventStream == FeedbackE.EventStream {
+            return (feedbackA, feedbackB, feedbackC, feedbackD, feedbackE)
     }
 }
