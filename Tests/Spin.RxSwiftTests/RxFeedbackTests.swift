@@ -10,6 +10,25 @@ import RxSwift
 import Spin_RxSwift
 import XCTest
 
+fileprivate class MockContainer {
+
+    var isRenderCalled = false
+    var receivedState: String?
+
+    private let exp: XCTestExpectation
+
+    init(exp: XCTestExpectation, expectationCount: Int) {
+        self.exp = exp
+        self.exp.expectedFulfillmentCount = expectationCount
+    }
+
+    func render(state: String) {
+        self.isRenderCalled = true
+        self.receivedState = state
+        self.exp.fulfill()
+    }
+}
+
 final class RxFeedbackTests: XCTestCase {
 
     private let disposeBag = DisposeBag()
@@ -181,6 +200,31 @@ final class RxFeedbackTests: XCTestCase {
 
         // Then: the stream waits for the long operation to end before completing
         XCTAssertEqual(received, ["2"])
+    }
+
+    func test_viewContext_is_used() throws {
+        // Given: a ViewContext and a Feedback instantiated from it
+        let exp = expectation(description: "ViewContext")
+        var receivedEvent = ""
+        let viewContext = RxViewContext<String, String>(state: "initialState")
+        let container = MockContainer(exp: exp, expectationCount: 2)
+        viewContext.render(on: container) { $0.render }
+        let sut = RxFeedback(viewContext: viewContext)
+
+        // When: feeding the feedback with an input state
+        let inputStream = Observable<String>.just("1701")
+        sut.effect(inputStream).subscribe(onNext: { (event) in
+            receivedEvent = event
+        }).disposed(by: self.disposeBag)
+
+        viewContext.emit("newEvent")
+
+        waitForExpectations(timeout: 5)
+
+        // Then: the ViewContext received the state
+        XCTAssertTrue(container.isRenderCalled)
+        XCTAssertEqual(container.receivedState, "1701")
+        XCTAssertEqual(receivedEvent, "newEvent")
     }
 
     func test_directEffect_is_used() {

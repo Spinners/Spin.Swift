@@ -63,5 +63,10 @@ public struct RxFeedback<State, Event>: Feedback {
 
         self.init(effect: fullEffect, on: nil)
     }
+}
 
+public extension RxFeedback {
+    init(viewContext: RxViewContext<State, Event>) {
+        self.init(uiEffects: viewContext.toStateEffect(), viewContext.toEventEffect(), on: MainScheduler.instance)
+    }
 }

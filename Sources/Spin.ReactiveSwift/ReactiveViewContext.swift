@@ -34,20 +34,17 @@ public class ReactiveViewContext<State, Event>: ObservableObject {
         return Binding(get: { self.state[keyPath: keyPath] }, set: { self.emit(event($0)) })
     }
 
-    public func toFeedback() -> ReactiveFeedback<State, Event> {
-        let renderFeedbackFunction: (State) -> Void = { [weak self] state in
+    func toStateEffect() -> (State) -> Void {
+        return { [weak self] state in
             self?.state = state
             self?.externalRenderFeedbackFunction?(state)
         }
+    }
 
-        let eventFeedbackFunction: () -> SignalProducer<Event, Never> = { [weak self] () in
+    func toEventEffect() -> () -> SignalProducer<Event, Never> {
+        return { [weak self] () in
             guard let strongSelf = self else { return .empty }
-
             return strongSelf.eventsProducer.producer
         }
-
-        return ReactiveFeedback(uiEffects: renderFeedbackFunction,
-                                eventFeedbackFunction,
-                                on: UIScheduler())
     }
 }

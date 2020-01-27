@@ -10,7 +10,7 @@ import Dispatch
 import Spin_Swift
 
 public struct CombineFeedback<State, Event, SchedulerTime, SchedulerOptions>: Feedback
-    where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConvertible {
+where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConvertible {
     public typealias StateStream = AnyPublisher<State, Never>
     public typealias EventStream = AnyPublisher<Event, Never>
     public typealias Executer = AnyScheduler<SchedulerTime, SchedulerOptions>
@@ -58,6 +58,15 @@ public struct CombineFeedback<State, Event, SchedulerTime, SchedulerOptions>: Fe
         }
 
         self.init(effect: fullEffect, on: nil)
+    }
+}
+
+public extension CombineFeedback
+    where
+    SchedulerTime == DispatchQueue.SchedulerTimeType,
+    SchedulerOptions == DispatchQueue.SchedulerOptions {
+    init(viewContext: CombineViewContext<State, Event>) {
+        self.init(uiEffects: viewContext.toStateEffect(), viewContext.toEventEffect(), on: DispatchQueue.main.eraseToAnyScheduler())
     }
 }
 

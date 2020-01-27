@@ -36,20 +36,17 @@ public class CombineViewContext<State, Event>: ObservableObject {
         return Binding(get: { self.state[keyPath: keyPath] }, set: { self.emit(event($0)) })
     }
 
-    public func toFeedback() -> DispatchQueueCombineFeedback<State, Event> {
-        let renderFeedbackFunction: (State) -> Void = { [weak self] state in
+    func toStateEffect() -> (State) -> Void {
+        return { [weak self] state in
             self?.state = state
             self?.externalRenderFeedbackFunction?(state)
         }
+    }
 
-        let eventFeedbackFunction: () -> AnyPublisher<Event, Never> = { [weak self] () in
+    func toEventEffect() -> () -> AnyPublisher<Event, Never> {
+        return { [weak self] () in
             guard let strongSelf = self else { return Empty().eraseToAnyPublisher() }
-            
             return strongSelf.events.eraseToAnyPublisher()
         }
-
-        return DispatchQueueCombineFeedback(uiEffects: renderFeedbackFunction,
-                                            eventFeedbackFunction,
-                                            on: DispatchQueue.main.eraseToAnyScheduler())
     }
 }

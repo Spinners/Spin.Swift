@@ -39,3 +39,9 @@ public struct ReactiveReducer<State, Event>: Reducer {
         }
     }
 }
+
+public extension ReactiveFeedback {
+    init(viewContext: ReactiveViewContext<State, Event>) {
+        self.init(uiEffects: viewContext.toStateEffect(), viewContext.toEventEffect(), on: UIScheduler())
+    }
+}

@@ -6,7 +6,7 @@
 //
 
 import Combine
-import Spin_Combine
+@testable import Spin_Combine
 import XCTest
 
 fileprivate class MockContainer {
@@ -28,7 +28,7 @@ final class CombineViewContextTests: XCTestCase {
 
         var receivedState = ""
 
-        // Given: a ViewContext (with an external rendering function) and its resulting feedback
+        // Given: a ViewContext (with an external rendering function) and its resulting effect
         let sut = CombineViewContext<String, String>(state: "initial")
         let container = MockContainer()
         sut.render(on: container) { $0.render(state:) }
@@ -37,16 +37,15 @@ final class CombineViewContextTests: XCTestCase {
         XCTAssertTrue(container.isRenderCalled)
         container.isRenderCalled = false
 
-        let feedback = sut.toFeedback()
+        let stateEffect = sut.toStateEffect()
 
         sut.$state.sink { state in
             receivedState = state
             exp.fulfill()
         }.disposed(by: &self.disposeBag)
 
-        // When: feeding the resulting feedback with a state input stream
-        let subject = PassthroughSubject<String, Never>()
-        feedback.effect(Just<String>("newState").eraseToAnyPublisher()).subscribe(subject).disposed(by: &self.disposeBag)
+        // When: feeding the resulting effect with a state
+        stateEffect("newState")
 
         waitForExpectations(timeout: 5)
 
@@ -60,11 +59,11 @@ final class CombineViewContextTests: XCTestCase {
 
         var receivedEvent = ""
 
-        // Given: a ViewContext and its resulting feedback
+        // Given: a ViewContext and its resulting effect
         let sut = CombineViewContext<String, String>(state: "initial")
-        let feedback = sut.toFeedback()
+        let eventEffect = sut.toEventEffect()
 
-        feedback.effect(Just<String>("newState").eraseToAnyPublisher()).sink { event in
+        eventEffect().sink { event in
             receivedEvent = event
             exp.fulfill()
         }.disposed(by: &self.disposeBag)
@@ -81,9 +80,9 @@ final class CombineViewContextTests: XCTestCase {
         let exp = expectation(description: "new event")
         var receivedEvent = ""
 
-        // Given: a ViewContext and its resulting feedback
+        // Given: a ViewContext and its resulting effect
         let sut = CombineViewContext<String, String>(state: "initial")
-        let feedback = sut.toFeedback()
+        let eventEffect = sut.toEventEffect()
 
         // Given: a Binding on the \.count State KeyPath
         let binding = sut.binding(for: \.count, event: { "\($0)" })
@@ -91,7 +90,7 @@ final class CombineViewContextTests: XCTestCase {
         // Then: the "get" side of the Binding gives the actuel state size in terms of string count ("initialState" -> 7 chars)
         XCTAssertEqual(binding.wrappedValue, 7)
 
-        feedback.effect(Just<String>("newState").eraseToAnyPublisher()).sink { event in
+        eventEffect().sink { event in
             receivedEvent = event
             exp.fulfill()
         }.disposed(by: &self.disposeBag)

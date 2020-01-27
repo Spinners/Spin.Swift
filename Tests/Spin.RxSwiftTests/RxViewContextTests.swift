@@ -7,7 +7,7 @@
 
 import Combine
 import RxSwift
-import Spin_RxSwift
+@testable import Spin_RxSwift
 import XCTest
 
 fileprivate class MockContainer {
@@ -30,7 +30,7 @@ final class RxViewContextTests: XCTestCase {
 
         var receivedState = ""
 
-        // Given: a ViewContext (with an external rendering function) and its resulting feedback
+        // Given: a ViewContext (with an external rendering function) and its resulting effect
         let sut = RxViewContext<String, String>(state: "initial")
         let container = MockContainer()
         sut.render(on: container) { $0.render(state:) }
@@ -39,15 +39,15 @@ final class RxViewContextTests: XCTestCase {
         XCTAssertTrue(container.isRenderCalled)
         container.isRenderCalled = false
 
-        let feedback = sut.toFeedback()
+        let stateEffect = sut.toStateEffect()
 
         sut.$state.sink { state in
             receivedState = state
             exp.fulfill()
         }.store(in: &self.cancellables)
 
-        // When: feeding the resulting feedback with a state input stream
-        feedback.effect(.just("newState")).subscribe().disposed(by: self.disposeBag)
+        // When: feeding the resulting effect with a state input stream
+        stateEffect("newState")
 
         waitForExpectations(timeout: 5)
 
@@ -61,11 +61,11 @@ final class RxViewContextTests: XCTestCase {
 
         var receivedEvent = ""
 
-        // Given: a ViewContext and its resulting feedback
+        // Given: a ViewContext and its resulting effect
         let sut = RxViewContext<String, String>(state: "initial")
-        let feedback = sut.toFeedback()
+        let eventEffect = sut.toEventEffect()
 
-        feedback.effect(.just("newState")).subscribe(onNext: { event in
+        eventEffect().subscribe(onNext: { event in
             receivedEvent = event
             exp.fulfill()
         }).disposed(by: self.disposeBag)
@@ -82,9 +82,9 @@ final class RxViewContextTests: XCTestCase {
         let exp = expectation(description: "new event")
         var receivedEvent = ""
 
-        // Given: a ViewContext and its resulting feedback
+        // Given: a ViewContext and its resulting effect
         let sut = RxViewContext<String, String>(state: "initial")
-        let feedback = sut.toFeedback()
+        let eventEffect = sut.toEventEffect()
 
         // Given: a Binding on the \.count State KeyPath
         let binding = sut.binding(for: \.count, event: { "\($0)" })
@@ -92,7 +92,7 @@ final class RxViewContextTests: XCTestCase {
         // Then: the "get" side of the Binding gives the actuel state size in terms of string count ("initialState" -> 7 chars)
         XCTAssertEqual(binding.wrappedValue, 7)
         
-        feedback.effect(.just("newState")).subscribe(onNext: { event in
+        eventEffect().subscribe(onNext: { event in
             receivedEvent = event
             exp.fulfill()
         }).disposed(by: self.disposeBag)
