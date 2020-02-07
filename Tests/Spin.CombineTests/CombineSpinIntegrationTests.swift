@@ -48,13 +48,14 @@ final class CombineSpinIntegrationTests: XCTestCase {
         }
 
         // When: spinning the feedbacks and the reducer on the default executer
-        let recorder = Spinner
+        let spin = Spinner
             .from(initialState: "initialState")
             .add(feedback: DispatchQueueCombineFeedback(effect: effectA))
             .add(feedback: DispatchQueueCombineFeedback(effect: effectB))
             .add(feedback: DispatchQueueCombineFeedback(effect: effectC))
             .reduce(with: CombineReducer(reducer: reducerFunction))
-            .toReactiveStream()
+
+        let recorder = AnyPublisher<String, Never>.stream(from: spin)
             .output(in: (0...6))
             .record()
 
@@ -101,15 +102,14 @@ final class CombineSpinIntegrationTests: XCTestCase {
             }
         }
 
-        let sut = CombineSpin<String>(initialState: "initialState", reducer: CombineReducer(reducer: reducerFunction)) {
-            CombineFeedback(effect: effectA).execute(on: DispatchQueue.main.eraseToAnyScheduler())
-            CombineFeedback(effect: effectB).execute(on: DispatchQueue.main.eraseToAnyScheduler())
-            CombineFeedback(effect: effectC).execute(on: DispatchQueue.main.eraseToAnyScheduler())
+        let spin = CombineSpin<String, StringAction>(initialState: "initialState", reducer: CombineReducer(reducer: reducerFunction)) {
+            DispatchQueueCombineFeedback(effect: effectA).execute(on: DispatchQueue.main.eraseToAnyScheduler())
+            DispatchQueueCombineFeedback(effect: effectB).execute(on: DispatchQueue.main.eraseToAnyScheduler())
+            DispatchQueueCombineFeedback(effect: effectC).execute(on: DispatchQueue.main.eraseToAnyScheduler())
         }
 
         // When: spinning the feedbacks and the reducer on the default executer
-        let recorder = sut
-            .toReactiveStream()
+        let recorder = AnyPublisher<String, Never>.stream(from: spin)
             .output(in: (0...6))
             .record()
 

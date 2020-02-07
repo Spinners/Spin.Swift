@@ -13,35 +13,14 @@ public struct ReactiveReducer<State, Event>: Reducer {
     public typealias EventStream = SignalProducer<Event, Never>
     public typealias Executer = Scheduler
 
-    public let reducer: (StateStream.Value, EventStream.Value) -> StateStream.Value
-    public let executer: Executer
+    public let reducerOnExecuter: (StateStream.Value, EventStream) -> StateStream
 
     public init(reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value,
                 on executer: Executer = QueueScheduler.main) {
-        self.reducer = reducer
-        self.executer = executer
-    }
-
-    public func apply(on initialState: StateStream.Value,
-                      after effects: [(StateStream) -> EventStream]) -> StateStream {
-        return SignalProducer.deferred {
-            let currentState = MutableProperty<State>(initialState)
-
-            // merging all the effects into one event stream
-            let eventStreams = effects.map { $0(currentState.producer) }
-            let eventStream = SignalProducer.merge(eventStreams)
-
-            return eventStream
-                .observe(on: self.executer)
-                .scan(initialState, self.reducer)
-                .prefix(value: initialState)
-                .on(value: { currentState.swap($0) })
+        self.reducerOnExecuter = { initialState, events in
+            events
+                .observe(on: executer)
+                .scan(initialState, reducer)
         }
-    }
-}
-
-public extension ReactiveFeedback {
-    init(viewContext: ReactiveViewContext<State, Event>) {
-        self.init(uiEffects: viewContext.toStateEffect(), viewContext.toEventEffect(), on: UIScheduler())
     }
 }

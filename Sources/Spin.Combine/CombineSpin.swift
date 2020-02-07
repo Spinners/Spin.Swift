@@ -8,4 +8,4 @@
 import Combine
 import Spin_Swift
 
-public typealias CombineSpin<Value> = AnySpin<AnyPublisher<Value, Never>>
+public typealias CombineSpin<State, Event> = AnySpin<AnyPublisher<State, Never>, AnyPublisher<Event, Never>>

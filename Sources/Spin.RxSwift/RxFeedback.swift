@@ -14,7 +14,6 @@ public struct RxFeedback<State, Event>: Feedback {
     public typealias Executer = ImmediateSchedulerType
 
     public let effect: (StateStream) -> EventStream
-    public var feedbackExecuter: Executer?
 
     public init(effect: @escaping (StateStream) -> EventStream, on executer: Executer? = nil) {
         guard let executer = executer else {
@@ -26,7 +25,6 @@ public struct RxFeedback<State, Event>: Feedback {
             return effect(stateStream.observeOn(executer))
         }
     }
-
 
     public init(effect: @escaping (StateStream.Value) -> EventStream,
                 on executer: Executer? = nil,
@@ -51,7 +49,7 @@ public struct RxFeedback<State, Event>: Feedback {
         let fullEffect: (StateStream) -> EventStream = { states in
             return states.map(directEffect)
         }
-
+        
         self.init(effect: fullEffect, on: executer)
     }
 
@@ -62,11 +60,5 @@ public struct RxFeedback<State, Event>: Feedback {
         }
 
         self.init(effect: fullEffect, on: nil)
-    }
-}
-
-public extension RxFeedback {
-    init(viewContext: RxViewContext<State, Event>) {
-        self.init(uiEffects: viewContext.toStateEffect(), viewContext.toEventEffect(), on: MainScheduler.instance)
     }
 }

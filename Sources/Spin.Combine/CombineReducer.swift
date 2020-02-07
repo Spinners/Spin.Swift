@@ -15,31 +15,15 @@ where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConv
     public typealias EventStream = AnyPublisher<Event, Never>
     public typealias Executer = AnyScheduler<SchedulerTime, SchedulerOptions>
 
-    public let reducer: (StateStream.Value, EventStream.Value) -> StateStream.Value
-    public let executer: Executer
+    public let reducerOnExecuter: (StateStream.Value, EventStream) -> StateStream
 
     public init(reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value, on executer: Executer) {
-        self.reducer = reducer
-        self.executer = executer
-    }
-
-    public func apply(on initialState: StateStream.Value,
-                      after effects: [(StateStream) -> EventStream]) -> StateStream {
-
-        return Deferred<StateStream> {
-            let currentState = CurrentValueSubject<StateStream.Value, Never>(initialState)
-
-            // merging all the effects into one event stream
-            let eventStreams = effects.map { $0(currentState.eraseToAnyPublisher()) }
-            let eventStream = Publishers.MergeMany(eventStreams).eraseToAnyPublisher()
-
-            return eventStream
-                .receive(on: self.executer)
-                .scan(initialState, self.reducer)
-                .prepend(initialState)
-                .handleEvents(receiveOutput: currentState.send)
+        self.reducerOnExecuter = { initialState, events in
+            events
+                .receive(on: executer)
+                .scan(initialState, reducer)
                 .eraseToAnyPublisher()
-        }.eraseToAnyPublisher()
+        }
     }
 }
 

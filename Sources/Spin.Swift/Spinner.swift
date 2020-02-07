@@ -17,7 +17,7 @@ public class Spinner<State> {
     }
 
     public func add<FeedbackType: Feedback>(feedback: FeedbackType) -> SpinnerFeedback< FeedbackType.StateStream,
-                                                                                        FeedbackType.EventStream>
+        FeedbackType.EventStream>
         where FeedbackType.StateStream.Value == State {
             return SpinnerFeedback< FeedbackType.StateStream, FeedbackType.EventStream>(initialState: self.initialState,
                                                                                         feedbacks: [feedback])
@@ -46,13 +46,13 @@ public class SpinnerFeedback<StateStream: ReactiveStream, EventStream: ReactiveS
             return self
     }
 
-    public func reduce<ReducerType>(with reducer: ReducerType) -> AnySpin<StateStream>
+    public func reduce<ReducerType>(with reducer: ReducerType) -> AnySpin<StateStream, EventStream>
         where
         ReducerType: Reducer,
         ReducerType.StateStream == StateStream,
         ReducerType.EventStream == EventStream {
-            return AnySpin<StateStream>(initialState: self.initialState,
-                                        effects: self.effects,
-                                        reducer: reducer)
+            return AnySpin<StateStream, EventStream>(initialState: self.initialState,
+                                                  effects: self.effects,
+                                                  reducerOnExecuter: reducer.reducerOnExecuter)
     }
 }

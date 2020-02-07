@@ -12,8 +12,9 @@ import XCTest
 
 final class CombineReducerTests: XCTestCase {
 
-    func test_apply_is_performed_on_default_executer_when_no_executer_is_specified() throws {
-        // Given: a effect switching on a specified Executer after being executed
+    func test_reducer_is_performed_on_default_executer_when_no_executer_is_specified() throws {
+        // Given: an event stream switching on a specified Executer after being executed
+        // and a Reducer applied after this event stream
         var reduceIsCalled = false
         let expectedExecuterName = "com.apple.main-thread"
         var receivedExecuterName = ""
@@ -23,23 +24,22 @@ final class CombineReducerTests: XCTestCase {
                                                  qos: .userInitiated,
                                                  attributes: .concurrent)
 
-        let feedback = DispatchQueueCombineFeedback<Int, String>(effect: { (inputs: AnyPublisher<Int, Never>) -> AnyPublisher<String, Never> in
-            return inputs.map { _ in return "" }.receive(on: inputStreamScheduler).eraseToAnyPublisher()
-        })
+        let eventStream = Just("").receive(on: inputStreamScheduler).eraseToAnyPublisher()
 
-        let reducerFunction = { (state: Int, action: String) -> Int in
+        let reducerFunction = { (state: String, action: String) -> String in
             reduceIsCalled = true
             receivedExecuterName = DispatchQueue.currentLabel
-            return 0
+            return ""
         }
 
         // When: reducing without specifying an Executer for the reduce operation
-        let recorder = CombineReducer(reducer: reducerFunction)
-            .apply(on: 0, after: [feedback.effect])
+        let sut = CombineReducer(reducer: reducerFunction)
+
+        let recorder = sut.reducerOnExecuter("initialState", eventStream)
             .output(in: (0...1))
             .record()
 
-        _ = try wait(for: recorder.elements, timeout: 5)
+        _ = try wait(for: recorder.completion, timeout: 5)
 
         // Then: the reduce is performed
         // Then: the reduce is performed on the default executer, ie the main queue for CombineReducer
@@ -47,7 +47,7 @@ final class CombineReducerTests: XCTestCase {
         XCTAssertEqual(receivedExecuterName, expectedExecuterName)
     }
 
-    func test_apply_is_performed_on_dedicated_executer_when_executer_is_specified() throws {
+    func test_reducer_is_performed_on_dedicated_executer_when_executer_is_specified() throws {
         // Given: a effect switching on a specified Executer after being executed
         var reduceIsCalled = false
         let expectedExecuterName = "REDUCER_QUEUE_\(UUID().uuidString)"
@@ -61,19 +61,18 @@ final class CombineReducerTests: XCTestCase {
                                              qos: .userInitiated,
                                              attributes: .concurrent).eraseToAnyScheduler()
 
-        let feedback = DispatchQueueCombineFeedback<Int, String>(effect: { (inputs: AnyPublisher<Int, Never>) in
-            return inputs.map { _ in return "" }.receive(on: inputStreamScheduler).eraseToAnyPublisher()
-        })
+        let eventStream = Just("").receive(on: inputStreamScheduler).eraseToAnyPublisher()
 
-        let reducerFunction = { (state: Int, action: String) -> Int in
+        let reducerFunction = { (state: String, action: String) -> String in
             reduceIsCalled = true
             receivedExecuterName = DispatchQueue.currentLabel
-            return 0
+            return ""
         }
 
         // When: reducing with specifying an Executer for the reduce operation
-        let recorder = CombineReducer(reducer: reducerFunction, on: reducerScheduler)
-            .apply(on: 0, after: [feedback.effect])
+        let sut = CombineReducer(reducer: reducerFunction, on: reducerScheduler)
+
+        let recorder = sut.reducerOnExecuter("initialState", eventStream)
             .output(in: (0...1))
             .record()
 
@@ -83,42 +82,5 @@ final class CombineReducerTests: XCTestCase {
         // Then: the reduce is performed on the current executer, ie the one set by the effect
         XCTAssertTrue(reduceIsCalled)
         XCTAssertEqual(receivedExecuterName, expectedExecuterName)
-    }
-
-    func test_initialState_is_the_first_state_given_to_the_feedbacks() throws {
-        // Given: 2 effects
-        let initialState = 1701
-        var receivedInitialStateInEffectA = 0
-        var receivedInitialStateInEffectB = 0
-
-        let effectA = { (input: AnyPublisher<Int, Never>) -> AnyPublisher<String, Never> in
-            return input.map { input in
-                receivedInitialStateInEffectA = input
-                return "\(input)"
-            }.eraseToAnyPublisher()
-        }
-
-        let effectB = { (input: AnyPublisher<Int, Never>) -> AnyPublisher<String, Never> in
-            return input.map { input in
-                receivedInitialStateInEffectB = input
-                return "\(input)"
-            }.eraseToAnyPublisher()
-        }
-
-        let reducerFunction = { (state: Int, action: String) -> Int in
-            return 0
-        }
-
-        // When: reducing the effects
-        let recorder = CombineReducer(reducer: reducerFunction)
-            .apply(on: initialState, after: [effectA, effectB])
-            .first()
-            .record()
-
-        _ = try wait(for: recorder.elements, timeout: 5)
-
-        // Then: the initial states received in the effects are the one specified in the Reducer
-        XCTAssertEqual(receivedInitialStateInEffectA, initialState)
-        XCTAssertEqual(receivedInitialStateInEffectB, initialState)
     }
 }

@@ -12,19 +12,7 @@ public protocol Reducer {
     associatedtype EventStream: ReactiveStream
     associatedtype Executer
 
-    var reducer: (StateStream.Value, EventStream.Value) -> StateStream.Value { get }
-    var executer: Executer { get }
+    var reducerOnExecuter: (StateStream.Value, EventStream) -> StateStream { get }
 
     init(reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value, on executer: Executer)
-
-    func apply(on initialState: StateStream.Value, after effects: [(StateStream) -> EventStream]) -> StateStream
-}
-
-public extension Reducer {
-    /// Set an executer for the reducer after its initilization
-    /// - Parameter executer: the executer on which the reducer will be executed
-    func execute(on executer: Executer) -> Self {
-        let newReducer = Self(reducer: self.reducer, on: executer)
-        return newReducer
-    }
 }

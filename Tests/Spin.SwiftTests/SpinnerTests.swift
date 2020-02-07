@@ -8,30 +8,6 @@
 @testable import Spin_Swift
 import XCTest
 
-fileprivate class SpyReducer: Reducer {
-    let reducer: (MockState, MockEvent) -> MockState
-    let executer: MockExecuter
-
-    var reduceIsCalled = false
-    var numberOfEffects = 0
-    var initialState: MockState?
-
-    required init(reducer: @escaping (MockState, MockEvent) -> MockState, on executer: MockExecuter = MockExecuter()) {
-        self.reducer = reducer
-        self.executer = executer
-    }
-
-    func apply(on initialState: MockState,
-               after effects: [(MockStream<MockState>) -> MockStream<MockEvent>]) -> MockStream<MockState> {
-        self.initialState = initialState
-        self.reduceIsCalled = true
-        self.numberOfEffects = effects.count
-        effects.forEach { _ = $0(MockStream<MockState>(value: initialState)) }
-        _ = self.reducer(initialState, MockEvent(value: 0))
-        return MockStream<MockState>(value: MockState(subState: 1701))
-    }
-}
-
 final class SpinnerTests: XCTestCase {
 
     func test_Spinner_from_instantiates_a_spinner_with_expected_initialState() {
@@ -46,7 +22,7 @@ final class SpinnerTests: XCTestCase {
         XCTAssertEqual(sut.initialState, expectedInitialState)
     }
 
-    func test_Spinner_add_creates_a_SpinnerFeedback_with_the_provided_feedback() {
+    func test_Spinner_add_creates_a_SpinnerFeedback_with_the_provided_effect() {
         // Given: a Feedback
         var effectsCalled = false
         let feedback = MockFeedback(effect: { (states: MockStream<MockState>) -> MockStream<MockEvent> in
@@ -68,7 +44,7 @@ final class SpinnerTests: XCTestCase {
         XCTAssertTrue(effectsCalled)
     }
 
-    func test_SpinnerFeedback_initializer_preserves_the_feedback_stream() {
+    func test_SpinnerFeedback_initializer_preserves_the_effect_and_initialState() {
         // Given: 2 Feedbacks
         var effectAIsCalled = false
         var effectBIsCalled = false
@@ -94,7 +70,7 @@ final class SpinnerTests: XCTestCase {
         XCTAssertTrue(effectBIsCalled)
     }
 
-    func test_SpinnerFeedback_add_preserves_the_feedback_stream() {
+    func test_SpinnerFeedback_add_preserves_the_effects() {
         // Given: 3 Feedbacks
         var effectAIsCalled = false
         var effectBIsCalled = false
@@ -130,63 +106,33 @@ final class SpinnerTests: XCTestCase {
         XCTAssertTrue(effectCIsCalled)
     }
 
-    func test_SpinnerFeedback_reduce_gives_the_expected_Spin() {
+    func test_SpinnerFeedback_reduce_preserves_the_reducer() {
         // Given: an initial state, 2 feedbacks and 1 reducer
         let expectedInitialState = MockState(subState: 1701)
+        var reducerIsCalled = false
+
         let feedbackA = MockFeedback(effect: { (states: MockStream<MockState>) -> MockStream<MockEvent> in
             return MockStream<MockEvent>(value: .toEmpty)
         })
         let feedbackB = MockFeedback(effect: { (states: MockStream<MockState>) -> MockStream<MockEvent> in
             return MockStream<MockEvent>(value: .toEmpty)
         })
-        let reducerFunction = { (state: MockState, event: MockEvent) -> MockState in return MockState(subState: 1702) }
+        let reducerFunction = { (state: MockState, event: MockEvent) -> MockState in
+            reducerIsCalled = true
+            return MockState(subState: 1702)
+        }
         
-        let reducer = SpyReducer(reducer: reducerFunction)
+        let reducer = MockReducer(reducer: reducerFunction)
 
         // When: using the initial state, the 2 feedbacks and the reducer whithin a Spinner to build a `Spin`
-        _ = SpinnerFeedback(initialState: expectedInitialState,
+        let sut = SpinnerFeedback(initialState: expectedInitialState,
                             feedbacks: [feedbackA, feedbackB])
             .reduce(with: reducer)
+        _ = sut.reducerOnExecuter(MockState.toEmpty, MockStream<MockEvent>(value: .toEmpty))
 
         // Then: the reducer is called with the right number of feedbacks
-        XCTAssertEqual(reducer.initialState, expectedInitialState)
-        XCTAssertTrue(reducer.reduceIsCalled)
-        XCTAssertEqual(reducer.numberOfEffects, 2)
-    }
-
-    func test_SpinnerFeedback_toReactiveStream_triggers_the_reducer() {
-        // Given: an initial state, 2 feedbacks and 1 reducer
-        let expectedInitialState = MockState(subState: 1701)
-        let feedbackA = MockFeedback(effect: { (states: MockStream<MockState>) in return MockStream<MockEvent>(value: .toEmpty) })
-        let feedbackB = MockFeedback(effect: { (states: MockStream<MockState>) in return MockStream<MockEvent>(value: .toEmpty) })
-        let reducerFunction = { (state: MockState, event: MockEvent) -> MockState in return MockState(subState: 1702) }
-        let reducer = SpyReducer(reducer: reducerFunction)
-
-        // When: using the initial state, the 2 feedbacks and the reducer whithin a Spinner until the `toReactiveStream` step to build a stream of `State`
-        _ = SpinnerFeedback(initialState: expectedInitialState,
-                            feedbacks: [feedbackA, feedbackB])
-            .reduce(with: reducer)
-            .toReactiveStream()
-
-        // Then: the `Reducer` is triggered
-        XCTAssertTrue(reducer.reduceIsCalled)
-    }
-
-    func test_SpinnerFeedback_spin_triggers_the_reactiveStream() {
-        // Given: an initial state, 2 feedbacks and 1 reducer
-        let expectedInitialState = MockState(subState: 1701)
-        let feedbackA = MockFeedback(effect: { (states: MockStream<MockState>) in return MockStream<MockEvent>(value: .toEmpty) })
-        let feedbackB = MockFeedback(effect: { (states: MockStream<MockState>) in return MockStream<MockEvent>(value: .toEmpty) })
-        let reducerFunction = { (state: MockState, event: MockEvent) -> MockState in return MockState(subState: 1702) }
-        let reducer = SpyReducer(reducer: reducerFunction)
-
-        // When: using the initial state, the 2 feedbacks and the reducer whithin a Spinner until the `spin` step to trigger a stream of `State`
-        _ = SpinnerFeedback(initialState: expectedInitialState,
-                            feedbacks: [feedbackA, feedbackB])
-            .reduce(with: reducer)
-            .spin()
-
-        // Then: the `Reducer` is triggered
-        XCTAssertTrue(reducer.reduceIsCalled)
+        XCTAssertEqual(sut.initialState, expectedInitialState)
+        XCTAssertEqual(sut.effects.count, 2)
+        XCTAssertTrue(reducerIsCalled)
     }
 }
