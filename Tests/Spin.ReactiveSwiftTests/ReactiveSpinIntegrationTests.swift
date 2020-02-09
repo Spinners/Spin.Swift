@@ -52,13 +52,14 @@ final class ReactiveSpinIntegrationTests: XCTestCase {
         }
 
         // When: spinning the feedbacks and the reducer on the default executer
-        Spinner
+        let spin = Spinner
             .from(initialState: "initialState")
             .add(feedback: ReactiveFeedback(effect: effectA))
             .add(feedback: ReactiveFeedback(effect: effectB))
             .add(feedback: ReactiveFeedback(effect: effectC))
             .reduce(with: ReactiveReducer(reducer: reducerFunction))
-            .toReactiveStream()
+
+        SignalProducer<String, Never>.stream(from: spin)
             .take(first: 7)
             .collect()
             .startWithValues({ (states) in
@@ -112,15 +113,14 @@ final class ReactiveSpinIntegrationTests: XCTestCase {
             }
         }
 
-        let sut = ReactiveSpin<String>(initialState: "initialState", reducer: ReactiveReducer(reducer: reducerFunction)) {
-            ReactiveFeedback(effect: effectA).execute(on: UIScheduler())
-            ReactiveFeedback(effect: effectB).execute(on: UIScheduler())
-            ReactiveFeedback(effect: effectC).execute(on: UIScheduler())
+        let spin = ReactiveSpin<String, StringAction>(initialState: "initialState", reducer: ReactiveReducer(reducer: reducerFunction)) {
+            ReactiveFeedback(effect: effectA).execute(on: QueueScheduler.main)
+            ReactiveFeedback(effect: effectB).execute(on: QueueScheduler.main)
+            ReactiveFeedback(effect: effectC).execute(on: QueueScheduler.main)
         }
 
         // When: spinning the feedbacks and the reducer on the default executer
-        sut
-            .toReactiveStream()
+        SignalProducer<String, Never>.stream(from: spin)
             .take(first: 7)
             .collect()
             .startWithValues({ (states) in

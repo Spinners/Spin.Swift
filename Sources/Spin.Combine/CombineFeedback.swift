@@ -61,14 +61,5 @@ where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConv
     }
 }
 
-public extension CombineFeedback
-    where
-    SchedulerTime == DispatchQueue.SchedulerTimeType,
-    SchedulerOptions == DispatchQueue.SchedulerOptions {
-    init(viewContext: CombineViewContext<State, Event>) {
-        self.init(uiEffects: viewContext.toStateEffect(), viewContext.toEventEffect(), on: DispatchQueue.main.eraseToAnyScheduler())
-    }
-}
-
 public typealias DispatchQueueCombineFeedback<State, Event> =
     CombineFeedback<State, Event, DispatchQueue.SchedulerTimeType, DispatchQueue.SchedulerOptions>

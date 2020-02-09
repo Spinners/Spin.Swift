@@ -5,50 +5,51 @@
 //  Created by Thibault Wittemberg on 2019-12-29.
 //
 
-/// `AnySpin` is a concrete implementation of `Spin`. This is what is to be returned in a concrete SpinDefinition
-/// implementation or a `Spinner` building process
-public struct AnySpin<StateStream: ReactiveStream>: Spin {
-    public let stream: StateStream
+open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Spin {
+    public var initialState: StateStream.Value
+    public var effects: [(StateStream) -> EventStream]
+    public var reducerOnExecuter: (StateStream.Value, EventStream) -> StateStream
 
-    public init<EventStream, ReducerType>(initialState: StateStream.Value,
-                                          effects: [(StateStream) -> EventStream],
-                                          reducer: ReducerType)
-        where
-        ReducerType: Reducer,
-        ReducerType.StateStream == StateStream,
-        EventStream == ReducerType.EventStream {
-            self.stream = reducer.apply(on: initialState, after: effects)
+    public init(initialState: StateStream.Value,
+                effects: [(StateStream) -> EventStream],
+                reducerOnExecuter: @escaping (StateStream.Value, EventStream) -> StateStream) {
+        self.initialState = initialState
+        self.effects = effects
+        self.reducerOnExecuter = reducerOnExecuter
     }
 
-    public init<FeedbackType, ReducerType>(initialState: StateStream.Value,
-                                           feedback: FeedbackType,
-                                           reducer: ReducerType)
+    public convenience init<FeedbackType, ReducerType>(initialState: StateStream.Value,
+                                                       feedback: FeedbackType,
+                                                       reducer: ReducerType)
         where
         FeedbackType: Feedback,
         ReducerType: Reducer,
         FeedbackType.StateStream == StateStream,
+        FeedbackType.EventStream == EventStream,
         FeedbackType.StateStream.Value == StateStream.Value,
         FeedbackType.StateStream == ReducerType.StateStream,
         FeedbackType.EventStream == ReducerType.EventStream {
             let effects = [feedback.effect]
-            self.init(initialState: initialState, effects: effects, reducer: reducer)
+            self.init(initialState: initialState, effects: effects, reducerOnExecuter: reducer.reducerOnExecuter)
     }
 
-    public init<FeedbackType, ReducerType>(initialState: StateStream.Value,
-                                           reducer: ReducerType,
-                                           @FeedbackBuilder feedbackBuilder: () -> FeedbackType)
+    public convenience init<FeedbackType, ReducerType>(initialState: StateStream.Value,
+                                                       reducer: ReducerType,
+                                                       @FeedbackBuilder feedbackBuilder: () -> FeedbackType)
         where
-        FeedbackType: Feedback, ReducerType: Reducer,
+        FeedbackType: Feedback,
+        ReducerType: Reducer,
         FeedbackType.StateStream == ReducerType.StateStream,
         FeedbackType.EventStream == ReducerType.EventStream,
-        FeedbackType.StateStream == StateStream {
+        FeedbackType.StateStream == StateStream,
+        FeedbackType.EventStream == EventStream {
             let effects = [feedbackBuilder().effect]
-            self.init(initialState: initialState, effects: effects, reducer: reducer)
+            self.init(initialState: initialState, effects: effects, reducerOnExecuter: reducer.reducerOnExecuter)
     }
 
-    public init<FeedbackA, FeedbackB, ReducerType>(initialState: StateStream.Value,
-                                                   reducer: ReducerType,
-                                                   @FeedbackBuilder builder: () -> (FeedbackA, FeedbackB))
+    public convenience init<FeedbackA, FeedbackB, ReducerType>(initialState: StateStream.Value,
+                                                               reducer: ReducerType,
+                                                               @FeedbackBuilder builder: () -> (FeedbackA, FeedbackB))
         where
         FeedbackA: Feedback,
         FeedbackB: Feedback,
@@ -57,17 +58,18 @@ public struct AnySpin<StateStream: ReactiveStream>: Spin {
         FeedbackA.EventStream == ReducerType.EventStream,
         FeedbackA.StateStream == FeedbackB.StateStream,
         FeedbackA.EventStream == FeedbackB.EventStream,
-        FeedbackA.StateStream == StateStream {
+        FeedbackA.StateStream == StateStream,
+        FeedbackA.EventStream == EventStream {
             let feedbacks = builder()
             let effects = [feedbacks.0.effect, feedbacks.1.effect]
-            self.init(initialState: initialState, effects: effects, reducer: reducer)
+            self.init(initialState: initialState, effects: effects, reducerOnExecuter: reducer.reducerOnExecuter)
     }
 
-    public init<FeedbackA, FeedbackB, FeedbackC, ReducerType>(initialState: StateStream.Value,
-                                                              reducer: ReducerType,
-                                                              @FeedbackBuilder builder: () -> ( FeedbackA,
-                                                                                                FeedbackB,
-                                                                                                FeedbackC))
+    public convenience init<FeedbackA, FeedbackB, FeedbackC, ReducerType>(initialState: StateStream.Value,
+                                                                          reducer: ReducerType,
+                                                                          @FeedbackBuilder builder: () -> ( FeedbackA,
+                                                                                                            FeedbackB,
+                                                                                                            FeedbackC))
         where
         FeedbackA: Feedback,
         FeedbackB: Feedback,
@@ -79,18 +81,19 @@ public struct AnySpin<StateStream: ReactiveStream>: Spin {
         FeedbackA.EventStream == FeedbackB.EventStream,
         FeedbackB.StateStream == FeedbackC.StateStream,
         FeedbackB.EventStream == FeedbackC.EventStream,
-        FeedbackA.StateStream == StateStream {
+        FeedbackA.StateStream == StateStream,
+        FeedbackA.EventStream == EventStream {
             let feedbacks = builder()
             let effects = [feedbacks.0.effect, feedbacks.1.effect, feedbacks.2.effect]
-            self.init(initialState: initialState, effects: effects, reducer: reducer)
+            self.init(initialState: initialState, effects: effects, reducerOnExecuter: reducer.reducerOnExecuter)
     }
 
-    public init<FeedbackA, FeedbackB, FeedbackC, FeedbackD, ReducerType>(initialState: StateStream.Value,
-                                                                         reducer: ReducerType,
-                                                                         @FeedbackBuilder builder: () -> (  FeedbackA,
-                                                                                                            FeedbackB,
-                                                                                                            FeedbackC,
-                                                                                                            FeedbackD))
+    public convenience init<FeedbackA, FeedbackB, FeedbackC, FeedbackD, ReducerType>(initialState: StateStream.Value,
+                                                                                     reducer: ReducerType,
+                                                                                     @FeedbackBuilder builder: () -> (  FeedbackA,
+                                                                                                                        FeedbackB,
+                                                                                                                        FeedbackC,
+                                                                                                                        FeedbackD))
         where
         FeedbackA: Feedback,
         FeedbackB: Feedback,
@@ -105,19 +108,20 @@ public struct AnySpin<StateStream: ReactiveStream>: Spin {
         FeedbackB.EventStream == FeedbackC.EventStream,
         FeedbackC.StateStream == FeedbackD.StateStream,
         FeedbackC.EventStream == FeedbackD.EventStream,
-        FeedbackA.StateStream == StateStream {
+        FeedbackA.StateStream == StateStream,
+        FeedbackA.EventStream == EventStream {
             let feedbacks = builder()
             let effects = [feedbacks.0.effect, feedbacks.1.effect, feedbacks.2.effect, feedbacks.3.effect]
-            self.init(initialState: initialState, effects: effects, reducer: reducer)
+            self.init(initialState: initialState, effects: effects, reducerOnExecuter: reducer.reducerOnExecuter)
     }
 
-    public init<FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE, ReducerType>(initialState: StateStream.Value,
-                                                                                    reducer: ReducerType,
-                                                                                    @FeedbackBuilder builder: () -> (   FeedbackA,
-                                                                                                                        FeedbackB,
-                                                                                                                        FeedbackC,
-                                                                                                                        FeedbackD,
-                                                                                                                        FeedbackE))
+    public convenience init<FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE, ReducerType>(initialState: StateStream.Value,
+                                                                                                reducer: ReducerType,
+                                                                                                @FeedbackBuilder builder: () -> (   FeedbackA,
+                                                                                                                                    FeedbackB,
+                                                                                                                                    FeedbackC,
+                                                                                                                                    FeedbackD,
+                                                                                                                                    FeedbackE))
         where
         FeedbackA: Feedback,
         FeedbackB: Feedback,
@@ -135,10 +139,11 @@ public struct AnySpin<StateStream: ReactiveStream>: Spin {
         FeedbackC.EventStream == FeedbackD.EventStream,
         FeedbackD.StateStream == FeedbackE.StateStream,
         FeedbackD.EventStream == FeedbackE.EventStream,
-        FeedbackA.StateStream == StateStream {
+        FeedbackA.StateStream == StateStream,
+        FeedbackA.EventStream == EventStream {
             let feedbacks = builder()
             let effects = [feedbacks.0.effect, feedbacks.1.effect, feedbacks.2.effect, feedbacks.3.effect, feedbacks.4.effect]
-            self.init(initialState: initialState, effects: effects, reducer: reducer)
+            self.init(initialState: initialState, effects: effects, reducerOnExecuter: reducer.reducerOnExecuter)
     }
 }
 

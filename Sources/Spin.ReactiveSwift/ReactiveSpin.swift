@@ -8,4 +8,4 @@
 import ReactiveSwift
 import Spin_Swift
 
-public typealias ReactiveSpin<Value> = AnySpin<SignalProducer<Value, Never>>
+public typealias ReactiveSpin<State, Event> = AnySpin<SignalProducer<State, Never>, SignalProducer<Event, Never>>
