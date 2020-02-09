@@ -53,4 +53,8 @@ public final class ReactiveUISpin<State, Event>: ReactiveSpin<State, Event>, Obs
     private func emit() -> SignalProducer<Event, Never> {
         self.eventsProducer.producer
     }
+
+    deinit {
+        self.disposeBag.dispose()
+    }
 }
