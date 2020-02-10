@@ -265,6 +265,34 @@ final class Feedback_DefaultTests: XCTestCase {
         XCTAssertEqual(receivedMockEventStream.value, MockEvent(value: 10))
     }
 
+    func test_initializer_is_called_with_nil_executer_and_default_executionStrategy_when_instantiated_with_a_keypath_substated_effect_but_without_executer_and_without_an_executionStrategy() {
+        // Given: a feedback stream based on a State -> Stream<Event>
+        var effectIsCalled = false
+        var effectIsCalledWithSubState: Int?
+        let effect: (Int) -> MockStream<MockEvent> = { subState -> MockStream<MockEvent> in
+            effectIsCalled = true
+            effectIsCalledWithSubState = subState
+            return MockStream<MockEvent>(value: MockEvent(value: 10))
+        }
+
+        // When: instantiating the feedback with the effect, a keyPath, and no Executer, and no execution strategy
+        // When: executing the feedback
+        let sut = SpyFeedback<MockState, MockEvent>(effect: effect, lensingOn: \.subState)
+        let receivedMockEventStream = sut.effect(MockStream<MockState>(value: MockState(subState: 15)))
+
+        // Then: the default initializer of the feedback is called
+        // Then: the Executer inside the feedback is nil
+        // Then: the ExecutionStrategy is the default one
+        // Then: the received state in the feedback closure is the one passed to the feedback.effect function
+        // Then: the feedback closure given to the feedback is executed and gives the expected result
+        XCTAssertTrue(sut.initIsCalled)
+        XCTAssertNil(sut.feedbackExecuter)
+        XCTAssertTrue(effectIsCalled)
+        XCTAssertEqual(spyExecutionStrategy, MockFeedback<MockState, MockEvent>.defaultExecutionStrategy)
+        XCTAssertEqual(effectIsCalledWithSubState, 15)
+        XCTAssertEqual(receivedMockEventStream.value, MockEvent(value: 10))
+    }
+
     func test_initializer_is_called_with_nil_executer_and_default_executionStrategy_when_instantiated_with_a_substated_filtered_effect_but_without_executer_and_without_an_executionStrategy() {
         // Given: a feedback stream based on a State -> Stream<Event>
         var effectIsCalled = false
@@ -278,6 +306,37 @@ final class Feedback_DefaultTests: XCTestCase {
         // When: instantiating the feedback with the effect, a lense, and no Executer, and no execution strategy
         // When: executing the feedback
         let sut = SpyFeedback<MockState, MockEvent>(effect: effect, lensingOn: { $0.subState }, filteredBy: { $0 > 10 })
+        let receivedMockEventStream = sut.effect(MockStream<MockState>(value: MockState(subState: 15)))
+        let receivedMockEventStreamWhenFilteredIsFalse = sut.effect(MockStream<MockState>(value: MockState(subState: 5)))
+
+        // Then: the default initializer of the feedback is called
+        // Then: the Executer inside the feedback is nil
+        // Then: the ExecutionStrategy is the default one
+        // Then: the received state in the feedback closure is the one passed to the feedback.effect function
+        // Then: the feedback closure given to the feedback is executed and gives the expected result
+        // Then: the received element from the feedback when the filter is false is an empty stream
+        XCTAssertTrue(sut.initIsCalled)
+        XCTAssertNil(sut.feedbackExecuter)
+        XCTAssertTrue(effectIsCalled)
+        XCTAssertEqual(spyExecutionStrategy, MockFeedback<MockState, MockEvent>.defaultExecutionStrategy)
+        XCTAssertEqual(effectIsCalledWithSubState, 15)
+        XCTAssertEqual(receivedMockEventStream.value, MockEvent(value: 10))
+        XCTAssertEqual(receivedMockEventStreamWhenFilteredIsFalse.value, MockEvent.toEmpty)
+    }
+
+    func test_initializer_is_called_with_nil_executer_and_default_executionStrategy_when_instantiated_with_a_keypath_substated_filtered_effect_but_without_executer_and_without_an_executionStrategy() {
+        // Given: a feedback stream based on a State -> Stream<Event>
+        var effectIsCalled = false
+        var effectIsCalledWithSubState: Int?
+        let effect: (Int) -> MockStream<MockEvent> = { subState -> MockStream<MockEvent> in
+            effectIsCalled = true
+            effectIsCalledWithSubState = subState
+            return MockStream<MockEvent>(value: MockEvent(value: 10))
+        }
+
+        // When: instantiating the feedback with the effect, a lense, and no Executer, and no execution strategy
+        // When: executing the feedback
+        let sut = SpyFeedback<MockState, MockEvent>(effect: effect, lensingOn: \.subState, filteredBy: { $0 > 10 })
         let receivedMockEventStream = sut.effect(MockStream<MockState>(value: MockState(subState: 15)))
         let receivedMockEventStreamWhenFilteredIsFalse = sut.effect(MockStream<MockState>(value: MockState(subState: 5)))
 

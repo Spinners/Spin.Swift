@@ -110,7 +110,26 @@ public extension Feedback {
     /// Initialize the feedback with a: `SubState` -> ReactiveStream<Event> stream
     /// - Parameters:
     ///   - effect: the function transforming a `SubState` to a reactive stream of `Event`
-    ///   - lense: the lense to apply to a State to obtain the `SubState` type paased as an input to the feedback
+    ///   - keyPath: the keyPath to obtain the `SubState` from the State type passed as an input to the feedback
+    ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
+    ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while
+    ///   the previous execution is still in progress
+    init<SubState>(effect: @escaping (SubState) -> EventStream,
+                   lensingOn keyPath: KeyPath<StateStream.Value, SubState>,
+                   on executer: Executer? = nil,
+                   applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
+        let effectFromKeyPath: (StateStream.Value) -> EventStream = { state -> EventStream in
+            let substate = state[keyPath: keyPath]
+            return effect(substate)
+        }
+
+        self.init(effect: effectFromKeyPath, on: executer, applying: strategy)
+    }
+
+    /// Initialize the feedback with a: `SubState` -> ReactiveStream<Event> stream
+    /// - Parameters:
+    ///   - effect: the function transforming a `SubState` to a reactive stream of `Event`
+    ///   - lense: the lense to apply to a State to obtain the `SubState` type passed as an input to the feedback
     ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
     ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while
     ///   the previous execution is still in progress
@@ -150,5 +169,31 @@ public extension Feedback {
         }
 
         self.init(effect: effectFromSubState, filteredBy: filterState, on: executer, applying: strategy)
+    }
+
+    /// Initialize the feedback with a: `SubState` -> ReactiveStream<Event> stream, dismissing the `SubState` values
+    /// that don't match the filter
+    /// - Parameters:
+    ///   - effect: the function transforming a `SubState` to a reactive stream of `Event`
+    ///   - keyPath: the keyPath to obtain the `SubState` from the State type passed as an input to the feedback
+    ///   - filter: the filter to apply to the input `State`
+    ///   - executer: the `Executer` upon which the feedback will be executed (default is nil)
+    ///   - strategy: the `ExecutionStrategy` to apply when a new `State` value is given as input of the feedback while
+    ///   the previous execution is still in progress
+    init<SubState>(effect: @escaping (SubState) -> EventStream,
+                   lensingOn keyPath: KeyPath<StateStream.Value, SubState>,
+                   filteredBy filter: @escaping (SubState) -> Bool,
+                   on executer: Executer? = nil,
+                   applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
+        let effectFromKeyPath: (StateStream.Value) -> EventStream = { state -> EventStream in
+            let substate = state[keyPath: keyPath]
+            return effect(substate)
+        }
+
+        let filterState: (StateStream.Value) -> Bool = { state -> Bool in
+            return filter(state[keyPath: keyPath])
+        }
+
+        self.init(effect: effectFromKeyPath, filteredBy: filterState, on: executer, applying: strategy)
     }
 }
