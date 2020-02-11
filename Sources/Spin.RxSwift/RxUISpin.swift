@@ -34,6 +34,12 @@ public final class RxUISpin<State, Event>: RxSpin<State, Event>, ObservableObjec
         return Binding(get: { self.state[keyPath: keyPath] }, set: { self.emit(event($0)) })
     }
 
+    public func binding<SubState>(for keyPath: KeyPath<State, SubState>, event: Event) -> Binding<SubState> {
+        return self.binding(for: keyPath) { _ -> Event in
+            event
+        }
+    }
+
     public func emit(_ event: Event) {
         self.events.accept(event)
     }

@@ -35,6 +35,12 @@ public final class CombineUISpin<State, Event>: CombineSpin<State, Event>, Obser
         return Binding(get: { self.state[keyPath: keyPath] }, set: { self.emit(event($0)) })
     }
 
+    public func binding<SubState>(for keyPath: KeyPath<State, SubState>, event: Event) -> Binding<SubState> {
+        return self.binding(for: keyPath) { _ -> Event in
+            event
+        }
+    }
+
     public func emit(_ event: Event) {
         self.events.send(event)
     }
