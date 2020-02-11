@@ -168,6 +168,39 @@ final class RxUISpinTests: XCTestCase {
         XCTAssertEqual(receivedEvent, "16")
     }
 
+    func test_binding_make_the_RxUISpin_emit_directly_an_event_when_the_binding_is_mutated() {
+        // Given: a Spin
+        let exp = expectation(description: "binding")
+        let initialState = "initialState"
+        var receivedEvent = ""
+
+        let feedback = RxFeedback<String, String>(effect: { states in
+            return .empty()
+        })
+
+        let reducer = RxReducer<String, String>(reducer: { state, event in
+            receivedEvent = event
+            exp.fulfill()
+            return "newState"
+        })
+
+        let spin = RxSpin<String, String>(initialState: initialState, reducer: reducer) {
+            feedback
+        }
+
+        // When: building a RxUISpin with the Spin and running the RxUISpin and getting a binding
+        // and then mutating the wrapped value of the binding
+        let sut = RxUISpin(spin: spin)
+        sut.toReactiveStream().take(2).subscribe().disposed(by: self.disposeBag)
+        let binding = sut.binding(for: \.count, event: "newEvent")
+        binding.wrappedValue = 16
+
+        waitForExpectations(timeout: 5)
+
+        // Then: the event from the binding mutation is received in the reducer
+        XCTAssertEqual(receivedEvent, "newEvent")
+    }
+
     func test_RxUISpin_runs_the_stream_when_spin_is_called() {
         // Given: a Spin
         let exp = expectation(description: "spin")
