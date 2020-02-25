@@ -28,13 +28,13 @@ final class ReactiveUISpinTests: XCTestCase {
         // Given: a Spin with an initialState
         let initialState = "initialState"
 
-        let feedback = DispatchQueueCombineFeedback<String, String>(effect: { states in
+        let feedback = CombineFeedback<String, String>(effect: { states in
             states.map { state -> String in
                 return "event"
             }.eraseToAnyPublisher()
         })
 
-        let reducer = DispatchQueueCombineReducer<String, String>(reducer: { state, _ in
+        let reducer = CombineReducer<String, String>(reducer: { state, _ in
             return "newState"
         })
 
@@ -53,13 +53,13 @@ final class ReactiveUISpinTests: XCTestCase {
         // Given: a Spin with an initialState and 1 effect
         let initialState = "initialState"
 
-        let feedback = DispatchQueueCombineFeedback<String, String>(effect: { states in
+        let feedback = CombineFeedback<String, String>(effect: { states in
             states.map { state -> String in
                 return "event"
             }.eraseToAnyPublisher()
         })
 
-        let reducer = DispatchQueueCombineReducer<String, String>(reducer: { state, _ in
+        let reducer = CombineReducer<String, String>(reducer: { state, _ in
             return "newState"
         })
 
@@ -78,13 +78,13 @@ final class ReactiveUISpinTests: XCTestCase {
         // Given: a Spin with an initialState and 1 effect
         let initialState = "initialState"
 
-        let feedback = DispatchQueueCombineFeedback<String, String>(effect: { states in
+        let feedback = CombineFeedback<String, String>(effect: { states in
             states.map { state -> String in
                 return "event"
             }.eraseToAnyPublisher()
         })
 
-        let reducer = DispatchQueueCombineReducer<String, String>(reducer: { state, _ in
+        let reducer = CombineReducer<String, String>(reducer: { state, _ in
             return "newState"
         })
 
@@ -109,11 +109,11 @@ final class ReactiveUISpinTests: XCTestCase {
         let initialState = "initialState"
         var receivedEvent = ""
 
-        let feedback = DispatchQueueCombineFeedback<String, String>(effect: { states in
+        let feedback = CombineFeedback<String, String>(effect: { states in
             return Empty().eraseToAnyPublisher()
         })
 
-        let reducer = DispatchQueueCombineReducer<String, String>(reducer: { state, event in
+        let reducer = CombineReducer<String, String>(reducer: { state, event in
             receivedEvent = event
             exp.fulfill()
             return "newState"
@@ -140,11 +140,11 @@ final class ReactiveUISpinTests: XCTestCase {
         let initialState = "initialState"
         var receivedEvent = ""
 
-        let feedback = DispatchQueueCombineFeedback<String, String>(effect: { states in
+        let feedback = CombineFeedback<String, String>(effect: { states in
             return Empty().eraseToAnyPublisher()
         })
 
-        let reducer = DispatchQueueCombineReducer<String, String>(reducer: { state, event in
+        let reducer = CombineReducer<String, String>(reducer: { state, event in
             receivedEvent = event
             exp.fulfill()
             return "newState"
@@ -173,11 +173,11 @@ final class ReactiveUISpinTests: XCTestCase {
         let initialState = "initialState"
         var receivedEvent = ""
 
-        let feedback = DispatchQueueCombineFeedback<String, String>(effect: { states in
+        let feedback = CombineFeedback<String, String>(effect: { states in
             return Empty().eraseToAnyPublisher()
         })
 
-        let reducer = DispatchQueueCombineReducer<String, String>(reducer: { state, event in
+        let reducer = CombineReducer<String, String>(reducer: { state, event in
             receivedEvent = event
             exp.fulfill()
             return "newState"
@@ -206,13 +206,13 @@ final class ReactiveUISpinTests: XCTestCase {
         let initialState = "initialState"
         var receivedState = ""
 
-        let feedback = DispatchQueueCombineFeedback<String, String>(effect: { (state: String) in
+        let feedback = CombineFeedback<String, String>(effect: { (state: String) in
             receivedState = state
             exp.fulfill()
             return Empty().eraseToAnyPublisher()
         })
 
-        let reducer = DispatchQueueCombineReducer<String, String>(reducer: { state, event in
+        let reducer = CombineReducer<String, String>(reducer: { state, event in
             return "newState"
         })
 

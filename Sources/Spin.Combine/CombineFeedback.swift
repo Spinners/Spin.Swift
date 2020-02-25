@@ -9,7 +9,7 @@ import Combine
 import Dispatch
 import Spin_Swift
 
-public struct CombineFeedback<State, Event, SchedulerTime, SchedulerOptions>: Feedback
+public struct ScheduledCombineFeedback<State, Event, SchedulerTime, SchedulerOptions>: Feedback
 where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConvertible {
     public typealias StateStream = AnyPublisher<State, Never>
     public typealias EventStream = AnyPublisher<Event, Never>
@@ -61,5 +61,5 @@ where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConv
     }
 }
 
-public typealias DispatchQueueCombineFeedback<State, Event> =
-    CombineFeedback<State, Event, DispatchQueue.SchedulerTimeType, DispatchQueue.SchedulerOptions>
+public typealias CombineFeedback<State, Event> =
+    ScheduledCombineFeedback<State, Event, DispatchQueue.SchedulerTimeType, DispatchQueue.SchedulerOptions>

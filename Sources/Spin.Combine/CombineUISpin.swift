@@ -20,7 +20,7 @@ public final class CombineUISpin<State, Event>: CombineSpin<State, Event>, Obser
     public init(spin: CombineSpin<State, Event>) {
         self.state = spin.initialState
         super.init(initialState: spin.initialState, effects: spin.effects, reducerOnExecuter: spin.reducerOnExecuter)
-        let uiFeedback = DispatchQueueCombineFeedback<State, Event>(uiEffects: self.render,
+        let uiFeedback = CombineFeedback<State, Event>(uiEffects: self.render,
                                                                     self.emit,
                                                                     on: DispatchQueue.main.eraseToAnyScheduler())
         self.effects = [uiFeedback.effect] + spin.effects

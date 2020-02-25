@@ -17,19 +17,19 @@ final class AnyPublisher_streamFromSpinTests: XCTestCase {
         var receivedInitialStateInEffectA = ""
         var receivedInitialStateInEffectB = ""
 
-        let feedbackA = DispatchQueueCombineFeedback<String, String>(effect: { states in
+        let feedbackA = CombineFeedback<String, String>(effect: { states in
             states.map { state -> String in
                 receivedInitialStateInEffectA = state
                 return "event"
             }.eraseToAnyPublisher()
         })
-        let feedbackB = DispatchQueueCombineFeedback<String, String>(effect: { states in
+        let feedbackB = CombineFeedback<String, String>(effect: { states in
             return states.map { state -> String in
                 receivedInitialStateInEffectB = state
                 return "event"
             }.eraseToAnyPublisher()
         })
-        let reducer = DispatchQueueCombineReducer<String, String>(reducer: { state, _ in
+        let reducer = CombineReducer<String, String>(reducer: { state, _ in
             return "newState"
         })
 
@@ -55,13 +55,13 @@ final class AnyPublisher_streamFromSpinTests: XCTestCase {
         let initialState = "initialState"
         var receivedInitialStateInReducer = ""
 
-        let feedbackA = DispatchQueueCombineFeedback<String, String>(effect: { states in
+        let feedbackA = CombineFeedback<String, String>(effect: { states in
             states.map { state -> String in
                 return "event"
             }.eraseToAnyPublisher()
         })
 
-        let reducer = DispatchQueueCombineReducer<String, String>(reducer: { state, _ in
+        let reducer = CombineReducer<String, String>(reducer: { state, _ in
             receivedInitialStateInReducer = state
             return "newState"
         })
