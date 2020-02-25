@@ -19,7 +19,7 @@ final class CombineFeedbackTests: XCTestCase {
 
         // Given: a feedback with no Executer
         let nilExecuter: DispatchQueue? = nil
-        let sut = CombineFeedback(effect: { (inputs: AnyPublisher<Int, Never>) -> AnyPublisher<String, Never> in
+        let sut = ScheduledCombineFeedback(effect: { (inputs: AnyPublisher<Int, Never>) -> AnyPublisher<String, Never> in
             effectIsCalled = true
             return inputs.map {
                 receivedExecuterName = DispatchQueue.currentLabel
@@ -49,7 +49,7 @@ final class CombineFeedbackTests: XCTestCase {
         let expectedExecuterName = "FEEDBACK_QUEUE_\(UUID().uuidString)"
 
         // Given: a feedback with a dedicated Executer
-        let sut = CombineFeedback(effect: { (inputs: AnyPublisher<Int, Never>) -> AnyPublisher<String, Never> in
+        let sut = ScheduledCombineFeedback(effect: { (inputs: AnyPublisher<Int, Never>) -> AnyPublisher<String, Never> in
             effectIsCalled = true
             return inputs.map {
                 receivedExecuterName = DispatchQueue.currentLabel
@@ -96,7 +96,7 @@ final class CombineFeedbackTests: XCTestCase {
         }
 
         // Given: this effect being applied a "continueOnNewEvent" strategy
-        let sut = DispatchQueueCombineFeedback<Int, String>(effect: effect, applying: .continueOnNewEvent).effect
+        let sut = CombineFeedback<Int, String>(effect: effect, applying: .continueOnNewEvent).effect
 
         // When: feeding this effect with 2 events: 1 and 2
         let recorder = sut([1, 2].publisher.eraseToAnyPublisher()).record()
@@ -129,7 +129,7 @@ final class CombineFeedbackTests: XCTestCase {
         }
 
         // Given: this effect being applied a "cancelOnNewEvent" strategy
-        let sut = DispatchQueueCombineFeedback<Int, String>(effect: effect, applying: .cancelOnNewEvent).effect
+        let sut = CombineFeedback<Int, String>(effect: effect, applying: .cancelOnNewEvent).effect
 
         // When: feeding this stream with 2 events: 1 and 2
         let recorder = sut([1, 2].publisher.eraseToAnyPublisher()).record()
@@ -145,7 +145,7 @@ final class CombineFeedbackTests: XCTestCase {
 
         // Given: a feedback from a directEffect
         let nilExecuter: DispatchQueue? = nil
-        let sut = CombineFeedback(directEffect: { (input: Int) -> String in
+        let sut = ScheduledCombineFeedback(directEffect: { (input: Int) -> String in
             effectIsCalled = true
             return "\(input)"
         }, on: nilExecuter?.eraseToAnyScheduler())
@@ -173,7 +173,7 @@ final class CombineFeedbackTests: XCTestCase {
             return inputs.map { "\($0)" }.eraseToAnyPublisher()
         }
 
-        let sut = DispatchQueueCombineFeedback(effects: [effectA, effectB])
+        let sut = CombineFeedback(effects: [effectA, effectB])
 
         // When: executing the feedback
         let inputStream = Just<Int>(1701).eraseToAnyPublisher()

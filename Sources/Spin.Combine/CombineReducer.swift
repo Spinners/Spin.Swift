@@ -9,7 +9,7 @@ import Combine
 import Dispatch
 import Spin_Swift
 
-public struct CombineReducer<State, Event, SchedulerTime, SchedulerOptions>: Reducer
+public struct ScheduledCombineReducer<State, Event, SchedulerTime, SchedulerOptions>: Reducer
 where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConvertible {
     public typealias StateStream = AnyPublisher<State, Never>
     public typealias EventStream = AnyPublisher<Event, Never>
@@ -27,10 +27,10 @@ where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConv
     }
 }
 
-public typealias DispatchQueueCombineReducer<State, Event>
-    = CombineReducer<State, Event, DispatchQueue.SchedulerTimeType, DispatchQueue.SchedulerOptions>
+public typealias CombineReducer<State, Event>
+    = ScheduledCombineReducer<State, Event, DispatchQueue.SchedulerTimeType, DispatchQueue.SchedulerOptions>
 
-public extension CombineReducer
+public extension ScheduledCombineReducer
 where SchedulerTime == DispatchQueue.SchedulerTimeType, SchedulerOptions == DispatchQueue.SchedulerOptions {
     init(reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value) {
         self.init(reducer: reducer, on: DispatchQueue.main.eraseToAnyScheduler())
