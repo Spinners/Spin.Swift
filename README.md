@@ -194,10 +194,10 @@ or
 ```swift
 RxSpin(initialState: Levels(left: 10, right: 20),
        reducer: RxReducer(reducer: levelsReducer)) {
-    		RxFeedback(effect: leftEffect)
-        		.execute(on: SerialDispatchQueueScheduler(qos: .userInitiated))
-    		RxFeedback(effect: rightEffect)
-        		.execute(on: SerialDispatchQueueScheduler(qos: .userInitiated))
+    RxFeedback(effect: leftEffect)
+        .execute(on: SerialDispatchQueueScheduler(qos: .userInitiated))
+    RxFeedback(effect: rightEffect)
+        .execute(on: SerialDispatchQueueScheduler(qos: .userInitiated))
 }
 ```
 
