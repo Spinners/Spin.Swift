@@ -59,7 +59,7 @@ Spin offers two ways to build a feedback loop. Both are equivalent and picking o
 
 Let’s try them by building a Spin that regulates two integer values to make them converge to their average value (like some kind of system that would adjust a left and a right channel volume on stereo speakers to make them converge to the same level).
 
-The following example will rely on RxSwift, but you can find their **ReactiveSwift** and **Combine** counterparts here, you will se how similar they are.
+The following example will rely on RxSwift, but you can find their **[ReactiveSwift](https://gist.github.com/twittemb/d2f31bc4e50aa287d6165638fc0069ef)** and **[Combine](https://gist.github.com/twittemb/b4fe726554b7d61f60d81a1136b8e4a3)** counterparts here, you will se how similar they are.
 
 We will need a data type for our state:
 
