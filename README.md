@@ -100,18 +100,18 @@ And finally to describe the transitions of the state we need a reducer:
 ```swift
 func levelsReducer(currentLevels: Levels, event: Event) -> Levels {
 
-   guard currentLevels.left != currentLevels.right else { return currentLevels }
+	guard currentLevels.left != currentLevels.right else { return currentLevels }
 
-    switch event {
-        case .decreaseLeft:
-            return Levels(left: currentLevels.left-1, right: currentLevels.right)
-        case .increaseLeft:
-            return Levels(left: currentLevels.left+1, right: currentLevels.right)
-        case .decreaseRight:
-            return Levels(left: currentLevels.left, right: currentLevels.right-1)
-        case .increaseRight:
-            return Levels(left: currentLevels.left, right: currentLevels.right+1)
-    }
+	switch event {
+	    case .decreaseLeft:
+	        return Levels(left: currentLevels.left-1, right: currentLevels.right)
+	    case .increaseLeft:
+	        return Levels(left: currentLevels.left+1, right: currentLevels.right)
+	    case .decreaseRight:
+	        return Levels(left: currentLevels.left, right: currentLevels.right-1)
+	    case .increaseRight:
+	        return Levels(left: currentLevels.left, right: currentLevels.right+1)
+	}
 }
 ```
 
