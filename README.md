@@ -121,10 +121,10 @@ In that case, the “**Spinner**” class is you entry point.
 
 ```swift
 let levelsSpin = Spinner
-            		.from(initialState: Levels(left: 10, right: 20))
-            		.add(feedback: RxFeedback(effect: leftEffect))
-            		.add(feedback: RxFeedback(effect: rightEffect))
-            		.reduce(with: RxReducer(reducer: levelsReducer))
+	.from(initialState: Levels(left: 10, right: 20))
+	.add(feedback: RxFeedback(effect: leftEffect))
+	.add(feedback: RxFeedback(effect: rightEffect))
+	.reduce(with: RxReducer(reducer: levelsReducer))
 ```
 
 That’s it. The feedback loop is built. What now ?
@@ -144,7 +144,7 @@ In that case we use a "DSL like" syntax thanks to function builder:
 
 ```swift
 let levelsSpin = RxSpin(initialState: Levels(left: 10, right: 20),
-						reducer: RxReducer(reducer: levelsReducer)) {
+                        reducer: RxReducer(reducer: levelsReducer)) {
     RxFeedback(effect: leftEffect)
     RxFeedback(effect: rightEffect)
 }
@@ -192,8 +192,8 @@ Spinner
 or
 
 ```swift
-RxSpin(	initialState: Levels(left: 10, right: 20),
-		reducer: RxReducer(reducer: levelsReducer)) {
+RxSpin(initialState: Levels(left: 10, right: 20),
+       reducer: RxReducer(reducer: levelsReducer)) {
     		RxFeedback(effect: leftEffect)
         		.execute(on: SerialDispatchQueueScheduler(qos: .userInitiated))
     		RxFeedback(effect: rightEffect)
@@ -275,7 +275,7 @@ you can then use the “uiSpin.state” property inside the view to display data
 
 ```swift
 Button(action: {
-	self.uiSpin.emit(Event.startCounter)
+    self.uiSpin.emit(Event.startCounter)
 }) {
     Text("\(self.uiSpin.state.isCounterPaused ? "Start": "Stop")")
 }
