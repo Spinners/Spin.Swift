@@ -1,7 +1,7 @@
 ![](https://github.com/Spinners/Spin.Swift/workflows/Tests/badge.svg)
 ![](https://github.com/Spinners/Spin.Swift/workflows/SwiftLint/badge.svg)
 
-<img alt="Spin Logo" src="https://raw.githubusercontent.com/Spinners/Spin.Swift/master/Resources/Logo.png" width="250"/>
+<img alt="Spin Logo" src="https://raw.githubusercontent.com/Spinners/Spin.Swift/master/Resources/spin-logo.png" border="1"/>
 
 **Spin** is a tool to build feedback loops within a Swift based application, allowing to use a unified syntax whatever the underlying reactive programming framework and whatever Apple UI technology you use (RxSwift, ReactiveSwift, Combine and UIKit, AppKit, SwiftUI).
 
