@@ -3,7 +3,7 @@
 
 <img alt="Spin Logo" src="https://raw.githubusercontent.com/Spinners/Spin.Swift/master/Resources/spin-logo.png" border="1"/>
 
-**Spin** is a tool to build feedback loops within a Swift based application, allowing to use a unified syntax whatever the underlying reactive programming framework and whatever Apple UI technology you use (RxSwift, ReactiveSwift, Combine and UIKit, AppKit, SwiftUI).
+**Spin is a tool to build feedback loops within a Swift based application, allowing to use a unified syntax whatever the underlying reactive programming framework and whatever Apple UI technology you use (RxSwift, ReactiveSwift, Combine and UIKit, AppKit, SwiftUI).**
 
 # Introduction
 
