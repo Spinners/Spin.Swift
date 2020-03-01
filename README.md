@@ -296,8 +296,8 @@ Toggle(isOn: self.uiSpin.binding(for: \.isPaused, event: .toggle) {
 
 In the Spinners organization, You can find 2 demo applications demonstrating the usage of Spin with RxSwift, ReactiveSwift and Combine.
 
-* A basic counter application: [UIKit version](https://github.com/Spinners/Spin.UIKit.Demo.Basic) and [SwiftUI version](https://github.com/Spinners/Spin.UIKit.Demo.Basic)
-* A more advanced “network based” application using dependency injection and a coordinator pattern (UIKit): [UIKit version](https://github.com/Spinners/Spin.UIKit.Demo) and [SwiftUI version](https://github.com/Spinners/Spin.UIKit.Demo)
+* A basic counter application: [UIKit version](https://github.com/Spinners/Spin.UIKit.Demo.Basic) and [SwiftUI version](https://github.com/Spinners/Spin.SwiftUI.Demo.Basic)
+* A more advanced “network based” application using dependency injection and a coordinator pattern (UIKit): [UIKit version](https://github.com/Spinners/Spin.UIKit.Demo) and [SwiftUI version](https://github.com/Spinners/Spin.SwiftUI.Demo)
 
 # Acknowledgements
 
