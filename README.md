@@ -8,8 +8,8 @@
 **Summary:**
 
 - <a href="#introduction">Introduction</a>
-- <a href="#what-is-spin">What is a Spin</a>
-- <a href="#the-ways-to-build-a-spin">The ways to build a Spin</a>
+- <a href="#what-is-spin">What is Spin</a>
+- <a href="#the-multiple-ways-to-build-a-spin">The multiple ways to build a Spin</a>
 - <a href="#the-multiple-ways-to-create-a-feedback">The multiple ways to create a Feedback</a>
 - <a href="#what-about-the-feedback-lifecycle">What about the feedback lifecycle</a>
 - <a href="#what-about-the-feedback-scheduling">What about the feedback scheduling</a>
@@ -53,7 +53,7 @@ Conversely, a reducer is a pure function that can only produce a new value given
 
 In real life applications, you can obviously have several feedbacks per Spin in order to separate preoccupations. Each of the feedbacks will be applied sequentially on the input value.
 
-# The ways to build a Spin
+# The multiple ways to build a Spin
 
 Spin offers two ways to build a feedback loop. Both are equivalent and picking one only depend on your preference.
 
