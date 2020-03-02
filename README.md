@@ -8,13 +8,13 @@
 **Summary:**
 
 - <a href="#introduction">Introduction</a>
-- <a href="#what-is-spin">What is Spin</a>
+- <a href="#what-is-spin">What is Spin ?</a>
 - <a href="#the-multiple-ways-to-build-a-spin">The multiple ways to build a Spin</a>
 - <a href="#the-multiple-ways-to-create-a-feedback">The multiple ways to create a Feedback</a>
-- <a href="#what-about-the-feedback-lifecycle">What about the feedback lifecycle</a>
-- <a href="#what-about-the-feedback-scheduling">What about the feedback scheduling</a>
-- <a href="#how-to-use-a-spin-in-a-uikit-or-appkit-based-app">How to use a Spin in a UIKit or AppKit based app</a>
-- <a href="#how-to-use-a-spin-in-a-swiftui-based-app">How to use a Spin in a SwiftUI based app</a>
+- <a href="#what-about-the-feedback-lifecycle">What about the feedback lifecycle ?</a>
+- <a href="#what-about-the-feedback-scheduling">What about the feedback scheduling ?</a>
+- <a href="#how-to-use-a-spin-in-a-uikit-or-appkit-based-app">How to use a Spin in a UIKit or AppKit based app ?</a>
+- <a href="#how-to-use-a-spin-in-a-swiftui-based-app">How to use a Spin in a SwiftUI based app ?</a>
 - <a href="#demo-applications">Demo applications</a>
 - <a href="#acknowledgements"> Acknowledgements </a>
 
@@ -48,18 +48,18 @@ A Spin is based on three components. To illustrate each one of them we will rely
 
 <img alt="Feedback Loop" src="https://raw.githubusercontent.com/Spinners/Spin.Swift/master/Resources/feedback-loop.png" border="1"/>
 
-Feedbacks are the only places where you can perform side effects (networking, local I/O, UI rendering, whatever you do that accesses or mutates a state outside the local scope of the loop)
-Conversely, a reducer is a pure function that can only produce a new value given a previous one and a request. Performing side effects in reducers is forbidden, as it would compromise its reproducibility.
+Feedbacks are the only places where you can perform side effects (networking, local I/O, UI rendering, whatever you do that accesses or mutates a state outside the local scope of the loop).
+Conversely, a reducer is a pure function that can only produce a new value given a previous one and a transition request. Performing side effects in reducers is forbidden, as it would compromise its reproducibility.
 
 In real life applications, you can obviously have several feedbacks per Spin in order to separate preoccupations. Each of the feedbacks will be applied sequentially on the input value.
 
 # The multiple ways to build a Spin
 
-Spin offers two ways to build a feedback loop. Both are equivalent and picking one only depend on your preference.
+Spin offers two ways to build a feedback loop. Both are equivalent and picking one only depends on your preference.
 
 Let’s try them by building a Spin that regulates two integer values to make them converge to their average value (like some kind of system that would adjust a left and a right channel volume on stereo speakers to make them converge to the same level).
 
-The following example will rely on RxSwift, but you can find their **[ReactiveSwift](https://gist.github.com/twittemb/d2f31bc4e50aa287d6165638fc0069ef)** and **[Combine](https://gist.github.com/twittemb/b4fe726554b7d61f60d81a1136b8e4a3)** counterparts here, you will se how similar they are.
+The following example will rely on RxSwift, here are the **[ReactiveSwift](https://gist.github.com/twittemb/d2f31bc4e50aa287d6165638fc0069ef)** and **[Combine](https://gist.github.com/twittemb/b4fe726554b7d61f60d81a1136b8e4a3)** counterparts, you will see how similar they are.
 
 We will need a data type for our state:
 
@@ -109,7 +109,7 @@ func rightEffect(inputLevels: Levels) -> Observable<Event> {
 }
 ```
 
-And finally to describe the transitions of the state we need a reducer:
+And finally to describe the state machine ruling the transitions, we need a reducer:
 
 ```swift
 func levelsReducer(currentLevels: Levels, event: Event) -> Levels {
@@ -143,7 +143,7 @@ let levelsSpin = Spinner
 
 That’s it. The feedback loop is built. What now ?
 
-If you want to start it, then you have to subscribe to the underlying reactive stream. To that end, a new operator “**.stream(from:)**” has been added to Observable in order to connect things together and provide an Observable you can subscribe to.
+If you want to start it, then you have to subscribe to the underlying reactive stream. To that end, a new operator “**.stream(from:)**” has been added to **Observable** in order to connect things together and provide an Observable you can subscribe to:
 
 ```swift
 Observable<Levels>
@@ -154,7 +154,7 @@ Observable<Levels>
 
 ## The declarative way
 
-In that case we use a "DSL like" syntax thanks to function builder:
+In that case we use a "DSL like" syntax thanks to Swift 5.1 function builder:
 
 ```swift
 let levelsSpin = RxSpin(initialState: Levels(left: 10, right: 20),
@@ -169,7 +169,7 @@ The way to start it remains unchanged.
 # The multiple ways to create a Feedback
 
 As you saw, a “Feedback loop / Spin” is created from several feedbacks. A feedback is a wrapper structure around a side effect function.
-Basically, a side effect has this signature (Stream<State>) -> Stream<Event>, Stream being a reactive stream (Observable, SignalProducer, AnyPublisher).
+Basically, a side effect has this signature (Stream\<State\>) -> Stream\<Event\>, Stream being a reactive stream (Observable, SignalProducer or AnyPublisher).
 
 As it might not always be easy to directly manipulate Streams, Spin comes with a bunch of helper constructors for feedbacks allowing to:
 
@@ -181,7 +181,7 @@ Please refer to [Feedback+Default.swift](https://github.com/Spinners/Spin.Swift/
 
 # What about the feedback lifecycle
 
-There are typical cases where a side effect consist in an asynchronous operation (like a network call). What happens if the very same side effect is called repeatedly ? Are the operations stacked ? Are they cancelled when a new one is performed ?
+There are typical cases where a side effect consist in an asynchronous operation (like a network call). What happens if the very same side effect is called repeatedly, not waiting for the previous ones to end ? Are the operations stacked ? Are they cancelled when a new one is performed ?
 
 Well, it depends 😁. By default Spin will cancel the previous operation. But there is a way to override this behaviour. Every feedback constructor that takes a State as a parameter can also be passed an ExecutionStrategy:
 
@@ -219,11 +219,11 @@ Of course, it remains possible to handle the Schedulers by yourself inside the f
 
 # How to use a Spin in a UIKit or AppKit based app
 
-Although a feedback loop can exist by itself without any visualisation, it makes more sense in our developer world to use it as way to produce a State that we can render on screen and to handle events emitted by the users.
+Although a feedback loop can exist by itself without any visualisation, it makes more sense in our developer world to use it as a way to produce a State that we can render on screen and to handle events emitted by the users.
 
-Fortunately, taking a State as an input for rendering and returning a stream of events from the user interactions looks A LOT like the definition of a feedback.
+Fortunately, taking a State as an input for rendering and returning a stream of events from the user interactions looks A LOT like the definition of a feedback (State -> Stream\<Event\>), we know how to handle feedbacks 😁.
 
-The view is a function of a State and rendering it changes the states of the UI elements, it is a mutation exceeding the local scope of the loop: we have a side effect.
+As the view is a function of a State, rendering it will changes the states of the UI elements, it is a mutation exceeding the local scope of the loop: UI is indeed a side effect. We just need a proper way to incorporate it in the definition of a Spin.
 
 Once a Spin is built, we can “decorate” it with a new feedback dedicated to the UI rendering/interactions. A special type of Spin exists to perform that decoration: RxUISpin, ReactiveUISpin, CombineUISpin depending on your framework.
 
@@ -249,8 +249,10 @@ func render(state: State) {
 We need to decorate the “business” Spin with a UI Spin, instance variable of the ViewController so their lifecycle is bound:
 
 ```swift
-// counterSpin is the Spin that handles our counter business
+// previously defined or injected: counterSpin is the Spin that handles our counter business
 self.uiSpin = RxUISpin(spin: counterSpin)
+
+// self.uiSpin is now able to handle UI side effects
 
 // we now want to attach the UI Spin to the rendering function of the ViewController:
 self.uiSpin.render(on: self, using: { $0.render(state:) })
@@ -278,7 +280,7 @@ In your view you have to annotate the UI Spin variable with “@ObservedObject�
 ```swift
 @ObservedObject
 private var uiSpin: RxUISpin<State, Event> = {
-    // counterSpin is the Spin that handles our counter business
+	// previously defined or injected: counterSpin is the Spin that handles our counter business
     let spin = RxUISpin(spin: counterSpin)
     spin.spin()
     return spin
@@ -315,11 +317,9 @@ In the Spinners organization, You can find 2 demo applications demonstrating the
 
 # Acknowledgements
 
-The advanced demo applications use [Alamofire](https://github.com/Alamofire/Alamofire) for their network stack.
+The advanced demo applications use [Alamofire](https://github.com/Alamofire/Alamofire) for their network stack, [Swinject](https://github.com/Swinject/Swinject) for dependency injection, [Reusable](https://github.com/AliSoftware/Reusable) for view instantiation (UIKit version) and [RxFlow](https://github.com/RxSwiftCommunity/RxFlow) for the coordinator pattern (UIKit version).
 
-The advanced UIKit demo applications uses [Swinject](https://github.com/Swinject/Swinject) for dependency injection, [Reusable](https://github.com/AliSoftware/Reusable) for view instantiation and [RxFlow](https://github.com/RxSwiftCommunity/RxFlow) for the coordinator pattern.
-
-The following repos have been a source of inspiration:
+The following repos have also been a source of inspiration:
 
 * [RxFeedback](https://github.com/NoTests/RxFeedback.swift)
 * [ReactiveFeedback](https://github.com/babylonhealth/ReactiveFeedback)
