@@ -10,6 +10,7 @@ import Spin_Combine
 import Spin_Swift
 import XCTest
 
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 final class CombineFeedbackTests: XCTestCase {
 
     func test_effect_observes_on_current_executer_when_nilExecuter_is_passed_to_initializer() throws {

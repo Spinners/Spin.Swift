@@ -273,15 +273,15 @@ self.uiSpin.emit(Event.startCounter)
 
 # How to use a Spin in a SwiftUI based app
 
-Because SwiftUI relies on the idea of a binding between a State in a View and takes care of the rendering, the way to connect the UI Spin is slightly different, and even simpler.
+Because SwiftUI relies on the idea of a binding between a State in a View and takes care of the rendering, the way to connect the SwiftUI Spin is slightly different, and even simpler.
 
-In your view you have to annotate the UI Spin variable with “@ObservedObject” (a UISpin being an “ObservableObject”):
+In your view you have to annotate the UI Spin variable with “@ObservedObject” (a SwiftUISpin being an “ObservableObject”):
 
 ```swift
 @ObservedObject
 private var uiSpin: RxUISpin<State, Event> = {
 	// previously defined or injected: counterSpin is the Spin that handles our counter business
-    let spin = RxUISpin(spin: counterSpin)
+    let spin = RxSwiftUISpin(spin: counterSpin)
     spin.spin()
     return spin
 }()

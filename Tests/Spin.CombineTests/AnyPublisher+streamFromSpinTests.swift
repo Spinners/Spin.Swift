@@ -9,6 +9,7 @@ import Combine
 import Spin_Combine
 import XCTest
 
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 final class AnyPublisher_streamFromSpinTests: XCTestCase {
 
     func test_initialState_is_the_first_state_given_to_the_effects() throws {

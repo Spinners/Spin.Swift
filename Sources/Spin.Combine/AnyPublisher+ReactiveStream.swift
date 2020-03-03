@@ -8,6 +8,7 @@
 import Combine
 import Spin_Swift
 
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension AnyPublisher: ReactiveStream where Failure == Never {
     public typealias Value = Output
     public typealias LifeCycle = AnyCancellable
