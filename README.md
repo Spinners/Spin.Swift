@@ -279,8 +279,8 @@ In your view you have to annotate the UI Spin variable with â€œ@ObservedObjectâ€
 
 ```swift
 @ObservedObject
-private var uiSpin: RxUISpin<State, Event> = {
-	// previously defined or injected: counterSpin is the Spin that handles our counter business
+private var uiSpin: RxSwiftUISpin<State, Event> = {
+    // previously defined or injected: counterSpin is the Spin that handles our counter business
     let spin = RxSwiftUISpin(spin: counterSpin)
     spin.spin()
     return spin
