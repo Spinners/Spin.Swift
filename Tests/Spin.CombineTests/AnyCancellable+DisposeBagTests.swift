@@ -9,6 +9,7 @@ import Combine
 import Spin_Combine
 import XCTest
 
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 final class AnyCancellable_DisposeBagTests: XCTestCase {
     func test_disposedBy_adds_the_expected_number_of_cancellables() {
         // Given: an empty disposeBag and several cancellables

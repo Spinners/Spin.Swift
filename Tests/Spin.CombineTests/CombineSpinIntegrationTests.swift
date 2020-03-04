@@ -14,6 +14,7 @@ fileprivate enum StringAction {
     case append(String)
 }
 
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 final class CombineSpinIntegrationTests: XCTestCase {
 
     func test_multiple_feedbacks_produces_incremental_states_while_executed_on_default_executer() throws {

@@ -8,6 +8,7 @@
 import Combine
 import Spin_Swift
 
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public extension AnyPublisher where Failure == Never {
     static func stream<State, Event>(from spin: CombineSpin<State, Event>) -> AnyPublisher<State, Never> {
         return Deferred<AnyPublisher<State, Never>> {

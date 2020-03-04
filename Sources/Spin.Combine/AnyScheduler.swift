@@ -7,12 +7,14 @@
 
 import Combine
 
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public extension Scheduler {
     func eraseToAnyScheduler() -> AnyScheduler<SchedulerTimeType, SchedulerOptions> {
         return AnyScheduler<SchedulerTimeType, SchedulerOptions>(scheduler: self)
     }
 }
 
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public final class AnyScheduler<SchedulerTimeType, SchedulerOptionsType>: Scheduler
 where SchedulerTimeType: Strideable, SchedulerTimeType.Stride: SchedulerTimeIntervalConvertible {
     public typealias SchedulerTimeType = SchedulerTimeType
