@@ -14,7 +14,7 @@ class MockReducer: Reducer {
 
     var reducerOnExecuter: (MockState, MockStream<MockEvent>) -> MockStream<MockState>
 
-    required init(reducer: @escaping (MockState, MockEvent) -> MockState, on executer: MockExecuter = MockExecuter()) {
+    required init(_ reducer: @escaping (MockState, MockEvent) -> MockState, on executer: MockExecuter = MockExecuter()) {
         self.reducerOnExecuter = { initialState, events in
             _ = reducer(initialState, MockEvent.toEmpty)
             return MockStream<MockState>(value: .toEmpty)

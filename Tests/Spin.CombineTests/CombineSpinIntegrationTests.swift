@@ -50,11 +50,11 @@ final class CombineSpinIntegrationTests: XCTestCase {
 
         // When: spinning the feedbacks and the reducer on the default executer
         let spin = Spinner
-            .from(initialState: "initialState")
-            .add(feedback: CombineFeedback(effect: effectA))
-            .add(feedback: CombineFeedback(effect: effectB))
-            .add(feedback: CombineFeedback(effect: effectC))
-            .reduce(with: ScheduledCombineReducer(reducer: reducerFunction))
+            .initialState("initialState")
+            .feedback(CombineFeedback(effect: effectA))
+            .feedback(CombineFeedback(effect: effectB))
+            .feedback(CombineFeedback(effect: effectC))
+            .reducer(CombineReducer(reducerFunction))
 
         let recorder = AnyPublisher<String, Never>.stream(from: spin)
             .output(in: (0...6))
@@ -103,7 +103,7 @@ final class CombineSpinIntegrationTests: XCTestCase {
             }
         }
 
-        let spin = CombineSpin<String, StringAction>(initialState: "initialState", reducer: ScheduledCombineReducer(reducer: reducerFunction)) {
+        let spin = CombineSpin<String, StringAction>(initialState: "initialState", reducer: CombineReducer(reducerFunction)) {
             CombineFeedback(effect: effectA).execute(on: DispatchQueue.main.eraseToAnyScheduler())
             CombineFeedback(effect: effectB).execute(on: DispatchQueue.main.eraseToAnyScheduler())
             CombineFeedback(effect: effectC).execute(on: DispatchQueue.main.eraseToAnyScheduler())

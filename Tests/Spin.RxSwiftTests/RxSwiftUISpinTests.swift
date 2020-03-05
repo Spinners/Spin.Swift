@@ -25,7 +25,7 @@ final class RxSwiftUISpinTests: XCTestCase {
             }
         })
 
-        let reducer = RxReducer<String, String>(reducer: { state, _ in
+        let reducer = RxReducer<String, String>({ state, _ in
             return "newState"
         })
 
@@ -50,7 +50,7 @@ final class RxSwiftUISpinTests: XCTestCase {
             }
         })
 
-        let reducer = RxReducer<String, String>(reducer: { state, _ in
+        let reducer = RxReducer<String, String>({ state, _ in
             return "newState"
         })
 
@@ -75,7 +75,7 @@ final class RxSwiftUISpinTests: XCTestCase {
             return .empty()
         })
 
-        let reducer = RxReducer<String, String>(reducer: { state, event in
+        let reducer = RxReducer<String, String>({ state, event in
             receivedEvent = event
             exp.fulfill()
             return "newState"
@@ -106,7 +106,7 @@ final class RxSwiftUISpinTests: XCTestCase {
             return .empty()
         })
 
-        let reducer = RxReducer<String, String>(reducer: { state, event in
+        let reducer = RxReducer<String, String>({ state, event in
             receivedEvent = event
             exp.fulfill()
             return "newState"
@@ -139,7 +139,7 @@ final class RxSwiftUISpinTests: XCTestCase {
             return .empty()
         })
 
-        let reducer = RxReducer<String, String>(reducer: { state, event in
+        let reducer = RxReducer<String, String>({ state, event in
             receivedEvent = event
             exp.fulfill()
             return "newState"
@@ -174,7 +174,7 @@ final class RxSwiftUISpinTests: XCTestCase {
             return .empty()
         })
 
-        let reducer = RxReducer<String, String>(reducer: { state, event in
+        let reducer = RxReducer<String, String>({ state, event in
             return "newState"
         })
 

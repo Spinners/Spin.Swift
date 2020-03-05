@@ -135,10 +135,10 @@ In that case, the “**Spinner**” class is you entry point.
 
 ```swift
 let levelsSpin = Spinner
-	.from(initialState: Levels(left: 10, right: 20))
-	.add(feedback: RxFeedback(effect: leftEffect))
-	.add(feedback: RxFeedback(effect: rightEffect))
-	.reduce(with: RxReducer(reducer: levelsReducer))
+	.initialState(Levels(left: 10, right: 20))
+	.feedback(RxFeedback(effect: leftEffect))
+	.feedback(RxFeedback(effect: rightEffect))
+	.reducer(RxReducer(levelsReducer))
 ```
 
 That’s it. The feedback loop is built. What now ?
@@ -158,7 +158,7 @@ In that case we use a "DSL like" syntax thanks to Swift 5.1 function builder:
 
 ```swift
 let levelsSpin = RxSpin(initialState: Levels(left: 10, right: 20),
-                        reducer: RxReducer(reducer: levelsReducer)) {
+                        reducer: RxReducer(levelsReducer)) {
     RxFeedback(effect: leftEffect)
     RxFeedback(effect: rightEffect)
 }
@@ -198,16 +198,16 @@ Spin provides a way to specify that scheduler for each feedback you add to a loo
 
 ```swift
 Spinner
-	.from(initialState: Levels(left: 10, right: 20))
-	.add(feedback: RxFeedback(effect: leftEffect, on: SerialDispatchQueueScheduler(qos: .userInitiated)))
-	.add(feedback: RxFeedback(effect: rightEffect, on: SerialDispatchQueueScheduler(qos: .userInitiated)))
-	.reduce(with: RxReducer(reducer: levelsReducer))
+	.initialState(Levels(left: 10, right: 20))
+	.feedback(RxFeedback(effect: leftEffect, on: SerialDispatchQueueScheduler(qos: .userInitiated)))
+	.feedback(RxFeedback(effect: rightEffect, on: SerialDispatchQueueScheduler(qos: .userInitiated)))
+	.reducer(RxReducer(levelsReducer))
 ```
 or
 
 ```swift
 RxSpin(initialState: Levels(left: 10, right: 20),
-       reducer: RxReducer(reducer: levelsReducer)) {
+       reducer: RxReducer(levelsReducer)) {
     RxFeedback(effect: leftEffect)
         .execute(on: SerialDispatchQueueScheduler(qos: .userInitiated))
     RxFeedback(effect: rightEffect)

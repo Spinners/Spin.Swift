@@ -33,7 +33,7 @@ final class SignalProducer_streamFromSpinTests: XCTestCase {
                 return "event"
             }
         })
-        let reducer = ReactiveReducer<String, String>(reducer: { state, _ in
+        let reducer = ReactiveReducer<String, String>({ state, _ in
             return "newState"
         })
 
@@ -67,7 +67,7 @@ final class SignalProducer_streamFromSpinTests: XCTestCase {
             }
         })
 
-        let reducer = ReactiveReducer<String, String>(reducer: { state, _ in
+        let reducer = ReactiveReducer<String, String>({ state, _ in
             receivedInitialStateInReducer = state
             exp.fulfill()
             return "newState"

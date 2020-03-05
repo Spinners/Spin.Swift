@@ -7,16 +7,16 @@
 
 public class Spinner<State> {
     internal let initialState: State
-
+    
     internal init (initialState state: State) {
         self.initialState = state
     }
-
-    public static func from(initialState state: State) -> Spinner<State> {
+    
+    public static func initialState(_ state: State) -> Spinner<State> {
         return Spinner<State>(initialState: state)
     }
-
-    public func add<FeedbackType: Feedback>(feedback: FeedbackType) -> SpinnerFeedback< FeedbackType.StateStream,
+    
+    public func feedback<FeedbackType: Feedback>(_ feedback: FeedbackType) -> SpinnerFeedback< FeedbackType.StateStream,
         FeedbackType.EventStream>
         where FeedbackType.StateStream.Value == State {
             return SpinnerFeedback< FeedbackType.StateStream, FeedbackType.EventStream>(initialState: self.initialState,
@@ -27,7 +27,7 @@ public class Spinner<State> {
 public class SpinnerFeedback<StateStream: ReactiveStream, EventStream: ReactiveStream> {
     internal let initialState: StateStream.Value
     internal var effects: [(StateStream) -> EventStream]
-
+    
     internal init<FeedbackType: Feedback> (initialState state: StateStream.Value,
                                            feedbacks: [FeedbackType])
         where
@@ -36,8 +36,8 @@ public class SpinnerFeedback<StateStream: ReactiveStream, EventStream: ReactiveS
             self.initialState = state
             self.effects = feedbacks.map { $0.effect }
     }
-
-    public func add<NewFeedbackType>(feedback: NewFeedbackType) -> SpinnerFeedback<StateStream, EventStream>
+    
+    public func feedback<NewFeedbackType>(_ feedback: NewFeedbackType) -> SpinnerFeedback<StateStream, EventStream>
         where
         NewFeedbackType: Feedback,
         NewFeedbackType.StateStream == StateStream,
@@ -45,14 +45,14 @@ public class SpinnerFeedback<StateStream: ReactiveStream, EventStream: ReactiveS
             self.effects.append(feedback.effect)
             return self
     }
-
-    public func reduce<ReducerType>(with reducer: ReducerType) -> AnySpin<StateStream, EventStream>
+    
+    public func reducer<ReducerType>(_ reducer: ReducerType) -> AnySpin<StateStream, EventStream>
         where
         ReducerType: Reducer,
         ReducerType.StateStream == StateStream,
         ReducerType.EventStream == EventStream {
             return AnySpin<StateStream, EventStream>(initialState: self.initialState,
-                                                  effects: self.effects,
-                                                  reducerOnExecuter: reducer.reducerOnExecuter)
+                                                     effects: self.effects,
+                                                     reducerOnExecuter: reducer.reducerOnExecuter)
     }
 }

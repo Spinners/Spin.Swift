@@ -16,7 +16,7 @@ final class SpinnerTests: XCTestCase {
 
         // When: a Spinner uses the `from` function to build a Spin with the initial state
         let sut = Spinner
-            .from(initialState: expectedInitialState)
+            .initialState(expectedInitialState)
 
         // Then: the initial state inside the Spinner is the expected one
         XCTAssertEqual(sut.initialState, expectedInitialState)
@@ -33,8 +33,8 @@ final class SpinnerTests: XCTestCase {
         // When: adding this feedback to a Spinner, resulting in a new SpinnerFeedback
         // When: executing the feedback stream held by the SpinnerFeedback
         let sut = Spinner
-            .from(initialState: MockState(subState: 1701))
-            .add(feedback: feedback)
+            .initialState(MockState(subState: 1701))
+            .feedback(feedback)
 
         _ = MockFeedback(effects: sut.effects).effect(MockStream<MockState>(value: .toEmpty))
 
@@ -92,8 +92,8 @@ final class SpinnerTests: XCTestCase {
         // When: adding those feedbacks to a Spinner/SpinnerFeedback
         // When: executing the feedback stream hold by the SpinnerFeedback
         let sut = SpinnerFeedback(initialState: MockState(subState: 1701), feedbacks: [feedbackA])
-            .add(feedback: feedbackB)
-            .add(feedback: feedbackC)
+            .feedback(feedbackB)
+            .feedback(feedbackC)
 
         _ = MockFeedback(effects: sut.effects).effect(MockStream<MockState>(value: .toEmpty))
 
@@ -122,12 +122,12 @@ final class SpinnerTests: XCTestCase {
             return MockState(subState: 1702)
         }
         
-        let reducer = MockReducer(reducer: reducerFunction)
+        let reducer = MockReducer(reducerFunction)
 
         // When: using the initial state, the 2 feedbacks and the reducer whithin a Spinner to build a `Spin`
         let sut = SpinnerFeedback(initialState: expectedInitialState,
-                            feedbacks: [feedbackA, feedbackB])
-            .reduce(with: reducer)
+                                  feedbacks: [feedbackA, feedbackB])
+            .reducer(reducer)
         _ = sut.reducerOnExecuter(MockState.toEmpty, MockStream<MockEvent>(value: .toEmpty))
 
         // Then: the reducer is called with the right number of feedbacks
