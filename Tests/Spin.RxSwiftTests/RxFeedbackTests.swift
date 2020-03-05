@@ -102,8 +102,8 @@ final class RxFeedbackTests: XCTestCase {
             return .just("\(input)")
         }
 
-        // Given: this stream being applied a "continueOnNewEvent" strategy
-        let sut = RxFeedback(effect: effect, applying: .continueOnNewEvent).effect
+        // Given: this stream being applied a "continueOnNewState" strategy
+        let sut = RxFeedback(effect: effect, applying: .continueOnNewState).effect
 
         // When: feeding this effect with 2 events: 1 and 2
         let received = try sut(.from([1, 2])).toBlocking().toArray()
@@ -122,8 +122,8 @@ final class RxFeedbackTests: XCTestCase {
             return .just("\(input)")
         }
 
-        // Given: this effect being applied a "continueOnNewEvent" strategy
-        let sut = RxFeedback(effect: effect, applying: .continueOnNewEvent).effect
+        // Given: this effect being applied a "continueOnNewState" strategy
+        let sut = RxFeedback(effect: effect, applying: .continueOnNewState).effect
 
         // When: feeding this effect with 2 events: 1 and 2
         let received = try sut(.from([1, 2])).toBlocking().toArray()
@@ -153,7 +153,7 @@ final class RxFeedbackTests: XCTestCase {
         }
 
         // Given: this effect being applied a "cancelOnNewEvent" strategy
-        let sut = RxFeedback(effect: effect, applying: .cancelOnNewEvent).effect
+        let sut = RxFeedback(effect: effect, applying: .cancelOnNewState).effect
 
         // When: feeding this effect with 2 events: 1 and 2
         let received = try sut(.from([1, 2])).toBlocking().toArray()
@@ -173,8 +173,8 @@ final class RxFeedbackTests: XCTestCase {
             return .just("\(input)")
         }
 
-        // Given: this effect being applied a "continueOnNewEvent" strategy
-        let sut = RxFeedback(effect: effect, applying: .cancelOnNewEvent).effect
+        // Given: this effect being applied a "continueOnNewState" strategy
+        let sut = RxFeedback(effect: effect, applying: .cancelOnNewState).effect
 
         // When: feeding this effect with 2 events: 1 and 2
         let received = try sut(.from([1, 2])).toBlocking().toArray()

@@ -35,9 +35,9 @@ public struct RxFeedback<State, Event>: Feedback {
 
         let fullEffect: (StateStream) -> EventStream = { states in
             switch strategy {
-            case .continueOnNewEvent:
+            case .continueOnNewState:
                 return states.flatMap(effectStream)
-            case .cancelOnNewEvent:
+            case .cancelOnNewState:
                 return states.flatMapLatest(effectStream)
             }
         }

@@ -7,11 +7,11 @@
 
 /// The strategy to apply when a new `State` value is given as input of a feedback while the previous execution is still
 /// in progress
-/// - continueOnNewEvent: the previous execution will go one while the new one is running
-/// - cancelOnNewEvent: the previous execution will be canceled while the new one is starting
+/// - continueOnNewState: the previous execution will go one while the new one is running
+/// - cancelOnNewState: the previous execution will be canceled while the new one is starting
 public enum ExecutionStrategy: Equatable {
-    case continueOnNewEvent
-    case cancelOnNewEvent
+    case continueOnNewState
+    case cancelOnNewState
 }
 
 /// A feedback is basically a function transforming a reactive stream of `State` to a reactive stream of `Event`

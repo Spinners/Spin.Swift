@@ -185,8 +185,8 @@ There are typical cases where a side effect consist in an asynchronous operation
 
 Well, it depends 😁. By default Spin will cancel the previous operation. But there is a way to override this behaviour. Every feedback constructor that takes a State as a parameter can also be passed an ExecutionStrategy:
 
-* **.cancelOnNewEvent**, to cancel the previous operation
-* **.continueOnNewEvent**, to let the previous operation end
+* **.cancelOnNewState**, to cancel the previous operation when a new state is to be handled
+* **.continueOnNewState**, to let the previous operation naturally end when a new state is to be handled
 
 Choose wisely the option that fits your needs. Not cancelling previous operations could lead to inconsistency in your state if the reducer is not protected against unordered events.
 

@@ -97,7 +97,7 @@ final class CombineFeedbackTests: XCTestCase {
         }
 
         // Given: this effect being applied a "continueOnNewEvent" strategy
-        let sut = CombineFeedback<Int, String>(effect: effect, applying: .continueOnNewEvent).effect
+        let sut = CombineFeedback<Int, String>(effect: effect, applying: .continueOnNewState).effect
 
         // When: feeding this effect with 2 events: 1 and 2
         let recorder = sut([1, 2].publisher.eraseToAnyPublisher()).record()
@@ -129,8 +129,8 @@ final class CombineFeedbackTests: XCTestCase {
             return Just<String>("\(input)").eraseToAnyPublisher()
         }
 
-        // Given: this effect being applied a "cancelOnNewEvent" strategy
-        let sut = CombineFeedback<Int, String>(effect: effect, applying: .cancelOnNewEvent).effect
+        // Given: this effect being applied a "cancelOnNewState" strategy
+        let sut = CombineFeedback<Int, String>(effect: effect, applying: .cancelOnNewState).effect
 
         // When: feeding this stream with 2 events: 1 and 2
         let recorder = sut([1, 2].publisher.eraseToAnyPublisher()).record()
