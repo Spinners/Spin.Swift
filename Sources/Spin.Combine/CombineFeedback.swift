@@ -34,9 +34,9 @@ where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConv
                 applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
         let fullEffect: (StateStream) -> EventStream = { states in
             switch strategy {
-            case .continueOnNewEvent:
+            case .continueOnNewState:
                 return states.flatMap(effect).eraseToAnyPublisher()
-            case .cancelOnNewEvent:
+            case .cancelOnNewState:
                 return states.map(effect).switchToLatest().eraseToAnyPublisher()
             }
         }

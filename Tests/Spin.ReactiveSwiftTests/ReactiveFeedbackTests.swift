@@ -91,8 +91,8 @@ final class ReactiveFeedbackTests: XCTestCase {
             return SignalProducer<String, Never>(value: "\(input)")
         }
 
-        // Given: this effect being applied a "continueOnNewEvent" strategy
-        let sut = ReactiveFeedback(effect: effect, applying: .continueOnNewEvent).effect
+        // Given: this effect being applied a "continueOnNewState" strategy
+        let sut = ReactiveFeedback(effect: effect, applying: .continueOnNewState).effect
 
         // When: feeding this effect with 2 events: 1 and 2
         let received = try sut(SignalProducer<Int, Never>([1, 2])).take(first: 2).collect().first()!.get()
@@ -123,8 +123,8 @@ final class ReactiveFeedbackTests: XCTestCase {
             return SignalProducer<String, Never>(value: "\(input)")
         }
 
-        // Given: this effect being applied a "cancelOnNewEvent" strategy
-        let sut = ReactiveFeedback(effect: effect, applying: .cancelOnNewEvent).effect
+        // Given: this effect being applied a "cancelOnNewState" strategy
+        let sut = ReactiveFeedback(effect: effect, applying: .cancelOnNewState).effect
 
         // When: effect this stream with 2 events: 1 and 2
         let received = try sut(SignalProducer<Int, Never>([1, 2])).take(first: 2).collect().first()!.get()

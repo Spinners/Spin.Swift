@@ -31,9 +31,9 @@ public struct ReactiveFeedback<State, Event>: Feedback {
                 applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {
         let fullEffect: (StateStream) -> EventStream = { states in
             switch strategy {
-            case .continueOnNewEvent:
+            case .continueOnNewState:
                 return states.flatMap(.merge, effect)
-            case .cancelOnNewEvent:
+            case .cancelOnNewState:
                 return states.flatMap(.latest, effect)
             }
         }

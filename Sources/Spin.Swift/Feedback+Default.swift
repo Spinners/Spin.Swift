@@ -11,7 +11,7 @@ public enum FeedbackFilterError: Error {
 
 public extension Feedback {
     static var defaultExecutionStrategy: ExecutionStrategy {
-        return .cancelOnNewEvent
+        return .cancelOnNewState
     }
 
     /// Set an executer for the feedback after its initilization
