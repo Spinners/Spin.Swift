@@ -14,5 +14,5 @@ public protocol Reducer {
 
     var reducerOnExecuter: (StateStream.Value, EventStream) -> StateStream { get }
 
-    init(reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value, on executer: Executer)
+    init(_ reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value, on executer: Executer)
 }

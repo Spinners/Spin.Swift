@@ -25,7 +25,7 @@ final class ReactiveSwiftUISpinTests: XCTestCase {
             }
         })
 
-        let reducer = ReactiveReducer<String, String>(reducer: { state, _ in
+        let reducer = ReactiveReducer<String, String>({ state, _ in
             return "newState"
         })
 
@@ -50,7 +50,7 @@ final class ReactiveSwiftUISpinTests: XCTestCase {
             }
         })
 
-        let reducer = ReactiveReducer<String, String>(reducer: { state, _ in
+        let reducer = ReactiveReducer<String, String>({ state, _ in
             return "newState"
         })
 
@@ -75,7 +75,7 @@ final class ReactiveSwiftUISpinTests: XCTestCase {
             return .empty
         })
 
-        let reducer = ReactiveReducer<String, String>(reducer: { state, event in
+        let reducer = ReactiveReducer<String, String>({ state, event in
             receivedEvent = event
             exp.fulfill()
             return "newState"
@@ -106,7 +106,7 @@ final class ReactiveSwiftUISpinTests: XCTestCase {
             return .empty
         })
 
-        let reducer = ReactiveReducer<String, String>(reducer: { state, event in
+        let reducer = ReactiveReducer<String, String>({ state, event in
             receivedEvent = event
             exp.fulfill()
             return "newState"
@@ -139,7 +139,7 @@ final class ReactiveSwiftUISpinTests: XCTestCase {
             return .empty
         })
 
-        let reducer = ReactiveReducer<String, String>(reducer: { state, event in
+        let reducer = ReactiveReducer<String, String>({ state, event in
             receivedEvent = event
             exp.fulfill()
             return "newState"
@@ -174,7 +174,7 @@ final class ReactiveSwiftUISpinTests: XCTestCase {
             return .empty
         })
 
-        let reducer = ReactiveReducer<String, String>(reducer: { state, event in
+        let reducer = ReactiveReducer<String, String>({ state, event in
             return "newState"
         })
 

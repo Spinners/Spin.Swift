@@ -59,7 +59,7 @@ final class AnySpinTests: XCTestCase {
         }
 
         let feedback = MockFeedback(effect: effectFunction)
-        let reducer = MockReducer(reducer: reducerFunction)
+        let reducer = MockReducer(reducerFunction)
 
         // When: building an AnySpin based on those feedback and reducer
         let sut = AnySpin(initialState: MockState(subState: 0), feedback: feedback, reducer: reducer)
@@ -88,7 +88,7 @@ final class AnySpinTests: XCTestCase {
             return MockState(subState: 0)
         }
 
-        let reducer = MockReducer(reducer: reducerFunction)
+        let reducer = MockReducer(reducerFunction)
 
         // When: building an AnySpin based on those feedback and reducer, with a declarative syntax
         let sut = AnySpin(initialState: MockState(subState: 0), reducer: reducer) {
@@ -125,7 +125,7 @@ final class AnySpinTests: XCTestCase {
             return MockState(subState: 0)
         }
 
-        let reducer = MockReducer(reducer: reducerFunction)
+        let reducer = MockReducer(reducerFunction)
 
         // When: building an AnySpin based on those feedbacks and reducer, with a declarative syntax
         let sut = AnySpin(initialState: MockState(subState: 0), reducer: reducer) {
@@ -170,7 +170,7 @@ final class AnySpinTests: XCTestCase {
             return MockState(subState: 0)
         }
 
-        let reducer = MockReducer(reducer: reducerFunction)
+        let reducer = MockReducer(reducerFunction)
 
         // When: building an AnySpin based on those feedbacks and reducer, with a declarative syntax
         let sut = AnySpin(initialState: MockState(subState: 0), reducer: reducer) {
@@ -223,7 +223,7 @@ final class AnySpinTests: XCTestCase {
             return MockState(subState: 0)
         }
 
-        let reducer = MockReducer(reducer: reducerFunction)
+        let reducer = MockReducer(reducerFunction)
 
         // When: building an AnySpin based on those feedbacks and reducer, with a declarative syntax
         let sut = AnySpin(initialState: MockState(subState: 0), reducer: reducer) {
@@ -284,7 +284,7 @@ final class AnySpinTests: XCTestCase {
             return MockState(subState: 0)
         }
 
-        let reducer = MockReducer(reducer: reducerFunction)
+        let reducer = MockReducer(reducerFunction)
 
         // When: building an AnySpin based on those feedbacks and reducer, with a declarative syntax
         let sut = AnySpin(initialState: MockState(subState: 0), reducer: reducer) {

@@ -37,7 +37,7 @@ final class CombineReducerTests: XCTestCase {
         }
 
         // When: reducing without specifying an Executer for the reduce operation
-        let sut = ScheduledCombineReducer(reducer: reducerFunction)
+        let sut = ScheduledCombineReducer(reducerFunction)
 
         sut.reducerOnExecuter("initialState", eventStream)
             .output(in: (0...1))
@@ -76,7 +76,7 @@ final class CombineReducerTests: XCTestCase {
         }
 
         // When: reducing with specifying an Executer for the reduce operation
-        let sut = ScheduledCombineReducer(reducer: reducerFunction, on: reducerScheduler)
+        let sut = ScheduledCombineReducer(reducerFunction, on: reducerScheduler)
 
         sut.reducerOnExecuter("initialState", eventStream)
             .output(in: (0...1))

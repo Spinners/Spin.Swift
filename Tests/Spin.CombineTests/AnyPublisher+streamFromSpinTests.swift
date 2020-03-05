@@ -30,7 +30,7 @@ final class AnyPublisher_streamFromSpinTests: XCTestCase {
                 return "event"
             }.eraseToAnyPublisher()
         })
-        let reducer = CombineReducer<String, String>(reducer: { state, _ in
+        let reducer = CombineReducer<String, String>({ state, _ in
             return "newState"
         })
 
@@ -62,7 +62,7 @@ final class AnyPublisher_streamFromSpinTests: XCTestCase {
             }.eraseToAnyPublisher()
         })
 
-        let reducer = CombineReducer<String, String>(reducer: { state, _ in
+        let reducer = CombineReducer<String, String>({ state, _ in
             receivedInitialStateInReducer = state
             return "newState"
         })

@@ -18,7 +18,7 @@ where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConv
 
     public let reducerOnExecuter: (StateStream.Value, EventStream) -> StateStream
 
-    public init(reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value, on executer: Executer) {
+    public init(_ reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value, on executer: Executer) {
         self.reducerOnExecuter = { initialState, events in
             events
                 .receive(on: executer)
@@ -35,7 +35,7 @@ public typealias CombineReducer<State, Event>
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public extension ScheduledCombineReducer
 where SchedulerTime == DispatchQueue.SchedulerTimeType, SchedulerOptions == DispatchQueue.SchedulerOptions {
-    init(reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value) {
-        self.init(reducer: reducer, on: DispatchQueue.main.eraseToAnyScheduler())
+    init(_ reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value) {
+        self.init(reducer, on: DispatchQueue.main.eraseToAnyScheduler())
     }
 }

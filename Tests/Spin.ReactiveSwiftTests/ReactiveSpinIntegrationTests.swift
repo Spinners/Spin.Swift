@@ -53,11 +53,11 @@ final class ReactiveSpinIntegrationTests: XCTestCase {
 
         // When: spinning the feedbacks and the reducer on the default executer
         let spin = Spinner
-            .from(initialState: "initialState")
-            .add(feedback: ReactiveFeedback(effect: effectA))
-            .add(feedback: ReactiveFeedback(effect: effectB))
-            .add(feedback: ReactiveFeedback(effect: effectC))
-            .reduce(with: ReactiveReducer(reducer: reducerFunction))
+            .initialState("initialState")
+            .feedback(ReactiveFeedback(effect: effectA))
+            .feedback(ReactiveFeedback(effect: effectB))
+            .feedback(ReactiveFeedback(effect: effectC))
+            .reducer(ReactiveReducer(reducerFunction))
 
         SignalProducer<String, Never>.stream(from: spin)
             .take(first: 7)
@@ -113,7 +113,7 @@ final class ReactiveSpinIntegrationTests: XCTestCase {
             }
         }
 
-        let spin = ReactiveSpin<String, StringAction>(initialState: "initialState", reducer: ReactiveReducer(reducer: reducerFunction)) {
+        let spin = ReactiveSpin<String, StringAction>(initialState: "initialState", reducer: ReactiveReducer(reducerFunction)) {
             ReactiveFeedback(effect: effectA).execute(on: QueueScheduler.main)
             ReactiveFeedback(effect: effectB).execute(on: QueueScheduler.main)
             ReactiveFeedback(effect: effectC).execute(on: QueueScheduler.main)

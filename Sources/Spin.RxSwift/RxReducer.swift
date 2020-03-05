@@ -16,7 +16,7 @@ public struct RxReducer<State, Event>: Reducer {
 
     public let reducerOnExecuter: (StateStream.Value, EventStream) -> StateStream
     
-    public init(reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value,
+    public init(_ reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value,
                 on executer: Executer = CurrentThreadScheduler.instance) {
         self.reducerOnExecuter = { initialState, events in
             events

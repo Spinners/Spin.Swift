@@ -50,11 +50,11 @@ final class RxSpinIntegrationTests: XCTestCase {
 
         // When: spinning the feedbacks and the reducer on the default executer
         let spin = Spinner
-            .from(initialState: "initialState")
-            .add(feedback: RxFeedback(effect: effectA))
-            .add(feedback: RxFeedback(effect: effectB))
-            .add(feedback: RxFeedback(effect: effectC))
-            .reduce(with: RxReducer(reducer: reducerFunction))
+            .initialState("initialState")
+            .feedback(RxFeedback(effect: effectA))
+            .feedback(RxFeedback(effect: effectB))
+            .feedback(RxFeedback(effect: effectC))
+            .reducer(RxReducer(reducerFunction))
 
         let receivedStates = try Observable<String>.stream(from: spin)
             .take(7)
@@ -102,7 +102,7 @@ final class RxSpinIntegrationTests: XCTestCase {
             }
         }
 
-        let spin = RxSpin<String, StringAction>(initialState: "initialState", reducer: RxReducer(reducer: reducerFunction)) {
+        let spin = RxSpin<String, StringAction>(initialState: "initialState", reducer: RxReducer(reducerFunction)) {
             RxFeedback(effect: effectA).execute(on: MainScheduler.instance)
             RxFeedback(effect: effectB).execute(on: MainScheduler.instance)
             RxFeedback(effect: effectC).execute(on: MainScheduler.instance)

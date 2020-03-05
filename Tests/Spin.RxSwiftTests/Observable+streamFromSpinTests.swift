@@ -32,7 +32,7 @@ final class Observable_streamFromSpinTests: XCTestCase {
                 return "event"
             }
         })
-        let reducer = RxReducer<String, String>(reducer: { state, _ in
+        let reducer = RxReducer<String, String>({ state, _ in
             return "newState"
         })
 
@@ -63,7 +63,7 @@ final class Observable_streamFromSpinTests: XCTestCase {
             }
         })
 
-        let reducer = RxReducer<String, String>(reducer: { state, _ in
+        let reducer = RxReducer<String, String>({ state, _ in
             receivedInitialStateInReducer = state
             return "newState"
         })
@@ -91,7 +91,7 @@ final class Observable_streamFromSpinTests: XCTestCase {
             return .error(NSError(domain: "feedback", code: 0))
         })
 
-        let reducer = RxReducer<String, String>(reducer: { state, _ in
+        let reducer = RxReducer<String, String>({ state, _ in
             reduceIsCalled = false
             return "newState"
         })

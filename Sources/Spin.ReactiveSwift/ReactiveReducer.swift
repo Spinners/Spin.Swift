@@ -15,7 +15,7 @@ public struct ReactiveReducer<State, Event>: Reducer {
 
     public let reducerOnExecuter: (StateStream.Value, EventStream) -> StateStream
 
-    public init(reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value,
+    public init(_ reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value,
                 on executer: Executer = QueueScheduler.main) {
         self.reducerOnExecuter = { initialState, events in
             events
