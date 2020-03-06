@@ -152,6 +152,21 @@ Observable
 	.disposed(by: self.disposeBag)
 ```
 
+For instance, the same Spin but using Combine would be (considering the effects return AnyPublishers):
+
+```swift
+let levelsSpin = Spinner
+	.initialState(Levels(left: 10, right: 20))
+	.feedback(CombineFeedback(effect: leftEffect))
+	.feedback(CombineFeedback(effect: rightEffect))
+	.reducer(CombineReducer(levelsReducer))
+	
+AnyPublisher.
+	.stream(from: levelsSpin)
+	.sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+	.store(in: &cancellables)
+```
+
 ## The declarative way
 
 In that case we use a "DSL like" syntax thanks to Swift 5.1 function builder:
@@ -164,7 +179,17 @@ let levelsSpin = RxSpin(initialState: Levels(left: 10, right: 20),
 }
 ```
 
-The way to start it remains unchanged.
+Again, with Combine:
+
+```swift
+let levelsSpin = CombineSpin(initialState: Levels(left: 10, right: 20),
+                             reducer: CombinrReducer(levelsReducer)) {
+    CombineFeedback(effect: leftEffect)
+    CombineFeedback(effect: rightEffect)
+}
+```
+
+The way to start the Spin remains unchanged.
 
 # The multiple ways to create a Feedback
 
