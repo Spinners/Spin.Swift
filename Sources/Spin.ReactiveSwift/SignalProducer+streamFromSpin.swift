@@ -9,9 +9,9 @@ import ReactiveSwift
 import Spin_Swift
 
 public extension SignalProducer where Error == Never {
-    static func stream<State, Event>(from spin: ReactiveSpin<State, Event>) -> SignalProducer<State, Never> {
-        return SignalProducer<State, Never>.deferred {
-            let currentState = MutableProperty<State>(spin.initialState)
+    static func stream<Event>(from spin: ReactiveSpin<Value, Event>) -> SignalProducer<Value, Never> {
+        return SignalProducer<Value, Never>.deferred {
+            let currentState = MutableProperty<Value>(spin.initialState)
 
             // merging all the effects into one event stream
             let eventStreams = spin.effects.map { $0(currentState.producer) }

@@ -43,7 +43,8 @@ final class SignalProducer_streamFromSpinTests: XCTestCase {
         }
 
         // When: producing/subscribing to a stream based on the ReactiveSpin
-        _ = SignalProducer<String, Never>.stream(from: spin)
+        _ = SignalProducer
+            .stream(from: spin)
             .take(first: 1)
             .start()
             .disposed(by: self.disposeBag)
@@ -78,7 +79,8 @@ final class SignalProducer_streamFromSpinTests: XCTestCase {
         }
 
         // When: producing/subscribing to a stream based on the ReactiveSpin
-        _ = SignalProducer<String, Never>.stream(from: spin)
+        _ = SignalProducer
+            .stream(from: spin)
             .take(first: 2)
             .start()
             .disposed(by: self.disposeBag)

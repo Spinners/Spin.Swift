@@ -40,7 +40,8 @@ final class AnyPublisher_streamFromSpinTests: XCTestCase {
         }
 
         // When: producing/subscribing to a stream based on the CombineSpin
-         let recorder = AnyPublisher<String, Never>.stream(from: spin)
+        let recorder = AnyPublisher
+            .stream(from: spin)
             .output(in: (0..<1))
             .record()
 
@@ -72,9 +73,10 @@ final class AnyPublisher_streamFromSpinTests: XCTestCase {
         }
 
         // When: producing/subscribing to a stream based on the CombineSpin
-        let recorder = AnyPublisher<String, Never>.stream(from: spin)
-                .output(in: (0...1))
-                .record()
+        let recorder = AnyPublisher
+            .stream(from: spin)
+            .output(in: (0...1))
+            .record()
 
         _ = try wait(for: recorder.elements, timeout: 5)
 
