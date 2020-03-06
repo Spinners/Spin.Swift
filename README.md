@@ -173,7 +173,7 @@ Basically, a side effect has this signature (Stream\<State\>) -> Stream\<Event\>
 
 As it might not always be easy to directly manipulate Streams, Spin comes with a bunch of helper constructors for feedbacks allowing to:
 
-* directly receive a State instead of a Stream<State> (like in the example of the `Levels`)
+* directly receive a State instead of a Stream<State> (like in the example with the `Levels`)
 * filter the input State by providing a predicate: ``` RxFeedback(effect: leftEffect, filteredBy: { $0.left > 0 }) ```
 * extract a substate from the State by providing a lens or a keypath: ``` RxFeedback(effect: leftEffect, lensingOn: \.left) ```
 
