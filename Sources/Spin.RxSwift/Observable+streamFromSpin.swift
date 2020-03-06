@@ -9,9 +9,9 @@ import RxSwift
 import Spin_Swift
 
 public extension Observable {
-    static func stream<State, Event>(from spin: RxSpin<State, Event>) -> Observable<State> {
-        return Observable<State>.deferred {
-            let currentState = ReplaySubject<State>.create(bufferSize: 1)
+    static func stream<Event>(from spin: RxSpin<Element, Event>) -> Observable<Element> {
+        return Observable<Element>.deferred {
+            let currentState = ReplaySubject<Element>.create(bufferSize: 1)
 
             // merging all the effects into one event stream
             let eventStreams = spin.effects.map { $0(currentState.asObservable()) }

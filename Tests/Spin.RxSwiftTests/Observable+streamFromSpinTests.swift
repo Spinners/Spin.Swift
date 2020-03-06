@@ -73,7 +73,8 @@ final class Observable_streamFromSpinTests: XCTestCase {
         }
 
         // When: producing/subscribing to a stream based on the RxSpin
-        _ = Observable<String>.stream(from: spin)
+        _ = Observable
+            .stream(from: spin)
             .take(2)
             .toBlocking()
             .materialize()
@@ -101,7 +102,8 @@ final class Observable_streamFromSpinTests: XCTestCase {
         }
 
         // When: producing/subscribing to a stream based on the RxSpin
-        let events = Observable<String>.stream(from: spin)
+        let events = Observable
+            .stream(from: spin)
             .take(1)
             .toBlocking()
             .materialize()

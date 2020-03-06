@@ -146,7 +146,7 @@ That’s it. The feedback loop is built. What now ?
 If you want to start it, then you have to subscribe to the underlying reactive stream. To that end, a new operator “**.stream(from:)**” has been added to **Observable** in order to connect things together and provide an Observable you can subscribe to:
 
 ```swift
-Observable<Levels>
+Observable
 	.stream(from: levelsSpin)
 	.subscribe()
 	.disposed(by: self.disposeBag)
