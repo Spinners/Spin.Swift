@@ -19,7 +19,7 @@ public final class RxSwiftUISpin<State, Event>: RxSpin<State, Event>, Observable
 
     public init(spin: RxSpin<State, Event>) {
         self.state = spin.initialState
-        super.init(initialState: spin.initialState, effects: spin.effects, reducerOnExecuter: spin.reducerOnExecuter)
+        super.init(initialState: spin.initialState, effects: spin.effects, scheduledReducer: spin.scheduledReducer)
         let uiFeedback = RxFeedback<State, Event>(uiEffects: self.render, self.emit, on: MainScheduler.instance)
         self.effects = [uiFeedback.effect] + spin.effects
     }
@@ -39,7 +39,7 @@ public final class RxSwiftUISpin<State, Event>: RxSpin<State, Event>, Observable
     }
 
     public func toReactiveStream() -> Observable<State> {
-        Observable<State>.stream(from: self)
+        Observable.stream(from: self)
     }
 
     public func start() {

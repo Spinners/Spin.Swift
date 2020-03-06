@@ -16,7 +16,7 @@ public final class CombineUISpin<State, Event>: CombineSpin<State, Event> {
     private var disposeBag = [AnyCancellable]()
 
     public init(spin: CombineSpin<State, Event>) {
-        super.init(initialState: spin.initialState, effects: spin.effects, reducerOnExecuter: spin.reducerOnExecuter)
+        super.init(initialState: spin.initialState, effects: spin.effects, scheduledReducer: spin.scheduledReducer)
         let uiFeedback = CombineFeedback<State, Event>(uiEffects: self.render,
                                                        self.emit,
                                                        on: DispatchQueue.main.eraseToAnyScheduler())

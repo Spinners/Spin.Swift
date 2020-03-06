@@ -128,7 +128,7 @@ final class SpinnerTests: XCTestCase {
         let sut = SpinnerFeedback(initialState: expectedInitialState,
                                   feedbacks: [feedbackA, feedbackB])
             .reducer(reducer)
-        _ = sut.reducerOnExecuter(MockState.toEmpty, MockStream<MockEvent>(value: .toEmpty))
+        _ = sut.scheduledReducer(MockStream<MockEvent>(value: .toEmpty))
 
         // Then: the reducer is called with the right number of feedbacks
         XCTAssertEqual(sut.initialState, expectedInitialState)

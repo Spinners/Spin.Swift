@@ -12,7 +12,9 @@ public protocol Reducer {
     associatedtype EventStream: ReactiveStream
     associatedtype Executer
 
-    var reducerOnExecuter: (StateStream.Value, EventStream) -> StateStream { get }
+    var reducer: (StateStream.Value, EventStream.Value) -> StateStream.Value { get }
+    var executer: Executer { get }
 
     init(_ reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value, on executer: Executer)
+    func scheduledReducer(with initialState: StateStream.Value) -> (EventStream) -> StateStream
 }

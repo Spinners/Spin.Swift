@@ -19,7 +19,7 @@ public final class CombineSwiftUISpin<State, Event>: CombineSpin<State, Event>, 
 
     public init(spin: CombineSpin<State, Event>) {
         self.state = spin.initialState
-        super.init(initialState: spin.initialState, effects: spin.effects, reducerOnExecuter: spin.reducerOnExecuter)
+        super.init(initialState: spin.initialState, effects: spin.effects, scheduledReducer: spin.scheduledReducer)
         let uiFeedback = CombineFeedback<State, Event>(uiEffects: self.render,
                                                        self.emit,
                                                        on: DispatchQueue.main.eraseToAnyScheduler())
@@ -41,7 +41,7 @@ public final class CombineSwiftUISpin<State, Event>: CombineSpin<State, Event>, 
     }
 
     public func toReactiveStream() -> AnyPublisher<State, Never> {
-        AnyPublisher<State, Never>.stream(from: self)
+        AnyPublisher.stream(from: self)
     }
 
     public func start() {

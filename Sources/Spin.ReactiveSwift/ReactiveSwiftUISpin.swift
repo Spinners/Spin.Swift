@@ -18,7 +18,7 @@ public final class ReactiveSwiftUISpin<State, Event>: ReactiveSpin<State, Event>
 
     public init(spin: ReactiveSpin<State, Event>) {
         self.state = spin.initialState
-        super.init(initialState: spin.initialState, effects: spin.effects, reducerOnExecuter: spin.reducerOnExecuter)
+        super.init(initialState: spin.initialState, effects: spin.effects, scheduledReducer: spin.scheduledReducer)
         let uiFeedback = ReactiveFeedback<State, Event>(uiEffects: self.render, self.emit, on: UIScheduler())
         self.effects = [uiFeedback.effect] + spin.effects
     }
@@ -38,7 +38,7 @@ public final class ReactiveSwiftUISpin<State, Event>: ReactiveSpin<State, Event>
     }
 
     public func toReactiveStream() -> SignalProducer<State, Never> {
-        SignalProducer<State, Never>.stream(from: self)
+        SignalProducer.stream(from: self)
     }
 
     public func start() {

@@ -18,7 +18,7 @@ public extension SignalProducer where Error == Never {
             let eventStream = SignalProducer<Event, Never>.merge(eventStreams)
 
             return spin
-                .reducerOnExecuter(spin.initialState, eventStream)
+                .scheduledReducer(eventStream)
                 .prefix(value: spin.initialState)
                 .on(value: { currentState.swap($0) })
         }
