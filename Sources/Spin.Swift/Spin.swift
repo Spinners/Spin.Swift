@@ -14,5 +14,5 @@ public protocol Spin {
 
     var initialState: StateStream.Value { get }
     var effects: [(StateStream) -> EventStream] { get }
-    var reducerOnExecuter: (StateStream.Value, EventStream) -> StateStream { get }
+    var scheduledReducer: (EventStream) -> StateStream { get }
 }

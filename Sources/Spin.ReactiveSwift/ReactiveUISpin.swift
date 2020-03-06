@@ -14,7 +14,7 @@ public final class ReactiveUISpin<State, Event>: ReactiveSpin<State, Event> {
     private let disposeBag = CompositeDisposable()
 
     public init(spin: ReactiveSpin<State, Event>) {
-        super.init(initialState: spin.initialState, effects: spin.effects, reducerOnExecuter: spin.reducerOnExecuter)
+        super.init(initialState: spin.initialState, effects: spin.effects, scheduledReducer: spin.scheduledReducer)
         let uiFeedback = ReactiveFeedback<State, Event>(uiEffects: self.render, self.emit, on: UIScheduler())
         self.effects = [uiFeedback.effect] + spin.effects
     }

@@ -19,7 +19,7 @@ public extension AnyPublisher where Failure == Never {
             let eventStream = Publishers.MergeMany(eventStreams).eraseToAnyPublisher()
 
             return spin
-                .reducerOnExecuter(spin.initialState, eventStream)
+                .scheduledReducer(eventStream)
                 .prepend(spin.initialState)
                 .handleEvents(receiveOutput: currentState.send)
                 .eraseToAnyPublisher()

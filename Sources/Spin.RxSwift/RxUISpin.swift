@@ -15,7 +15,7 @@ public final class RxUISpin<State, Event>: RxSpin<State, Event> {
     private let disposeBag = DisposeBag()
 
     public init(spin: RxSpin<State, Event>) {
-        super.init(initialState: spin.initialState, effects: spin.effects, reducerOnExecuter: spin.reducerOnExecuter)
+        super.init(initialState: spin.initialState, effects: spin.effects, scheduledReducer: spin.scheduledReducer)
         let uiFeedback = RxFeedback<State, Event>(uiEffects: self.render, self.emit, on: MainScheduler.instance)
         self.effects = [uiFeedback.effect] + spin.effects
     }

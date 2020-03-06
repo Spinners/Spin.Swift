@@ -8,14 +8,14 @@
 open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Spin {
     public var initialState: StateStream.Value
     public var effects: [(StateStream) -> EventStream]
-    public var reducerOnExecuter: (StateStream.Value, EventStream) -> StateStream
+    public var scheduledReducer: (EventStream) -> StateStream
 
     public init(initialState: StateStream.Value,
                 effects: [(StateStream) -> EventStream],
-                reducerOnExecuter: @escaping (StateStream.Value, EventStream) -> StateStream) {
+                scheduledReducer: @escaping (EventStream) -> StateStream) {
         self.initialState = initialState
         self.effects = effects
-        self.reducerOnExecuter = reducerOnExecuter
+        self.scheduledReducer = scheduledReducer
     }
 
     public convenience init<FeedbackType, ReducerType>(initialState: StateStream.Value,
@@ -30,7 +30,7 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
         FeedbackType.StateStream == ReducerType.StateStream,
         FeedbackType.EventStream == ReducerType.EventStream {
             let effects = [feedback.effect]
-            self.init(initialState: initialState, effects: effects, reducerOnExecuter: reducer.reducerOnExecuter)
+            self.init(initialState: initialState, effects: effects, scheduledReducer: reducer.scheduledReducer(with: initialState))
     }
 
     public convenience init<FeedbackType, ReducerType>(initialState: StateStream.Value,
@@ -44,7 +44,7 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
         FeedbackType.StateStream == StateStream,
         FeedbackType.EventStream == EventStream {
             let effects = [feedbackBuilder().effect]
-            self.init(initialState: initialState, effects: effects, reducerOnExecuter: reducer.reducerOnExecuter)
+            self.init(initialState: initialState, effects: effects, scheduledReducer: reducer.scheduledReducer(with: initialState))
     }
 
     public convenience init<FeedbackA, FeedbackB, ReducerType>(initialState: StateStream.Value,
@@ -62,7 +62,7 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
         FeedbackA.EventStream == EventStream {
             let feedbacks = builder()
             let effects = [feedbacks.0.effect, feedbacks.1.effect]
-            self.init(initialState: initialState, effects: effects, reducerOnExecuter: reducer.reducerOnExecuter)
+            self.init(initialState: initialState, effects: effects, scheduledReducer: reducer.scheduledReducer(with: initialState))
     }
 
     public convenience init<FeedbackA, FeedbackB, FeedbackC, ReducerType>(initialState: StateStream.Value,
@@ -85,7 +85,7 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
         FeedbackA.EventStream == EventStream {
             let feedbacks = builder()
             let effects = [feedbacks.0.effect, feedbacks.1.effect, feedbacks.2.effect]
-            self.init(initialState: initialState, effects: effects, reducerOnExecuter: reducer.reducerOnExecuter)
+            self.init(initialState: initialState, effects: effects, scheduledReducer: reducer.scheduledReducer(with: initialState))
     }
 
     public convenience init<FeedbackA, FeedbackB, FeedbackC, FeedbackD, ReducerType>(initialState: StateStream.Value,
@@ -112,7 +112,7 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
         FeedbackA.EventStream == EventStream {
             let feedbacks = builder()
             let effects = [feedbacks.0.effect, feedbacks.1.effect, feedbacks.2.effect, feedbacks.3.effect]
-            self.init(initialState: initialState, effects: effects, reducerOnExecuter: reducer.reducerOnExecuter)
+            self.init(initialState: initialState, effects: effects, scheduledReducer: reducer.scheduledReducer(with: initialState))
     }
 
     public convenience init<FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE, ReducerType>(initialState: StateStream.Value,
@@ -143,7 +143,7 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
         FeedbackA.EventStream == EventStream {
             let feedbacks = builder()
             let effects = [feedbacks.0.effect, feedbacks.1.effect, feedbacks.2.effect, feedbacks.3.effect, feedbacks.4.effect]
-            self.init(initialState: initialState, effects: effects, reducerOnExecuter: reducer.reducerOnExecuter)
+            self.init(initialState: initialState, effects: effects, scheduledReducer: reducer.scheduledReducer(with: initialState))
     }
 }
 

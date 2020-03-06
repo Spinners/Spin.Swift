@@ -14,14 +14,20 @@ public struct RxReducer<State, Event>: Reducer {
     public typealias EventStream = Observable<Event>
     public typealias Executer = ImmediateSchedulerType
 
-    public let reducerOnExecuter: (StateStream.Value, EventStream) -> StateStream
+    public let reducer: (StateStream.Value, EventStream.Value) -> StateStream.Value
+    public let executer: Executer
     
     public init(_ reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value,
                 on executer: Executer = CurrentThreadScheduler.instance) {
-        self.reducerOnExecuter = { initialState, events in
+        self.reducer = reducer
+        self.executer = executer
+    }
+
+    public func scheduledReducer(with initialState: StateStream.Value) -> (EventStream) -> StateStream {
+        return { events in
             events
-                .observeOn(executer)
-                .scan(initialState, accumulator: reducer)
+                .observeOn(self.executer)
+                .scan(initialState, accumulator: self.reducer)
         }
     }
 }

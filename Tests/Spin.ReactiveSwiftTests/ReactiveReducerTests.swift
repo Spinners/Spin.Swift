@@ -34,8 +34,9 @@ final class ReactiveReducerTests: XCTestCase {
 
         // When: reducing without specifying an Executer for the reduce operation
         let sut = ReactiveReducer(reducerFunction)
+        let scheduledReducer = sut.scheduledReducer(with: "initialState")
 
-        _ = sut.reducerOnExecuter("initialState", eventStream)
+        _ = scheduledReducer(eventStream)
             .take(first: 2)
             .start()
             .disposed(by: disposeBag)
@@ -69,8 +70,9 @@ final class ReactiveReducerTests: XCTestCase {
 
         // When: reducing with specifying an Executer for the reduce operation
         let sut = ReactiveReducer(reducerFunction, on: reducerScheduler)
+        let scheduledReducer = sut.scheduledReducer(with: "initialState")
 
-        _ = sut.reducerOnExecuter("initialState", eventStream)
+        _ = scheduledReducer(eventStream)
             .take(first: 2)
             .start()
             .disposed(by: disposeBag)

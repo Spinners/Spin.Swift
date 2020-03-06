@@ -16,13 +16,19 @@ where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConv
     public typealias EventStream = AnyPublisher<Event, Never>
     public typealias Executer = AnyScheduler<SchedulerTime, SchedulerOptions>
 
-    public let reducerOnExecuter: (StateStream.Value, EventStream) -> StateStream
-
+    public let reducer: (StateStream.Value, EventStream.Value) -> StateStream.Value
+    public let executer: Executer
+    
     public init(_ reducer: @escaping (StateStream.Value, EventStream.Value) -> StateStream.Value, on executer: Executer) {
-        self.reducerOnExecuter = { initialState, events in
+        self.reducer = reducer
+        self.executer = executer
+    }
+
+    public func scheduledReducer(with initialState: StateStream.Value) -> (EventStream) -> StateStream {
+        return { events in
             events
-                .receive(on: executer)
-                .scan(initialState, reducer)
+                .receive(on: self.executer)
+                .scan(initialState, self.reducer)
                 .eraseToAnyPublisher()
         }
     }

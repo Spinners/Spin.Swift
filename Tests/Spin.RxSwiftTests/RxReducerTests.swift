@@ -32,8 +32,9 @@ final class RxReducerTests: XCTestCase {
 
         // When: reducing without specifying an Executer for the reduce operation
         let sut = RxReducer(reducerFunction)
+        let scheduledReducer = sut.scheduledReducer(with: "initialState")
 
-        _ = sut.reducerOnExecuter("initialState", eventStream)
+        _ = scheduledReducer(eventStream)
             .take(2)
             .toBlocking()
             .materialize()
@@ -65,8 +66,9 @@ final class RxReducerTests: XCTestCase {
 
         // When: reducing without specifying an Executer for the reduce operation
         let sut = RxReducer(reducerFunction, on: reducerScheduler)
+        let scheduledReducer = sut.scheduledReducer(with: "initialState")
 
-        _ = sut.reducerOnExecuter("initialState", eventStream)
+        _ = scheduledReducer(eventStream)
             .take(2)
             .toBlocking()
             .materialize()

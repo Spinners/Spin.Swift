@@ -53,6 +53,6 @@ public class SpinnerFeedback<StateStream: ReactiveStream, EventStream: ReactiveS
         ReducerType.EventStream == EventStream {
             return AnySpin<StateStream, EventStream>(initialState: self.initialState,
                                                      effects: self.effects,
-                                                     reducerOnExecuter: reducer.reducerOnExecuter)
+                                                     scheduledReducer: reducer.scheduledReducer(with: initialState))
     }
 }

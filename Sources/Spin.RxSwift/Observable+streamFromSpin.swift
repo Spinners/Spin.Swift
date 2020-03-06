@@ -18,7 +18,7 @@ public extension Observable {
             let eventStream = Observable<Event>.merge(eventStreams).catchError { _ in return .empty() }
 
             return spin
-                .reducerOnExecuter(spin.initialState, eventStream)
+                .scheduledReducer(eventStream)
                 .startWith(spin.initialState)
                 .do(onNext: { currentState.onNext($0) })
         }
