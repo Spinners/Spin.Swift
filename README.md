@@ -225,16 +225,15 @@ Spin provides a way to specify that scheduler for each feedback you add to a loo
 
 ```swift
 Spinner
-	.initialState(Levels(left: 10, right: 20))
-	.feedback(RxFeedback(effect: leftEffect, on: SerialDispatchQueueScheduler(qos: .userInitiated)))
-	.feedback(RxFeedback(effect: rightEffect, on: SerialDispatchQueueScheduler(qos: .userInitiated)))
-	.reducer(RxReducer(levelsReducer))
+    .initialState(Levels(left: 10, right: 20))
+    .feedback(RxFeedback(effect: leftEffect, on: SerialDispatchQueueScheduler(qos: .userInitiated)))
+    .feedback(RxFeedback(effect: rightEffect, on: SerialDispatchQueueScheduler(qos: .userInitiated)))
+    .reducer(RxReducer(levelsReducer))
 ```
 or
 
 ```swift
-RxSpin(initialState: Levels(left: 10, right: 20),
-       reducer: RxReducer(levelsReducer)) {
+RxSpin(initialState: Levels(left: 10, right: 20), reducer: RxReducer(levelsReducer)) {
     RxFeedback(effect: leftEffect)
         .execute(on: SerialDispatchQueueScheduler(qos: .userInitiated))
     RxFeedback(effect: rightEffect)
@@ -244,11 +243,13 @@ RxSpin(initialState: Levels(left: 10, right: 20),
 
 Of course, it remains possible to handle the Schedulers by yourself inside the feedback functions.
 
+Please note that reducers are executed on default schedulers to handle things like reentrancy or handling events in a serial way. This behavior can be overidden by passing a custom scheduler to the Reducer you create.
+
 # How to use a Spin in a UIKit or AppKit based app
 
-Although a feedback loop can exist by itself without any visualisation, it makes more sense in our developer world to use it as a way to produce a State that we can render on screen and to handle events emitted by the users.
+Although a feedback loop can exist by itself without any visualisation, it makes more sense in our developer world to use it as a way to produce a State that we be rendered on screen and to handle events emitted by the users.
 
-Fortunately, taking a State as an input for rendering and returning a stream of events from the user interactions looks A LOT like the definition of a feedback (State -> Stream\<Event\>), we know how to handle feedbacks 😁.
+Fortunately, taking a State as an input for rendering and returning a stream of events from the user interactions looks A LOT like the definition of a feedback (State -> Stream\<Event\>), we know how to handle feedbacks 😁, with a Spin of course.
 
 As the view is a function of a State, rendering it will changes the states of the UI elements, it is a mutation exceeding the local scope of the loop: UI is indeed a side effect. We just need a proper way to incorporate it in the definition of a Spin.
 
@@ -300,7 +301,7 @@ self.uiSpin.emit(Event.startCounter)
 
 # How to use a Spin in a SwiftUI based app
 
-Because SwiftUI relies on the idea of a binding between a State in a View and takes care of the rendering, the way to connect the SwiftUI Spin is slightly different, and even simpler.
+Because SwiftUI relies on the idea of a binding between a State in a View and takes care of the rendering, the way to connect the SwiftUI Spin is slightly different, and even simpler. 3 Dedicated SwiftUI Spins are to your disposal: RxSwiftUISpin, ReactiveSwiftUISpin and CombineSwiftUISpin.
 
 In your view you have to annotate the UI Spin variable with “@ObservedObject” (a SwiftUISpin being an “ObservableObject”):
 
