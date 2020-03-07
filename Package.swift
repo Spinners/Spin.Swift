@@ -28,7 +28,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/ReactiveCocoa/ReactiveSwift", from: "6.1.0"),
-        .package(url: "https://github.com/ReactiveX/RxSwift", from: "5.0.1"),
+        .package(url: "https://github.com/ReactiveX/RxSwift", from: "5.1.0"),
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
     ],
