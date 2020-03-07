@@ -183,7 +183,7 @@ Again, with Combine:
 
 ```swift
 let levelsSpin = CombineSpin(initialState: Levels(left: 10, right: 20),
-                             reducer: CombinrReducer(levelsReducer)) {
+                             reducer: CombineReducer(levelsReducer)) {
     CombineFeedback(effect: leftEffect)
     CombineFeedback(effect: rightEffect)
 }
