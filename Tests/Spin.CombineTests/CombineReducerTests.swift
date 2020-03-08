@@ -42,8 +42,7 @@ final class CombineReducerTests: XCTestCase {
 
         scheduledReducer(eventStream)
             .output(in: (0...1))
-            .eraseToAnyPublisher()
-            .spin()
+            .subscribe()
             .disposed(by: &self.disposeBag)
 
         waitForExpectations(timeout: 5)
@@ -82,8 +81,7 @@ final class CombineReducerTests: XCTestCase {
 
         scheduledReducer(eventStream)
             .output(in: (0...1))
-            .eraseToAnyPublisher()
-            .spin()
+            .subscribe()
             .disposed(by: &self.disposeBag)
 
         waitForExpectations(timeout: 5)

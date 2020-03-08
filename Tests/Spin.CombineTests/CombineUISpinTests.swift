@@ -97,7 +97,11 @@ final class CombineUISpinTests: XCTestCase {
 
         // When: building a CombineUISpin with the Spin and running the CombineUISpin and emitting an event
         let sut = CombineUISpin(spin: spin)
-        sut.toReactiveStream().output(in: (0...1)).eraseToAnyPublisher().spin().store(in: &self.disposeBag)
+        sut.toReactiveStream()
+            .output(in: (0...1))
+            .subscribe()
+            .disposed(by: &self.disposeBag)
+
         sut.emit("newEvent")
 
         waitForExpectations(timeout: 5)

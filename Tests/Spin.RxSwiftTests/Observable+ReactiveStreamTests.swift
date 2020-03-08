@@ -28,38 +28,13 @@ final class Observable_ReactiveStreamTests: XCTestCase {
                 receivedValue = value
                 exp.fulfill()
             })
-            .spin()
+            .subscribe()
             .disposed(by: self.disposeBag)
 
         waitForExpectations(timeout: 5)
 
         // Then: The stream is executed and the value is fired
         XCTAssertEqual(receivedValue, 1701)
-    }
-
-    func test_reactive_stream_is_subscribed_after_a_trigger_when_spin_is_called() {
-        // Given: a reactive stream
-        let exp = expectation(description: "spin expectation")
-        let sut = Observable<Int>.just(1701)
-        let trigger = PublishRelay<Void>()
-        var streamTime = 0.0
-        var triggerTime = 0.0
-
-        // When: spinning this reactive stream after a trigger
-        sut
-            .do(onNext: { value in
-                streamTime = Date().timeIntervalSince1970
-                exp.fulfill()
-            })
-            .spin(after: trigger.do(onNext: { _ in triggerTime = Date().timeIntervalSince1970 }).asObservable())
-            .disposed(by: self.disposeBag)
-
-        trigger.accept(())
-
-        waitForExpectations(timeout: 5)
-
-        // Then: The stream is executed after the trigger has fired an event
-        XCTAssert(triggerTime < streamTime)
     }
 
     func test_reactive_stream_makes_an_empty_stream_when_emptyStream_is_called() {
