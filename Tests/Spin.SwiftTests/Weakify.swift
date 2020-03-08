@@ -1,11 +1,11 @@
 //
 //  WeakifyTests.swift
-//  
+//
 //
 //  Created by Thibault Wittemberg on 2020-01-09.
 //
 
-@testable import Spin_ReactiveSwift
+import Spin_Swift
 import XCTest
 
 fileprivate class MockContainer {
