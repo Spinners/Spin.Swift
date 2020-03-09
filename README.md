@@ -137,10 +137,10 @@ In that case, the “**Spinner**” class is you entry point.
 
 ```swift
 let levelsSpin = Spinner
-	.initialState(Levels(left: 10, right: 20))
-	.feedback(RxFeedback(effect: leftEffect))
-	.feedback(RxFeedback(effect: rightEffect))
-	.reducer(RxReducer(levelsReducer))
+    .initialState(Levels(left: 10, right: 20))
+    .feedback(RxFeedback(effect: leftEffect))
+    .feedback(RxFeedback(effect: rightEffect))
+    .reducer(RxReducer(levelsReducer))
 ```
 
 That’s it. The feedback loop is built. What now ?
