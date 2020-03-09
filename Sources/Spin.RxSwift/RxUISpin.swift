@@ -9,14 +9,24 @@ import RxRelay
 import RxSwift
 import Spin_Swift
 
-public final class RxUISpin<State, Event>: RxSpin<State, Event> {
+public final class RxUISpin<State, Event>: RxSpin<State, Event>, StateRenderer, EventEmitter {
     private let events = PublishRelay<Event>()
     private var externalRenderFunction: ((State) -> Void)?
-    private let disposeBag = DisposeBag()
+    public var state: State {
+        didSet {
+            self.externalRenderFunction?(state)
+        }
+    }
 
     public init(spin: RxSpin<State, Event>) {
+        self.state = spin.initialState
         super.init(initialState: spin.initialState, effects: spin.effects, scheduledReducer: spin.scheduledReducer)
-        let uiFeedback = RxFeedback<State, Event>(uiEffects: self.render, self.emit, on: MainScheduler.instance)
+        let uiFeedback = RxFeedback<State, Event>(uiEffects: { [weak self] state in
+            self?.state = state
+            }, { [weak self] in
+                guard let `self` = self else { return .empty() }
+                return self.events.asObservable()
+            }, on: MainScheduler.instance)
         self.effects = [uiFeedback.effect] + spin.effects
     }
 
@@ -26,13 +36,5 @@ public final class RxUISpin<State, Event>: RxSpin<State, Event> {
 
     public func emit(_ event: Event) {
         self.events.accept(event)
-    }
-
-    private func render(state: State) {
-        self.externalRenderFunction?(state)
-    }
-
-    private func emit() -> Observable<Event> {
-        self.events.asObservable()
     }
 }
