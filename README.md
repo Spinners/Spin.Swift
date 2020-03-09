@@ -149,9 +149,9 @@ If you want to start it, then you have to subscribe to the underlying reactive s
 
 ```swift
 Observable
-	.stream(from: levelsSpin)
-	.subscribe()
-	.disposed(by: self.disposeBag)
+    .stream(from: levelsSpin)
+    .subscribe()
+    .disposed(by: self.disposeBag)
 ```
 
 There is even a less verbose way of starting a Spin:
@@ -162,19 +162,19 @@ levelsSpin
     .disposed(by: self.disposeBag)
 ```
 
-For instance, the same Spin but using Combine would be (considering the effects return AnyPublishers):
+For instance, the same Spin using Combine would be (considering the effects return AnyPublishers):
 
 ```swift
 let levelsSpin = Spinner
-	.initialState(Levels(left: 10, right: 20))
-	.feedback(CombineFeedback(effect: leftEffect))
-	.feedback(CombineFeedback(effect: rightEffect))
-	.reducer(CombineReducer(levelsReducer))
+    .initialState(Levels(left: 10, right: 20))
+    .feedback(CombineFeedback(effect: leftEffect))
+    .feedback(CombineFeedback(effect: rightEffect))
+    .reducer(CombineReducer(levelsReducer))
 	
-AnyPublisher.
-	.stream(from: levelsSpin)
-	.sink(receiveCompletion: { _ in }, receiveValue: { _ in })
-	.store(in: &cancellables)
+AnyPublisher
+    .stream(from: levelsSpin)
+    .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+    .store(in: &cancellables)
 	
 or
 
