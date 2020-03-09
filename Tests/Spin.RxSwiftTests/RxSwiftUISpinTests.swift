@@ -184,7 +184,9 @@ final class RxSwiftUISpinTests: XCTestCase {
 
         // When: building a RxSwiftUISpin with the Spin and running the RxSwiftUISpin
         let sut = RxSwiftUISpin(spin: spin)
-        sut.start()
+        sut
+            .start()
+            .disposed(by: self.disposeBag)
 
         waitForExpectations(timeout: 5)
 

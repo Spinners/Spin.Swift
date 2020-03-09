@@ -27,14 +27,6 @@ public final class ReactiveUISpin<State, Event>: ReactiveSpin<State, Event> {
         self.eventsObserver.send(value: event)
     }
 
-    public func toReactiveStream() -> SignalProducer<State, Never> {
-        SignalProducer<State, Never>.stream(from: self)
-    }
-
-    public func start() {
-        self.toReactiveStream().start().disposed(by: self.disposeBag)
-    }
-
     private func render(state: State) {
         self.externalRenderFunction?(state)
     }

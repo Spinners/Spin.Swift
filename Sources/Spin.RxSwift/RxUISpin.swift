@@ -28,14 +28,6 @@ public final class RxUISpin<State, Event>: RxSpin<State, Event> {
         self.events.accept(event)
     }
 
-    public func toReactiveStream() -> Observable<State> {
-        Observable<State>.stream(from: self)
-    }
-
-    public func start() {
-        self.toReactiveStream().subscribe().disposed(by: self.disposeBag)
-    }
-
     private func render(state: State) {
         self.externalRenderFunction?(state)
     }

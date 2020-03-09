@@ -128,7 +128,9 @@ final class ReactiveUISpinTests: XCTestCase {
 
         // When: building a ReactiveUISpin with the Spin and running the ReactiveUISpin
         let sut = ReactiveUISpin(spin: spin)
-        sut.start()
+        sut
+            .start()
+            .disposed(by: self.disposeBag)
 
         waitForExpectations(timeout: 5)
 

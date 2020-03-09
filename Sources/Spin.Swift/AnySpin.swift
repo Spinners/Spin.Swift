@@ -18,6 +18,10 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
         self.scheduledReducer = scheduledReducer
     }
 
+    open func toReactiveStream() -> StateStream {
+        fatalError("Must implement according to the underlying reactive framework")
+    }
+
     public convenience init<FeedbackType, ReducerType>(initialState: StateStream.Value,
                                                        feedback: FeedbackType,
                                                        reducer: ReducerType)
