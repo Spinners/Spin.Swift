@@ -8,4 +8,8 @@
 import RxSwift
 import Spin_Swift
 
-public typealias RxSpin<State, Event> = AnySpin<Observable<State>, Observable<Event>>
+public class RxSpin<State, Event>: AnySpin<Observable<State>, Observable<Event>> {
+    public override func toReactiveStream() -> StateStream {
+        Observable<State>.stream(from: self)
+    }
+}

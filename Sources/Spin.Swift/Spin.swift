@@ -15,4 +15,13 @@ public protocol Spin {
     var initialState: StateStream.Value { get }
     var effects: [(StateStream) -> EventStream] { get }
     var scheduledReducer: (EventStream) -> StateStream { get }
+
+    func toReactiveStream() -> StateStream
+    func start() -> StateStream.Subscription
+}
+
+public extension Spin {
+    func start()  -> StateStream.Subscription {
+        self.toReactiveStream().consume()
+    }
 }

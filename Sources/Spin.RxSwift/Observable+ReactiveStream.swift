@@ -10,6 +10,7 @@ import Spin_Swift
 
 extension Observable: ReactiveStream {
     public typealias Value = Element
+    public typealias Subscription = Disposable
 
     public static func emptyStream() -> Self {
         guard let emptyStream = Observable<Value>.empty() as? Self else {
@@ -17,5 +18,9 @@ extension Observable: ReactiveStream {
         }
 
         return emptyStream
+    }
+
+    public func consume() -> Disposable {
+        self.subscribe()
     }
 }

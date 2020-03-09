@@ -154,6 +154,14 @@ Observable
 	.disposed(by: self.disposeBag)
 ```
 
+There is even a less verbose way of starting a Spin:
+
+```swift
+levelsSpin
+    .start()
+    .disposed(by: self.disposeBag)
+```
+
 For instance, the same Spin but using Combine would be (considering the effects return AnyPublishers):
 
 ```swift
@@ -167,6 +175,12 @@ AnyPublisher.
 	.stream(from: levelsSpin)
 	.sink(receiveCompletion: { _ in }, receiveValue: { _ in })
 	.store(in: &cancellables)
+	
+or
+
+levelsSpin
+    .start()
+    .store(in: &cancellables)
 ```
 
 ## The declarative way
@@ -289,8 +303,10 @@ self.uiSpin.render(on: self, using: { $0.render(state:) })
 And once the view is ready (in “viewDidLoad” function for instance) let’s start the loop:
 
 ```swift
-self.uiSpin.spin()
-// internally, this statement builds and subscribes to the reactive stream with the custom operator seen in the “The ways to build a Spin” chapter
+self
+    .uiSpin
+    .start()
+    .disposed(by: self.disposeBag)
 ```
 
 To send events in the loop, this is very straightforward, simply use the emit function:
@@ -310,7 +326,9 @@ In your view you have to annotate the UI Spin variable with “@ObservedObject�
 private var uiSpin: RxSwiftUISpin<State, Event> = {
     // previously defined or injected: counterSpin is the Spin that handles our counter business
     let spin = RxSwiftUISpin(spin: counterSpin)
-    spin.spin()
+    spin
+        .start()
+        .disposed(by: self.disposeBag)
     return spin
 }()
 ```

@@ -37,9 +37,9 @@ extension MockStream: ReactiveStream {
     }
 
     typealias Value = Event
-    typealias Lifecycle = MockLifecycle
+    typealias Subscription = MockLifecycle
 
-    func spin() -> Lifecycle {
+    func consume() -> Subscription {
         return MockLifecycle()
     }
 }

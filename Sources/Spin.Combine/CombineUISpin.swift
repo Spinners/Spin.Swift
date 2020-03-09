@@ -31,14 +31,6 @@ public final class CombineUISpin<State, Event>: CombineSpin<State, Event> {
         self.events.send(event)
     }
 
-    public func toReactiveStream() -> AnyPublisher<State, Never> {
-        AnyPublisher<State, Never>.stream(from: self)
-    }
-
-    public func start() {
-        self.toReactiveStream().sink(receiveCompletion: { _ in }, receiveValue: { _ in }).disposed(by: &self.disposeBag)
-    }
-
     private func render(state: State) {
         self.externalRenderFunction?(state)
     }

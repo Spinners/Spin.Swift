@@ -209,7 +209,9 @@ final class CombineSwiftUISpinTests: XCTestCase {
 
         // When: building a CombineSwiftUISpin with the Spin and running the CombineSwiftUISpin
         let sut = CombineSwiftUISpin(spin: spin)
-        sut.start()
+        sut
+            .start()
+            .disposed(by: &self.disposeBag)
 
         waitForExpectations(timeout: 5)
 
