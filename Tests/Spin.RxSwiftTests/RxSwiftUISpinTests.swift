@@ -87,7 +87,12 @@ final class RxSwiftUISpinTests: XCTestCase {
 
         // When: building a RxSwiftUISpin with the Spin and running the RxSwiftUISpin and emitting an event
         let sut = RxSwiftUISpin(spin: spin)
-        sut.toReactiveStream().take(2).subscribe().disposed(by: self.disposeBag)
+        Observable
+            .stream(from: sut)
+            .take(2)
+            .subscribe()
+            .disposed(by: self.disposeBag)
+
         sut.emit("newEvent")
 
         waitForExpectations(timeout: 5)
@@ -119,7 +124,12 @@ final class RxSwiftUISpinTests: XCTestCase {
         // When: building a RxSwiftUISpin with the Spin and running the RxSwiftUISpin and getting a binding
         // and then mutating the wrapped value of the binding
         let sut = RxSwiftUISpin(spin: spin)
-        sut.toReactiveStream().take(2).subscribe().disposed(by: self.disposeBag)
+        Observable
+            .stream(from: sut)
+            .take(2)
+            .subscribe()
+            .disposed(by: self.disposeBag)
+
         let binding = sut.binding(for: \.count, event: { "\($0)" })
         binding.wrappedValue = 16
 
@@ -152,7 +162,12 @@ final class RxSwiftUISpinTests: XCTestCase {
         // When: building a RxSwiftUISpin with the Spin and running the RxSwiftUISpin and getting a binding
         // and then mutating the wrapped value of the binding
         let sut = RxSwiftUISpin(spin: spin)
-        sut.toReactiveStream().take(2).subscribe().disposed(by: self.disposeBag)
+        Observable
+            .stream(from: sut)
+            .take(2)
+            .subscribe()
+            .disposed(by: self.disposeBag)
+
         let binding = sut.binding(for: \.count, event: "newEvent")
         binding.wrappedValue = 16
 
@@ -184,8 +199,8 @@ final class RxSwiftUISpinTests: XCTestCase {
 
         // When: building a RxSwiftUISpin with the Spin and running the RxSwiftUISpin
         let sut = RxSwiftUISpin(spin: spin)
-        sut
-            .start()
+        Observable
+            .start(spin: sut)
             .disposed(by: self.disposeBag)
 
         waitForExpectations(timeout: 5)

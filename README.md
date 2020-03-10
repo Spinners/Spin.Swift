@@ -158,11 +158,11 @@ Observable
     .disposed(by: self.disposeBag)
 ```
 
-There is even a less verbose way of starting a Spin:
+There is a shortcut function to directly subscribe to the underlying stream:
 
 ```swift
-levelsSpin
-    .start()
+Observable
+    .start(spin: levelsSpin)
     .disposed(by: self.disposeBag)
 ```
 
@@ -182,8 +182,8 @@ AnyPublisher
 	
 or
 
-levelsSpin
-    .start()
+Observable
+    .start(spin: levelsSpin)
     .store(in: &cancellables)
 ```
 
@@ -307,9 +307,8 @@ self.uiSpin.render(on: self, using: { $0.render(state:) })
 And once the view is ready (in “viewDidLoad” function for instance) let’s start the loop:
 
 ```swift
-self
-    .uiSpin
-    .start()
+Observable
+    .start(spin: self.uiSpin)
     .disposed(by: self.disposeBag)
 ```
 
@@ -330,8 +329,8 @@ In your view you have to annotate the UI Spin variable with “@ObservedObject�
 private var uiSpin: RxSwiftUISpin<State, Event> = {
     // previously defined or injected: counterSpin is the Spin that handles our counter business
     let spin = RxSwiftUISpin(spin: counterSpin)
-    spin
-        .start()
+    Observable
+        .start(spin: spin)
         .disposed(by: self.disposeBag)
     return spin
 }()

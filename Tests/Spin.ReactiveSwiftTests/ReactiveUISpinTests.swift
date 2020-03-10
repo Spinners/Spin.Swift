@@ -8,6 +8,7 @@
 import Combine
 import ReactiveSwift
 import Spin_ReactiveSwift
+import Spin_Swift
 import XCTest
 
 fileprivate class SpyContainer {
@@ -97,7 +98,12 @@ final class ReactiveUISpinTests: XCTestCase {
 
         // When: building a ReactiveUISpin with the Spin and running the ReactiveUISpin and emitting an event
         let sut = ReactiveUISpin(spin: spin)
-        sut.toReactiveStream().take(first: 2).start().disposed(by: self.disposeBag)
+        SignalProducer
+            .stream(from: sut)
+            .take(first: 2)
+            .start()
+            .disposed(by: self.disposeBag)
+
         sut.emit("newEvent")
 
         waitForExpectations(timeout: 5)
@@ -122,14 +128,19 @@ final class ReactiveUISpinTests: XCTestCase {
             return "newState"
         })
 
-        let spin = ReactiveSpin<String, String>(initialState: initialState, reducer: reducer) {
-            feedback
-        }
+//        let spin = ReactiveSpin<String, String>(initialState: initialState, reducer: reducer) {
+//            feedback
+//        }
+
+        let spin = Spinner
+            .initialState(initialState)
+            .feedback(feedback)
+            .reducer(reducer)
 
         // When: building a ReactiveUISpin with the Spin and running the ReactiveUISpin
         let sut = ReactiveUISpin(spin: spin)
-        sut
-            .start()
+        SignalProducer
+            .start(spin: sut)
             .disposed(by: self.disposeBag)
 
         waitForExpectations(timeout: 5)

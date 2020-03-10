@@ -97,8 +97,8 @@ final class CombineSwiftUISpinTests: XCTestCase {
 
         // When: building a CombineSwiftUISpin with the Spin and running the CombineSwiftUISpin and emitting an event
         let sut = CombineSwiftUISpin(spin: spin)
-        sut
-            .toReactiveStream()
+        AnyPublisher
+            .stream(from: sut)
             .output(in: (0...1))
             .subscribe()
             .disposed(by: &self.disposeBag)
@@ -134,8 +134,8 @@ final class CombineSwiftUISpinTests: XCTestCase {
         // When: building a CombineSwiftUISpin with the Spin and running the CombineSwiftUISpin and getting a binding
         // and then mutating the wrapped value of the binding
         let sut = CombineSwiftUISpin(spin: spin)
-        sut
-            .toReactiveStream()
+        AnyPublisher
+            .stream(from: sut)
             .output(in: (0...1))
             .subscribe()
             .disposed(by: &self.disposeBag)
@@ -172,8 +172,8 @@ final class CombineSwiftUISpinTests: XCTestCase {
         // When: building a CombineSwiftUISpin with the Spin and running the CombineSwiftUISpin and getting a binding
         // and then mutating the wrapped value of the binding
         let sut = CombineSwiftUISpin(spin: spin)
-        sut
-            .toReactiveStream()
+        AnyPublisher
+            .stream(from: sut)
             .output(in: (0...1))
             .subscribe()
             .disposed(by: &self.disposeBag)
@@ -209,8 +209,8 @@ final class CombineSwiftUISpinTests: XCTestCase {
 
         // When: building a CombineSwiftUISpin with the Spin and running the CombineSwiftUISpin
         let sut = CombineSwiftUISpin(spin: spin)
-        sut
-            .start()
+        AnyPublisher
+            .start(spin: sut)
             .disposed(by: &self.disposeBag)
 
         waitForExpectations(timeout: 5)

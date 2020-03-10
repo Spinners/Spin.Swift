@@ -87,7 +87,12 @@ final class ReactiveSwiftUISpinTests: XCTestCase {
 
         // When: building a ReactiveSwiftUISpin with the Spin and running the ReactiveSwiftUISpin and emitting an event
         let sut = ReactiveSwiftUISpin(spin: spin)
-        sut.toReactiveStream().take(first: 2).start().disposed(by: self.disposeBag)
+        SignalProducer
+            .stream(from: sut)
+            .take(first: 2)
+            .start()
+            .disposed(by: self.disposeBag)
+
         sut.emit("newEvent")
 
         waitForExpectations(timeout: 5)
@@ -119,7 +124,12 @@ final class ReactiveSwiftUISpinTests: XCTestCase {
         // When: building a ReactiveSwiftUISpin with the Spin and running the ReactiveSwiftUISpin and getting a binding
         // and then mutating the wrapped value of the binding
         let sut = ReactiveSwiftUISpin(spin: spin)
-        sut.toReactiveStream().take(first: 2).start().disposed(by: self.disposeBag)
+        SignalProducer
+            .stream(from: sut)
+            .take(first: 2)
+            .start()
+            .disposed(by: self.disposeBag)
+
         let binding = sut.binding(for: \.count, event: { "\($0)" })
         binding.wrappedValue = 16
 
@@ -152,7 +162,12 @@ final class ReactiveSwiftUISpinTests: XCTestCase {
         // When: building a ReactiveSwiftUISpin with the Spin and running the ReactiveSwiftUISpin and getting a binding
         // and then mutating the wrapped value of the binding
         let sut = ReactiveSwiftUISpin(spin: spin)
-        sut.toReactiveStream().take(first: 2).start().disposed(by: self.disposeBag)
+        SignalProducer
+            .stream(from: sut)
+            .take(first: 2)
+            .start()
+            .disposed(by: self.disposeBag)
+
         let binding = sut.binding(for: \.count, event: "newEvent")
         binding.wrappedValue = 16
 
@@ -184,8 +199,8 @@ final class ReactiveSwiftUISpinTests: XCTestCase {
 
         // When: building a ReactiveSwiftUISpin with the Spin and running the ReactiveSwiftUISpin
         let sut = ReactiveSwiftUISpin(spin: spin)
-        sut
-            .start()
+        SignalProducer
+            .start(spin: sut)
             .disposed(by: self.disposeBag)
 
         waitForExpectations(timeout: 5)

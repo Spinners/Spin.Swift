@@ -97,7 +97,12 @@ final class RxUISpinTests: XCTestCase {
 
         // When: building a RxUISpin with the Spin and running the RxUISpin and emitting an event
         let sut = RxUISpin(spin: spin)
-        sut.toReactiveStream().take(2).subscribe().disposed(by: self.disposeBag)
+        Observable
+            .stream(from: sut)
+            .take(2)
+            .subscribe()
+            .disposed(by: self.disposeBag)
+
         sut.emit("newEvent")
 
         waitForExpectations(timeout: 5)
@@ -128,8 +133,8 @@ final class RxUISpinTests: XCTestCase {
 
         // When: building a RxUISpin with the Spin and running the RxUISpin
         let sut = RxUISpin(spin: spin)
-        sut
-            .start()
+        Observable
+            .start(spin: sut)
             .disposed(by: self.disposeBag)
 
         waitForExpectations(timeout: 5)
