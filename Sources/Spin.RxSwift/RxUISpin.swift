@@ -10,6 +10,7 @@ import RxSwift
 import Spin_Swift
 
 public final class RxUISpin<State, Event>: RxSpin<State, Event>, StateRenderer, EventEmitter {
+    private let disposeBag = DisposeBag()
     private let events = PublishRelay<Event>()
     private var externalRenderFunction: ((State) -> Void)?
     public var state: State {
@@ -36,5 +37,9 @@ public final class RxUISpin<State, Event>: RxSpin<State, Event>, StateRenderer, 
 
     public func emit(_ event: Event) {
         self.events.accept(event)
+    }
+
+    public func start() {
+        Observable.start(spin: self).disposed(by: self.disposeBag)
     }
 }

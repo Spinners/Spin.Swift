@@ -15,6 +15,7 @@ public final class RxSwiftUISpin<State, Event>: RxSpin<State, Event>, StateRende
     @Published
     public var state: State
     private let events = PublishRelay<Event>()
+    private let disposeBag = DisposeBag()
 
     public init(spin: RxSpin<State, Event>) {
         self.state = spin.initialState
@@ -30,5 +31,9 @@ public final class RxSwiftUISpin<State, Event>: RxSpin<State, Event>, StateRende
 
     public func emit(_ event: Event) {
         self.events.accept(event)
+    }
+
+    public func start() {
+        Observable.start(spin: self).disposed(by: self.disposeBag)
     }
 }

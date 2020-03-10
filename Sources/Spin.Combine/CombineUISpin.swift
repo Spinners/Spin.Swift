@@ -11,6 +11,7 @@ import SwiftUI
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public final class CombineUISpin<State, Event>: CombineSpin<State, Event>, StateRenderer, EventEmitter {
+    private var disposeBag = [AnyCancellable]()
     private let events = PassthroughSubject<Event, Never>()
     private var externalRenderFunction: ((State) -> Void)?
     public var state: State {
@@ -37,5 +38,9 @@ public final class CombineUISpin<State, Event>: CombineSpin<State, Event>, State
 
     public func emit(_ event: Event) {
         self.events.send(event)
+    }
+
+    public func start() {
+        AnyPublisher.start(spin: self).disposed(by: &self.disposeBag)
     }
 }

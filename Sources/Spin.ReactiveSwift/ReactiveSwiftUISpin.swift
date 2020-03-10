@@ -14,6 +14,7 @@ public final class ReactiveSwiftUISpin<State, Event>: ReactiveSpin<State, Event>
     @Published
     public var state: State
     private let (eventsProducer, eventsObserver) = Signal<Event, Never>.pipe()
+    private let disposeBag = CompositeDisposable()
 
     public init(spin: ReactiveSpin<State, Event>) {
         self.state = spin.initialState
@@ -29,5 +30,9 @@ public final class ReactiveSwiftUISpin<State, Event>: ReactiveSpin<State, Event>
 
     public func emit(_ event: Event) {
         self.eventsObserver.send(value: event)
+    }
+
+    public func start() {
+        SignalProducer.start(spin: self).disposed(by: self.disposeBag)
     }
 }

@@ -9,6 +9,7 @@ import ReactiveSwift
 import Spin_Swift
 
 public final class ReactiveUISpin<State, Event>: ReactiveSpin<State, Event>, StateRenderer, EventEmitter {
+    private let disposeBag = CompositeDisposable()
     private let (eventsProducer, eventsObserver) = Signal<Event, Never>.pipe()
     private var externalRenderFunction: ((State) -> Void)?
     public var state: State {
@@ -35,5 +36,9 @@ public final class ReactiveUISpin<State, Event>: ReactiveSpin<State, Event>, Sta
     
     public func emit(_ event: Event) {
         self.eventsObserver.send(value: event)
+    }
+
+    public func start() {
+        SignalProducer.start(spin: self).disposed(by: self.disposeBag)
     }
 }

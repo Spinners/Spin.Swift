@@ -314,6 +314,13 @@ Observable
     .disposed(by: self.disposeBag)
 ```
 
+or a shortest version:
+
+```swift
+self.uiSpin.start()
+// the underlying reactive stream will be disposed once uiSpin will be deinit
+```
+
 To send events in the loop, this is very straightforward, simply use the emit function:
 
 ```swift
