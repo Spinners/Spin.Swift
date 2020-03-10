@@ -28,6 +28,10 @@ public final class ReactiveUISpin<State, Event>: ReactiveSpin<State, Event>, Sta
             }, on: UIScheduler())
         self.effects = [uiFeedback.effect] + spin.effects
     }
+
+    public func render<Container: AnyObject>(on container: Container, using function: @escaping (Container) -> (State) -> Void) {
+        self.externalRenderFunction = weakify(container: container, function: function)
+    }
     
     public func emit(_ event: Event) {
         self.eventsObserver.send(value: event)

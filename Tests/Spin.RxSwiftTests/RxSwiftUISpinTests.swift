@@ -208,4 +208,43 @@ final class RxSwiftUISpinTests: XCTestCase {
         // Then: the reactive stream is launched and the initialState is received in the effect
         XCTAssertEqual(receivedState, initialState)
     }
+
+    func test_RxUISwiftSpin_mutates_the_inner_state() {
+        // Given: a Spin with an initialState and 1 effect
+        let exp = expectation(description: "spin")
+
+        let initialState = "initialState"
+
+        let feedback = RxFeedback<String, String>(effect: { states in
+            states.map { state -> String in
+                if state == "newState" {
+                    exp.fulfill()
+                }
+                return "event"
+            }
+        })
+
+        let reducer = RxReducer<String, String>({ state, _ in
+            return "newState"
+        })
+
+        let spin = RxSpin<String, String>(initialState: initialState, reducer: reducer) {
+            feedback
+        }
+
+        // When: building a RxUISpin with the Spin
+        // When: starting the spin
+        let sut = RxUISpin(spin: spin)
+
+        Observable
+            .stream(from: sut)
+            .take(2)
+            .subscribe()
+            .disposed(by: self.disposeBag)
+
+        waitForExpectations(timeout: 5)
+
+        // Then: the state is mutated
+        XCTAssertEqual(sut.state, "newState")
+    }
 }

@@ -218,4 +218,37 @@ final class CombineSwiftUISpinTests: XCTestCase {
         // Then: the reactive stream is launched and the initialState is received in the effect
         XCTAssertEqual(receivedState, initialState)
     }
+
+    func test_CombineUISwiftSpin_mutates_the_inner_state() throws {
+        // Given: a Spin with an initialState and 1 effect
+        let initialState = "initialState"
+
+        let feedback = CombineFeedback<String, String>(effect: { states in
+            states.map { state -> String in
+                return "event"
+            }.eraseToAnyPublisher()
+        })
+
+        let reducer = CombineReducer<String, String>({ state, _ in
+            return "newState"
+        })
+
+        let spin = CombineSpin<String, String>(initialState: initialState, reducer: reducer) {
+            feedback
+        }
+
+        // When: building a CombineUISpin with the Spin
+        // When: starting the spin
+        let sut = CombineUISpin(spin: spin)
+
+        let recorder = AnyPublisher
+            .stream(from: sut)
+            .output(in: (0...2))
+            .record()
+
+        _ = try wait(for: recorder.completion, timeout: 5)
+
+        // Then: the state is mutated
+        XCTAssertEqual(sut.state, "newState")
+    }
 }

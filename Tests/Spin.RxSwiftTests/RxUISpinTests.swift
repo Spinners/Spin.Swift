@@ -10,7 +10,7 @@ import RxSwift
 import Spin_RxSwift
 import XCTest
 
-fileprivate class SpyContainer {
+fileprivate class SpyRenderer {
 
     var isRenderCalled = false
     var receivedState = ""
@@ -141,5 +141,48 @@ final class RxUISpinTests: XCTestCase {
 
         // Then: the reactive stream is launched and the initialState is received in the effect
         XCTAssertEqual(receivedState, initialState)
+    }
+
+    func test_RxUISpin_runs_the_external_render_function() {
+        // Given: a Spin with an initialState and 1 effect
+        // Given: a SpyRenderer that will render the state mutations
+        let exp = expectation(description: "spin")
+        let spyRenderer = SpyRenderer()
+
+        let initialState = "initialState"
+
+        let feedback = RxFeedback<String, String>(effect: { states in
+            states.map { state -> String in
+                if state == "newState" {
+                    exp.fulfill()
+                }
+                return "event"
+            }
+        })
+
+        let reducer = RxReducer<String, String>({ state, _ in
+            return "newState"
+        })
+
+        let spin = RxSpin<String, String>(initialState: initialState, reducer: reducer) {
+            feedback
+        }
+
+        // When: building a RxUISpin with the Spin and attaching the spyRenderer as the renderer of the uiSpin
+        // When: starting the spin
+        let sut = RxUISpin(spin: spin)
+        sut.render(on: spyRenderer, using: { $0.render(state:) })
+
+        Observable
+            .stream(from: sut)
+            .take(2)
+            .subscribe()
+            .disposed(by: self.disposeBag)
+
+        waitForExpectations(timeout: 5)
+
+        // Then: the spyRenderer is called
+        XCTAssertTrue(spyRenderer.isRenderCalled)
+        XCTAssertEqual(spyRenderer.receivedState, "newState")
     }
 }
