@@ -5,25 +5,29 @@
 
 <img alt="Spin Logo" src="https://raw.githubusercontent.com/Spinners/Spin.Swift/master/Resources/spin-logo.png" border="1"/>
 
+**With the recent introduction of Combine and SwiftUI, we will face some transition periods in our code base. Our applications will use both Combine and a third-party reactive framework, or both UIKit and SwiftUI, which makes it potentially difficult to guarantee a consistent architecture over time.**
+
 **Spin is a tool to build feedback loops within a Swift based application, allowing to use a unified syntax whatever the underlying reactive programming framework and whatever Apple UI technology you use (RxSwift, ReactiveSwift, Combine and UIKit, AppKit, SwiftUI).**
+
+**Please dig into the <a href="#demo-applications">Demo applications</a> if you already feel comfortable with the feedback loop theory.**
 
 **Summary:**
 
-- <a href="#introduction">Introduction</a>
-- <a href="#what-is-spin">What is Spin ?</a>
+- <a href="#about-state-machines">About State machines</a>
+- <a href="#about-spin">About Spin</a>
 - <a href="#the-multiple-ways-to-build-a-spin">The multiple ways to build a Spin</a>
 - <a href="#the-multiple-ways-to-create-a-feedback">The multiple ways to create a Feedback</a>
-- <a href="#what-about-the-feedback-lifecycle">What about the feedback lifecycle ?</a>
-- <a href="#what-about-the-feedback-scheduling">What about the feedback scheduling ?</a>
-- <a href="#how-to-use-a-spin-in-a-uikit-or-appkit-based-app">How to use a Spin in a UIKit or AppKit based app ?</a>
-- <a href="#how-to-use-a-spin-in-a-swiftui-based-app">How to use a Spin in a SwiftUI based app ?</a>
+- <a href="#feedbacks-lifecycle">Feedbacks lifecycle?</a>
+- <a href="#feedbacks-and-scheduling">Feedbacks and scheduling</a>
+- <a href="#using-spin-in-a-uikit-or-appkit-based-app">Using Spin in a UIKit or AppKit based app</a>
+- <a href="#using-spin-in-a-swiftUI-based-app">Using Spin in a SwiftUI based app</a>
 - <a href="#demo-applications">Demo applications</a>
-- <a href="#acknowledgements"> Acknowledgements </a>
+- <a href="#acknowledgements">Acknowledgements</a>
 
 
-# Introduction
+# About State machines
 
-**What is a state machine ?**
+**What is a State machine ?**
 
 > It is an abstract machine that can be in exactly one of a finite number of states at any given time. The state machine can change from one state to another in response to some external inputs. The change from one state to another is called a transition. A state machine is defined by a list of its states, its initial state, and the conditions for each transition
 
@@ -39,10 +43,10 @@ Stated like that, it might sound obscur and unrelated to software engineering BU
 
 Feedback loops are perfect candidates to host and manage state machines inside an application.
 
-# What is Spin
+# About Spin
 
 Spin is a tool which only purpose is to help you build feedback loops called « Spins ».
-A Spin is based on three components. To illustrate each one of them we will rely on a basic example: a “feedback loop / Spin” that counts from 0 to 10.
+A Spin is based on three components: an initial state, several feedbacks and a reducer. To illustrate each one of them we will rely on a basic example: a “feedback loop / Spin” that counts from 0 to 10.
 
 * The initial state: this is the starting value of our counter, 0.
 * A feedback: this is the rule we apply to the counter to accomplish our purpose. If 0 <= counter < 10 then we ask to increase the counter else we ask to stop it.
@@ -220,7 +224,7 @@ As it might not always be easy to directly manipulate Streams, Spin comes with a
 
 Please refer to [Feedback+Default.swift](https://github.com/Spinners/Spin.Swift/blob/master/Sources/Spin.Swift/Feedback%2BDefault.swift) for completeness.
 
-# What about the feedback lifecycle
+# Feedbacks lifecycle
 
 There are typical cases where a side effect consist in an asynchronous operation (like a network call). What happens if the very same side effect is called repeatedly, not waiting for the previous ones to end ? Are the operations stacked ? Are they cancelled when a new one is performed ?
 
@@ -231,7 +235,7 @@ Well, it depends 😁. By default Spin will cancel the previous operation. But t
 
 Choose wisely the option that fits your needs. Not cancelling previous operations could lead to inconsistency in your state if the reducer is not protected against unordered events.
 
-# What about the feedback scheduling
+# Feedbacks and scheduling
 
 Reactive programming is often associated with asynchronous execution. Even though every reactive framework comes with its own GCD abstraction, it is always about saying on which scheduler should the side effect be executed. 
 
@@ -259,7 +263,7 @@ Of course, it remains possible to handle the Schedulers by yourself inside the f
 
 Please note that reducers are executed on default schedulers to handle things like reentrancy or handling events in a serial way. This behavior can be overidden by passing a custom scheduler to the Reducer you create.
 
-# How to use a Spin in a UIKit or AppKit based app
+# Using Spin in a UIKit or AppKit based app
 
 Although a feedback loop can exist by itself without any visualisation, it makes more sense in our developer world to use it as a way to produce a State that we be rendered on screen and to handle events emitted by the users.
 
@@ -315,7 +319,7 @@ To send events in the loop, this is very straightforward, simply use the emit fu
 self.uiSpin.emit(Event.startCounter)
 ```
 
-# How to use a Spin in a SwiftUI based app
+# Using Spin in a SwiftUI based app
 
 Because SwiftUI relies on the idea of a binding between a State in a View and takes care of the rendering, the way to connect the SwiftUI Spin is slightly different, and even simpler. 3 Dedicated SwiftUI Spins are to your disposal: RxSwiftUISpin, ReactiveSwiftUISpin and CombineSwiftUISpin.
 
