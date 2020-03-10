@@ -17,7 +17,7 @@
 - <a href="#about-spin">About Spin</a>
 - <a href="#the-multiple-ways-to-build-a-spin">The multiple ways to build a Spin</a>
 - <a href="#the-multiple-ways-to-create-a-feedback">The multiple ways to create a Feedback</a>
-- <a href="#feedbacks-lifecycle">Feedbacks lifecycle?</a>
+- <a href="#feedbacks-lifecycle">Feedbacks lifecycle</a>
 - <a href="#feedbacks-and-scheduling">Feedbacks and scheduling</a>
 - <a href="#using-spin-in-a-uikit-or-appkit-based-app">Using Spin in a UIKit or AppKit based app</a>
 - <a href="#using-spin-in-a-swiftUI-based-app">Using Spin in a SwiftUI based app</a>
