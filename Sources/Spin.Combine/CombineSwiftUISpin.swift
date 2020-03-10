@@ -14,6 +14,7 @@ public final class CombineSwiftUISpin<State, Event>: CombineSpin<State, Event>, 
     @Published
     public var state: State
     private let events = PassthroughSubject<Event, Never>()
+    private var disposeBag = [AnyCancellable]()
 
     public init(spin: CombineSpin<State, Event>) {
         self.state = spin.initialState
@@ -29,5 +30,9 @@ public final class CombineSwiftUISpin<State, Event>: CombineSpin<State, Event>, 
 
     public func emit(_ event: Event) {
         self.events.send(event)
+    }
+
+    public func start() {
+        AnyPublisher.start(spin: self).disposed(by: &self.disposeBag)
     }
 }
