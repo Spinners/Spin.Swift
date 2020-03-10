@@ -3,7 +3,9 @@
 [![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
  ![platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20macOS%20%7C%20tvOS%20%7C%20watchOS-333333.svg)
 
-<img alt="Spin Logo" src="https://raw.githubusercontent.com/Spinners/Spin.Swift/master/Resources/spin-logo.png" border="1"/>
+<p align="center">
+<img alt="Spin Logo" src="https://raw.githubusercontent.com/Spinners/Spin.Swift/master/Resources/spin-logo.png" height="250"/>
+</p>
 
 **With the recent introduction of Combine and SwiftUI, we will face some transition periods in our code base. Our applications will use both Combine and a third-party reactive framework, or both UIKit and SwiftUI, which makes it potentially difficult to guarantee a consistent architecture over time.**
 
