@@ -182,7 +182,7 @@ AnyPublisher
 	
 or
 
-Observable
+AnyPublisher
     .start(spin: levelsSpin)
     .store(in: &cancellables)
 ```
