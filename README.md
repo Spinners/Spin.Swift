@@ -9,7 +9,7 @@
 
 **With the recent introduction of Combine and SwiftUI, we will face some transition periods in our code base. Our applications will use both Combine and a third-party reactive framework, or both UIKit and SwiftUI, which makes it potentially difficult to guarantee a consistent architecture over time.**
 
-**Spin is a tool to build feedback loops within a Swift based application, allowing to use a unified syntax whatever the underlying reactive programming framework and whatever Apple UI technology you use (RxSwift, ReactiveSwift, Combine and UIKit, AppKit, SwiftUI).**
+**Spin is a tool to build feedback loops within a Swift based application allowing you to use a unified syntax whatever the underlying reactive programming framework and whatever Apple UI technology you use (RxSwift, ReactiveSwift, Combine and UIKit, AppKit, SwiftUI).**
 
 **Please dig into the <a href="#demo-applications">Demo applications</a> if you already feel comfortable with the feedback loop theory.**
 
@@ -19,7 +19,7 @@
 - <a href="#about-spin">About Spin</a>
 - <a href="#the-multiple-ways-to-build-a-spin">The multiple ways to build a Spin</a>
 - <a href="#the-multiple-ways-to-create-a-feedback">The multiple ways to create a Feedback</a>
-- <a href="#feedbacks-lifecycle">Feedbacks lifecycle</a>
+- <a href="#feedback-lifecycle">Feedback lifecycle</a>
 - <a href="#feedbacks-and-scheduling">Feedbacks and scheduling</a>
 - <a href="#using-spin-in-a-uikit-or-appkit-based-app">Using Spin in a UIKit or AppKit based app</a>
 - <a href="#using-spin-in-a-swiftUI-based-app">Using Spin in a SwiftUI based app</a>
@@ -27,28 +27,28 @@
 - <a href="#acknowledgements">Acknowledgements</a>
 
 
-# About State machines
+# About State Machines
 
-**What is a State machine ?**
+**What is a State Machine?**
 
-> It is an abstract machine that can be in exactly one of a finite number of states at any given time. The state machine can change from one state to another in response to some external inputs. The change from one state to another is called a transition. A state machine is defined by a list of its states, its initial state, and the conditions for each transition
+> It's an abstract machine that can be in exactly one of a finite number of states at any given time. The state machine can change from one state to another in response to some external inputs. The change from one state to another is called a transition. A state machine is defined by a list of its states, its initial state, and the conditions for each transition
 
-Guess what ? An application IS a state machine.
+Guess what! An application IS a state machine.
 
 We just have to find the right tool to implement it. This is where feedback loops come into play 👍.
 
-A Feedback loop is a system that is able to self regulate by giving the resulting value from its computations as the next input to itself, constantly adjusting this value according to given rules (Feedback loops are used in domains like electronics to automatically adjust the level of a signal for instance).
+A Feedback Loop is a system that is able to self-regulate by using the resulting value from its computations as the next input to itself, constantly adjusting this value according to given rules (Feedback Loops are used in domains like electronics to automatically adjust the level of a signal for instance).
 
 <img alt="Feedback Loop" src="https://raw.githubusercontent.com/Spinners/Spin.Swift/master/Resources/feedback.png" border="1"/>
 
-Stated like that, it might sound obscur and unrelated to software engineering BUT “adjusting a value according to certain rules” is exactly what a program and by extension an application is made for ! An application is the sum of all kinds of states that we want to regulate to provide a consistent behaviour following precise rules.
+Stated this way might sound obscur and unrelated to software engineering, BUT “adjusting a value according to certain rules” is exactly what a program, and by extension an application, is made for! An application is the sum of all kinds of states that we want to regulate to provide a consistent behaviour following precise rules.
 
 Feedback loops are perfect candidates to host and manage state machines inside an application.
 
 # About Spin
 
-Spin is a tool which only purpose is to help you build feedback loops called « Spins ».
-A Spin is based on three components: an initial state, several feedbacks and a reducer. To illustrate each one of them we will rely on a basic example: a “feedback loop / Spin” that counts from 0 to 10.
+Spin is a tool whose only purpose is to help you build feedback loops called "Spins".
+A Spin is based on three components: an initial state, several feedbacks, and a reducer. To illustrate each one of them, we will rely on a basic example: a “feedback loop / Spin” that counts from 0 to 10.
 
 * The initial state: this is the starting value of our counter, 0.
 * A feedback: this is the rule we apply to the counter to accomplish our purpose. If 0 <= counter < 10 then we ask to increase the counter else we ask to stop it.
@@ -56,18 +56,18 @@ A Spin is based on three components: an initial state, several feedbacks and a r
 
 <img alt="Feedback Loop" src="https://raw.githubusercontent.com/Spinners/Spin.Swift/master/Resources/feedback-loop.png" border="1"/>
 
-Feedbacks are the only places where you can perform side effects (networking, local I/O, UI rendering, whatever you do that accesses or mutates a state outside the local scope of the loop).
+Feedbacks are the only place where you can perform side effects (networking, local I/O, UI rendering, whatever you do that accesses or mutates a state outside the local scope of the loop).
 Conversely, a reducer is a pure function that can only produce a new value given a previous one and a transition request. Performing side effects in reducers is forbidden, as it would compromise its reproducibility.
 
-In real life applications, you can obviously have several feedbacks per Spin in order to separate preoccupations. Each of the feedbacks will be applied sequentially on the input value.
+In real life applications, you can obviously have several feedbacks per Spin in order to separate concerns. Each of the feedbacks will be applied sequentially on the input value.
 
 # The multiple ways to build a Spin
 
-Spin offers two ways to build a feedback loop. Both are equivalent and picking one only depends on your preference.
+Spin offers two ways to build a feedback loop. Both are equivalent and picking one depends only on your preference.
 
 Let’s try them by building a Spin that regulates two integer values to make them converge to their average value (like some kind of system that would adjust a left and a right channel volume on stereo speakers to make them converge to the same level).
 
-The following example will rely on RxSwift, here are the **[ReactiveSwift](https://gist.github.com/twittemb/d2f31bc4e50aa287d6165638fc0069ef)** and **[Combine](https://gist.github.com/twittemb/b4fe726554b7d61f60d81a1136b8e4a3)** counterparts, you will see how similar they are.
+The following example will rely on RxSwift, here are the **[ReactiveSwift](https://gist.github.com/twittemb/d2f31bc4e50aa287d6165638fc0069ef)** and **[Combine](https://gist.github.com/twittemb/b4fe726554b7d61f60d81a1136b8e4a3)** counterparts; you will see how similar they are.
 
 We will need a data type for our state:
 
@@ -139,7 +139,7 @@ func levelsReducer(currentLevels: Levels, event: Event) -> Levels {
 
 ## The builder way
 
-In that case, the “**Spinner**” class is you entry point.
+In that case, the “**Spinner**” class is your entry point.
 
 ```swift
 let levelsSpin = Spinner
@@ -149,7 +149,7 @@ let levelsSpin = Spinner
     .reducer(RxReducer(levelsReducer))
 ```
 
-That’s it. The feedback loop is built. What now ?
+That’s it. The feedback loop is built. What now?
 
 If you want to start it, then you have to subscribe to the underlying reactive stream. To that end, a new operator “**.stream(from:)**” has been added to **Observable** in order to connect things together and provide an Observable you can subscribe to:
 
@@ -191,7 +191,7 @@ AnyPublisher
 
 ## The declarative way
 
-In that case we use a "DSL like" syntax thanks to Swift 5.1 function builder:
+In this case we use a "DSL like" syntax thanks to Swift 5.1 function builder:
 
 ```swift
 let levelsSpin = RxSpin(initialState: Levels(left: 10, right: 20),
@@ -226,11 +226,11 @@ As it might not always be easy to directly manipulate Streams, Spin comes with a
 
 Please refer to [Feedback+Default.swift](https://github.com/Spinners/Spin.Swift/blob/master/Sources/Spin.Swift/Feedback%2BDefault.swift) for completeness.
 
-# Feedbacks lifecycle
+# Feedback lifecycle
 
-There are typical cases where a side effect consist in an asynchronous operation (like a network call). What happens if the very same side effect is called repeatedly, not waiting for the previous ones to end ? Are the operations stacked ? Are they cancelled when a new one is performed ?
+There are typical cases where a side effect consist of an asynchronous operation (like a network call). What happens if the very same side effect is called repeatedly, not waiting for the previous ones to end? Are the operations stacked? Are they cancelled when a new one is performed?
 
-Well, it depends 😁. By default Spin will cancel the previous operation. But there is a way to override this behaviour. Every feedback constructor that takes a State as a parameter can also be passed an ExecutionStrategy:
+Well, it depends 😁. By default, Spin will cancel the previous operation. But there is a way to override this behaviour. Every feedback constructor that takes a State as a parameter can also be passed an ExecutionStrategy:
 
 * **.cancelOnNewState**, to cancel the previous operation when a new state is to be handled
 * **.continueOnNewState**, to let the previous operation naturally end when a new state is to be handled
@@ -239,9 +239,9 @@ Choose wisely the option that fits your needs. Not cancelling previous operation
 
 # Feedbacks and scheduling
 
-Reactive programming is often associated with asynchronous execution. Even though every reactive framework comes with its own GCD abstraction, it is always about saying on which scheduler should the side effect be executed. 
+Reactive programming is often associated with asynchronous execution. Even though every reactive framework comes with its own GCD abstraction, it is always about stating which scheduler the side effect should be executed on. 
 
-Spin provides a way to specify that scheduler for each feedback you add to a loop, still being as declarative as possible:
+Spin provides a way to specify this scheduler for each feedback you add to a loop while still being as declarative as possible:
 
 ```swift
 Spinner
@@ -263,15 +263,15 @@ RxSpin(initialState: Levels(left: 10, right: 20), reducer: RxReducer(levelsReduc
 
 Of course, it remains possible to handle the Schedulers by yourself inside the feedback functions.
 
-Please note that reducers are executed on default schedulers to handle things like reentrancy or handling events in a serial way. This behavior can be overidden by passing a custom scheduler to the Reducer you create.
+Please note that reducers are executed on default schedulers to handle things like reentrancy or handling events in a serial way. This behaviour can be overridden by passing a custom scheduler to the Reducer you create.
 
 # Using Spin in a UIKit or AppKit based app
 
-Although a feedback loop can exist by itself without any visualisation, it makes more sense in our developer world to use it as a way to produce a State that we be rendered on screen and to handle events emitted by the users.
+Although a feedback loop can exist by itself without any visualization, it makes more sense in our developer world to use it as a way to produce a State that we be rendered on screen and to handle events emitted by the users.
 
 Fortunately, taking a State as an input for rendering and returning a stream of events from the user interactions looks A LOT like the definition of a feedback (State -> Stream\<Event\>), we know how to handle feedbacks 😁, with a Spin of course.
 
-As the view is a function of a State, rendering it will changes the states of the UI elements, it is a mutation exceeding the local scope of the loop: UI is indeed a side effect. We just need a proper way to incorporate it in the definition of a Spin.
+As the view is a function of a State, rendering it will change the states of the UI elements. It is a mutation exceeding the local scope of the loop: UI is indeed a side effect. We just need a proper way to incorporate it in the definition of a Spin.
 
 Once a Spin is built, we can “decorate” it with a new feedback dedicated to the UI rendering/interactions. A special type of Spin exists to perform that decoration: RxUISpin, ReactiveUISpin, CombineUISpin depending on your framework.
 
@@ -294,7 +294,7 @@ func render(state: State) {
 }
 ```
 
-We need to decorate the “business” Spin with a UI Spin, instance variable of the ViewController so their lifecycle is bound:
+We need to decorate the “business” Spin with a UI Spin instance variable of the ViewController so their lifecycle is bound:
 
 ```swift
 // previously defined or injected: counterSpin is the Spin that handles our counter business
@@ -321,7 +321,7 @@ self.uiSpin.start()
 // the underlying reactive stream will be disposed once uiSpin will be deinit
 ```
 
-To send events in the loop, this is very straightforward, simply use the emit function:
+Sending events in the loop is very straightforward; simply use the emit function:
 
 ```swift
 self.uiSpin.emit(Event.startCounter)
@@ -364,11 +364,11 @@ Toggle(isOn: self.uiSpin.binding(for: \.isPaused, event: .toggle) {
 }
 ```
 
-**\\.isPaused** is a keypath designating a sub state of the state, and **.toggle** is the event to emit when the toggle is changed.
+**\\.isPaused** is a keypath which designates a sub state of the state, and **.toggle** is the event to emit when the toggle is changed.
 
 # Demo applications
 
-In the Spinners organization, You can find 2 demo applications demonstrating the usage of Spin with RxSwift, ReactiveSwift and Combine.
+In the Spinners organization, you can find 2 demo applications demonstrating the usage of Spin with RxSwift, ReactiveSwift, and Combine.
 
 * A basic counter application: [UIKit version](https://github.com/Spinners/Spin.UIKit.Demo.Basic) and [SwiftUI version](https://github.com/Spinners/Spin.SwiftUI.Demo.Basic)
 * A more advanced “network based” application using dependency injection and a coordinator pattern (UIKit): [UIKit version](https://github.com/Spinners/Spin.UIKit.Demo) and [SwiftUI version](https://github.com/Spinners/Spin.SwiftUI.Demo)
@@ -377,7 +377,7 @@ In the Spinners organization, You can find 2 demo applications demonstrating the
 
 The advanced demo applications use [Alamofire](https://github.com/Alamofire/Alamofire) for their network stack, [Swinject](https://github.com/Swinject/Swinject) for dependency injection, [Reusable](https://github.com/AliSoftware/Reusable) for view instantiation (UIKit version) and [RxFlow](https://github.com/RxSwiftCommunity/RxFlow) for the coordinator pattern (UIKit version).
 
-The following repos have also been a source of inspiration:
+The following repos were also a source of inspiration:
 
 * [RxFeedback](https://github.com/NoTests/RxFeedback.swift)
 * [ReactiveFeedback](https://github.com/babylonhealth/ReactiveFeedback)
