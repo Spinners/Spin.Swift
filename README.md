@@ -369,11 +369,11 @@ Toggle(isOn: self.uiSpin.binding(for: \.isPaused, event: .toggle) {
 
 As stated in the introduction, Spin aims to ease the cohabitation between several reactive frameworks inside your apps to allow a smoother transition. As a result, you may have to differentiate a RxSwift Feedback from a Combine Feedback since they share the same type name, which is `Feedback`. The same goes for `Reducer`, `Spin`, `UISpin` and `SwiftUISpin`.
 
-The Spin frameworks (Spin_RxSwift, Spin_ReactiveSwift and Spin_Combine) come with typealises to differentiate their inner types.
+The Spin frameworks (Spin_RxSwift, Spin_ReactiveSwift and Spin_Combine) come with typealiases to differentiate their inner types.
 
 For instance `RxFeedback` is a typealias for `Spin_RxSwift.Feedback`, `CombineFeedback` is the one for `Spin_Combine.Feedback`.
 
-By using those typeliases, it is now safe to use all the Spin flavors inside the same source file.
+By using those typealiases, it is safe to use all the Spin flavors inside the same source file.
 
 All the Demo applications use the three reactive frameworks at the same time. But the [advanced demo application](https://github.com/Spinners/Spin.UIKit.Demo) is the most interesting one since it uses those frameworks in the same source files (for dependency injection) and take advantage of the provided typealiases.
 
