@@ -7,7 +7,7 @@
 
 import Spin_Swift
 
-struct MockFeedback<State: CanBeEmpty, Event: CanBeEmpty>: Feedback {
+struct MockFeedback<State: CanBeEmpty, Event: CanBeEmpty>: FeedbackDefinition {
     typealias StateStream = MockStream<State>
     typealias EventStream = MockStream<Event>
     typealias Executer = MockExecuter

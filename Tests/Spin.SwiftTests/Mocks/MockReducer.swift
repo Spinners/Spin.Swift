@@ -7,7 +7,7 @@
 
 import Spin_Swift
 
-class MockReducer: Reducer {
+class MockReducer: ReducerDefinition {
     typealias StateStream = MockStream<MockState>
     typealias EventStream = MockStream<MockEvent>
     typealias Executer = MockExecuter

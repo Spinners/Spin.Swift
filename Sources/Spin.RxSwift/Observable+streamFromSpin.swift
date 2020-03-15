@@ -9,7 +9,7 @@ import RxSwift
 import Spin_Swift
 
 public extension Observable {
-    static func stream<Event>(from spin: RxSpin<Element, Event>) -> Observable<Element> {
+    static func stream<Event>(from spin: Spin<Element, Event>) -> Observable<Element> {
         return Observable<Element>.deferred {
             let currentState = ReplaySubject<Element>.create(bufferSize: 1)
 
@@ -24,7 +24,7 @@ public extension Observable {
         }
     }
 
-    static func start<Event>(spin: RxSpin<Element, Event>) -> Disposable {
+    static func start<Event>(spin: Spin<Element, Event>) -> Disposable {
         Observable.stream(from: spin).consume()
     }
 }

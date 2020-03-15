@@ -10,7 +10,7 @@ import Spin_Swift
 
 public extension SignalProducer where Error == Never {
     
-    static func stream<Event>(from spin: ReactiveSpin<Value, Event>) -> SignalProducer<Value, Never> {
+    static func stream<Event>(from spin: Spin<Value, Event>) -> SignalProducer<Value, Never> {
         return SignalProducer<Value, Never>.deferred {
             let currentState = MutableProperty<Value>(spin.initialState)
             
@@ -25,7 +25,7 @@ public extension SignalProducer where Error == Never {
         }
     }
     
-    static func start<Event>(spin: ReactiveSpin<Value, Event>) -> Disposable {
+    static func start<Event>(spin: Spin<Value, Event>) -> Disposable {
         SignalProducer.stream(from: spin).consume()
     }
 }

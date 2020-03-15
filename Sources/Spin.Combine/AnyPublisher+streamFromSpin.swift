@@ -10,7 +10,7 @@ import Spin_Swift
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public extension AnyPublisher where Failure == Never {
-    static func stream<Event>(from spin: CombineSpin<Value, Event>) -> AnyPublisher<Value, Never> {
+    static func stream<Event>(from spin: Spin<Value, Event>) -> AnyPublisher<Value, Never> {
         return Deferred<AnyPublisher<Value, Never>> {
             let currentState = CurrentValueSubject<Value, Never>(spin.initialState)
 
@@ -26,7 +26,7 @@ public extension AnyPublisher where Failure == Never {
         }.eraseToAnyPublisher()
     }
     
-    static func start<Event>(spin: CombineSpin<Value, Event>) -> AnyCancellable {
+    static func start<Event>(spin: Spin<Value, Event>) -> AnyCancellable {
         AnyPublisher.stream(from: spin).consume()
     }
 }

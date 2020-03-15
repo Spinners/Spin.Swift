@@ -16,7 +16,7 @@ public class Spinner<State> {
         return Spinner<State>(initialState: state)
     }
     
-    public func feedback<FeedbackType: Feedback>(_ feedback: FeedbackType) -> SpinnerFeedback< FeedbackType.StateStream,
+    public func feedback<FeedbackType: FeedbackDefinition>(_ feedback: FeedbackType) -> SpinnerFeedback< FeedbackType.StateStream,
         FeedbackType.EventStream>
         where FeedbackType.StateStream.Value == State {
             return SpinnerFeedback< FeedbackType.StateStream, FeedbackType.EventStream>(initialState: self.initialState,
@@ -28,7 +28,7 @@ public class SpinnerFeedback<StateStream: ReactiveStream, EventStream: ReactiveS
     internal let initialState: StateStream.Value
     internal var effects: [(StateStream) -> EventStream]
     
-    internal init<FeedbackType: Feedback> (initialState state: StateStream.Value,
+    internal init<FeedbackType: FeedbackDefinition> (initialState state: StateStream.Value,
                                            feedbacks: [FeedbackType])
         where
         FeedbackType.StateStream == StateStream,
@@ -39,7 +39,7 @@ public class SpinnerFeedback<StateStream: ReactiveStream, EventStream: ReactiveS
     
     public func feedback<NewFeedbackType>(_ feedback: NewFeedbackType) -> SpinnerFeedback<StateStream, EventStream>
         where
-        NewFeedbackType: Feedback,
+        NewFeedbackType: FeedbackDefinition,
         NewFeedbackType.StateStream == StateStream,
         NewFeedbackType.EventStream == EventStream {
             self.effects.append(feedback.effect)
@@ -48,7 +48,7 @@ public class SpinnerFeedback<StateStream: ReactiveStream, EventStream: ReactiveS
     
     public func reducer<ReducerType>(_ reducer: ReducerType) -> AnySpin<StateStream, EventStream>
         where
-        ReducerType: Reducer,
+        ReducerType: ReducerDefinition,
         ReducerType.StateStream == StateStream,
         ReducerType.EventStream == EventStream {
             return AnySpin<StateStream, EventStream>(initialState: self.initialState,
