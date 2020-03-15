@@ -23,6 +23,7 @@
 - <a href="#feedbacks-and-scheduling">Feedbacks and scheduling</a>
 - <a href="#using-spin-in-a-uikit-or-appkit-based-app">Using Spin in a UIKit or AppKit based app</a>
 - <a href="#using-spin-in-a-swiftUI-based-app">Using Spin in a SwiftUI based app</a>
+- <a href="#using-spin-with-multiple-reactive-frameworks">Using Spin with multiple Reactive Frameworks</a>
 - <a href="#demo-applications">Demo applications</a>
 - <a href="#acknowledgements">Acknowledgements</a>
 
@@ -144,9 +145,9 @@ In that case, the “**Spinner**” class is your entry point.
 ```swift
 let levelsSpin = Spinner
     .initialState(Levels(left: 10, right: 20))
-    .feedback(RxFeedback(effect: leftEffect))
-    .feedback(RxFeedback(effect: rightEffect))
-    .reducer(RxReducer(levelsReducer))
+    .feedback(Feedback(effect: leftEffect))
+    .feedback(Feedback(effect: rightEffect))
+    .reducer(Reducer(levelsReducer))
 ```
 
 That’s it. The feedback loop is built. What now?
@@ -173,9 +174,9 @@ For instance, the same Spin using Combine would be (considering the effects retu
 ```swift
 let levelsSpin = Spinner
     .initialState(Levels(left: 10, right: 20))
-    .feedback(CombineFeedback(effect: leftEffect))
-    .feedback(CombineFeedback(effect: rightEffect))
-    .reducer(CombineReducer(levelsReducer))
+    .feedback(Feedback(effect: leftEffect))
+    .feedback(Feedback(effect: rightEffect))
+    .reducer(Reducer(levelsReducer))
 	
 AnyPublisher
     .stream(from: levelsSpin)
@@ -194,20 +195,20 @@ AnyPublisher
 In this case we use a "DSL like" syntax thanks to Swift 5.1 function builder:
 
 ```swift
-let levelsSpin = RxSpin(initialState: Levels(left: 10, right: 20),
-                        reducer: RxReducer(levelsReducer)) {
-    RxFeedback(effect: leftEffect)
-    RxFeedback(effect: rightEffect)
+let levelsSpin = Spin(initialState: Levels(left: 10, right: 20),
+                      reducer: Reducer(levelsReducer)) {
+    Feedback(effect: leftEffect)
+    Feedback(effect: rightEffect)
 }
 ```
 
-Again, with Combine:
+Again, with Combine, same syntax considering that effects return AnyPublishers:
 
 ```swift
-let levelsSpin = CombineSpin(initialState: Levels(left: 10, right: 20),
-                             reducer: CombineReducer(levelsReducer)) {
-    CombineFeedback(effect: leftEffect)
-    CombineFeedback(effect: rightEffect)
+let levelsSpin = Spin(initialState: Levels(left: 10, right: 20),
+                      reducer: CombineReducer(levelsReducer)) {
+    Feedback(effect: leftEffect)
+    Feedback(effect: rightEffect)
 }
 ```
 
@@ -224,7 +225,7 @@ As it might not always be easy to directly manipulate Streams, Spin comes with a
 * filter the input State by providing a predicate: ``` RxFeedback(effect: leftEffect, filteredBy: { $0.left > 0 }) ```
 * extract a substate from the State by providing a lens or a keypath: ``` RxFeedback(effect: leftEffect, lensingOn: \.left) ```
 
-Please refer to [Feedback+Default.swift](https://github.com/Spinners/Spin.Swift/blob/master/Sources/Spin.Swift/Feedback%2BDefault.swift) for completeness.
+Please refer to [FeedbackDefinition+Default.swift](https://github.com/Spinners/Spin.Swift/blob/master/Sources/Spin.Swift/FeedbackDefinition%2BDefault.swift) for completeness.
 
 # Feedback lifecycle
 
@@ -246,17 +247,17 @@ Spin provides a way to specify this scheduler for each feedback you add to a loo
 ```swift
 Spinner
     .initialState(Levels(left: 10, right: 20))
-    .feedback(RxFeedback(effect: leftEffect, on: SerialDispatchQueueScheduler(qos: .userInitiated)))
-    .feedback(RxFeedback(effect: rightEffect, on: SerialDispatchQueueScheduler(qos: .userInitiated)))
-    .reducer(RxReducer(levelsReducer))
+    .feedback(Feedback(effect: leftEffect, on: SerialDispatchQueueScheduler(qos: .userInitiated)))
+    .feedback(Feedback(effect: rightEffect, on: SerialDispatchQueueScheduler(qos: .userInitiated)))
+    .reducer(Reducer(levelsReducer))
 ```
 or
 
 ```swift
-RxSpin(initialState: Levels(left: 10, right: 20), reducer: RxReducer(levelsReducer)) {
-    RxFeedback(effect: leftEffect)
+Spin(initialState: Levels(left: 10, right: 20), reducer: Reducer(levelsReducer)) {
+    Feedback(effect: leftEffect)
         .execute(on: SerialDispatchQueueScheduler(qos: .userInitiated))
-    RxFeedback(effect: rightEffect)
+    Feedback(effect: rightEffect)
         .execute(on: SerialDispatchQueueScheduler(qos: .userInitiated))
 }
 ```
@@ -273,7 +274,7 @@ Fortunately, taking a State as an input for rendering and returning a stream of 
 
 As the view is a function of a State, rendering it will change the states of the UI elements. It is a mutation exceeding the local scope of the loop: UI is indeed a side effect. We just need a proper way to incorporate it in the definition of a Spin.
 
-Once a Spin is built, we can “decorate” it with a new feedback dedicated to the UI rendering/interactions. A special type of Spin exists to perform that decoration: RxUISpin, ReactiveUISpin, CombineUISpin depending on your framework.
+Once a Spin is built, we can “decorate” it with a new feedback dedicated to the UI rendering/interactions. A special type of Spin exists to perform that decoration: UISpin.
 
 As a global picture, we can illustrate a feedback loop in the context of a UI with this diagram:
 
@@ -294,11 +295,11 @@ func render(state: State) {
 }
 ```
 
-We need to decorate the “business” Spin with a UI Spin instance variable of the ViewController so their lifecycle is bound:
+We need to decorate the “business” Spin with a UISpin instance variable of the ViewController so their lifecycle is bound:
 
 ```swift
 // previously defined or injected: counterSpin is the Spin that handles our counter business
-self.uiSpin = RxUISpin(spin: counterSpin)
+self.uiSpin = UISpin(spin: counterSpin)
 
 // self.uiSpin is now able to handle UI side effects
 
@@ -318,7 +319,7 @@ or a shortest version:
 
 ```swift
 self.uiSpin.start()
-// the underlying reactive stream will be disposed once uiSpin will be deinit
+// the underlying reactive stream will be disposed once the uiSpin will be deinit
 ```
 
 Sending events in the loop is very straightforward; simply use the emit function:
@@ -329,18 +330,16 @@ self.uiSpin.emit(Event.startCounter)
 
 # Using Spin in a SwiftUI based app
 
-Because SwiftUI relies on the idea of a binding between a State in a View and takes care of the rendering, the way to connect the SwiftUI Spin is slightly different, and even simpler. 3 Dedicated SwiftUI Spins are to your disposal: RxSwiftUISpin, ReactiveSwiftUISpin and CombineSwiftUISpin.
+Because SwiftUI relies on the idea of a binding between a State in a View and takes care of the rendering, the way to connect the SwiftUI Spin is slightly different, and even simpler.
 
-In your view you have to annotate the UI Spin variable with “@ObservedObject” (a SwiftUISpin being an “ObservableObject”):
+In your view you have to annotate the SwiftUI Spin variable with “@ObservedObject” (a SwiftUISpin being an “ObservableObject”):
 
 ```swift
 @ObservedObject
-private var uiSpin: RxSwiftUISpin<State, Event> = {
+private var uiSpin: SwiftUISpin<State, Event> = {
     // previously defined or injected: counterSpin is the Spin that handles our counter business
-    let spin = RxSwiftUISpin(spin: counterSpin)
-    Observable
-        .start(spin: spin)
-        .disposed(by: self.disposeBag)
+    let spin = SwiftUISpin(spin: counterSpin)
+    spin.start()
     return spin
 }()
 ```
@@ -355,7 +354,7 @@ Button(action: {
 }
 ```
 
-A UISpin can also be used to produce SwiftUI bindings:
+A SwiftUISpin can also be used to produce SwiftUI bindings:
 
 
 ```swift
@@ -365,6 +364,18 @@ Toggle(isOn: self.uiSpin.binding(for: \.isPaused, event: .toggle) {
 ```
 
 **\\.isPaused** is a keypath which designates a sub state of the state, and **.toggle** is the event to emit when the toggle is changed.
+
+# Using Spin with multiple Reactive Frameworks
+
+As stated in the introduction, Spin aims to ease the cohabitation between several reactive frameworks inside your apps to allow a smoother transition. As a result, you may have to differentiate a RxSwift Feedback from a Combine Feedback since they share the same type name, which is `Feedback`. The same goes for `Reducer`, `Spin`, `UISpin` and `SwiftUISpin`.
+
+The Spin frameworks (Spin_RxSwift, Spin_ReactiveSwift and Spin_Combine) come with typealises to differentiate their inner types.
+
+For instance `RxFeedback` is a typealias for `Spin_RxSwift.Feedback`, `CombineFeedback` is the one for `Spin_Combine.Feedback`.
+
+By using those typeliases, it is now safe to use all the Spin flavors inside the same source file.
+
+All the Demo applications use the three reactive frameworks at the same time. But the [advanced demo application](https://github.com/Spinners/Spin.UIKit.Demo) is the most interesting one since it uses those frameworks in the same source files (for dependency injection) and take advantage of the provided typealiases.
 
 # Demo applications
 

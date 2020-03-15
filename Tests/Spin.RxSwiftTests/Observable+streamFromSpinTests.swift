@@ -15,28 +15,28 @@ final class Observable_streamFromSpinTests: XCTestCase {
     private let disposeBag = DisposeBag()
 
     func test_initialState_is_the_first_state_given_to_the_effects() {
-        // Given: 2 feedbacks and 1 reducer assembled in a RxSpin with an initialState
+        // Given: 2 feedbacks and 1 reducer assembled in a Spin with an initialState
         let initialState = "initialState"
         var receivedInitialStateInEffectA = ""
         var receivedInitialStateInEffectB = ""
 
-        let feedbackA = RxFeedback<String, String>(effect: { states in
+        let feedbackA = Feedback<String, String>(effect: { states in
             states.map { state -> String in
                 receivedInitialStateInEffectA = state
                 return "event"
             }
         })
-        let feedbackB = RxFeedback<String, String>(effect: { states in
+        let feedbackB = Feedback<String, String>(effect: { states in
             states.map { state -> String in
                 receivedInitialStateInEffectB = state
                 return "event"
             }
         })
-        let reducer = RxReducer<String, String>({ state, _ in
+        let reducer = Reducer<String, String>({ state, _ in
             return "newState"
         })
 
-        let spin = RxSpin<String, String>(initialState: initialState, reducer: reducer) {
+        let spin = Spin<String, String>(initialState: initialState, reducer: reducer) {
             feedbackA
             feedbackB
         }
@@ -53,26 +53,26 @@ final class Observable_streamFromSpinTests: XCTestCase {
     }
 
     func test_initialState_is_the_state_given_to_the_reducer() {
-        // Given: 1 feedback and 1 reducer assembled in a RxSpin with an initialState
+        // Given: 1 feedback and 1 reducer assembled in a Spin with an initialState
         let initialState = "initialState"
         var receivedInitialStateInReducer = ""
 
-        let feedbackA = RxFeedback<String, String>(effect: { states in
+        let feedbackA = Feedback<String, String>(effect: { states in
             states.map { state -> String in
                 return "event"
             }
         })
 
-        let reducer = RxReducer<String, String>({ state, _ in
+        let reducer = Reducer<String, String>({ state, _ in
             receivedInitialStateInReducer = state
             return "newState"
         })
 
-        let spin = RxSpin<String, String>(initialState: initialState, reducer: reducer) {
+        let spin = Spin<String, String>(initialState: initialState, reducer: reducer) {
             feedbackA
         }
 
-        // When: producing/subscribing to a stream based on the RxSpin
+        // When: producing/subscribing to a stream based on the Spin
         _ = Observable
             .stream(from: spin)
             .take(2)
@@ -88,20 +88,20 @@ final class Observable_streamFromSpinTests: XCTestCase {
         let initialState = "initialState"
         var reduceIsCalled = false
 
-        let feedback = RxFeedback(effect: { (inputs: Observable<String>) -> Observable<String> in
+        let feedback = Feedback(effect: { (inputs: Observable<String>) -> Observable<String> in
             return .error(NSError(domain: "feedback", code: 0))
         })
 
-        let reducer = RxReducer<String, String>({ state, _ in
+        let reducer = Reducer<String, String>({ state, _ in
             reduceIsCalled = false
             return "newState"
         })
 
-        let spin = RxSpin<String, String>(initialState: initialState, reducer: reducer) {
+        let spin = Spin<String, String>(initialState: initialState, reducer: reducer) {
             feedback
         }
 
-        // When: producing/subscribing to a stream based on the RxSpin
+        // When: producing/subscribing to a stream based on the Spin
         let events = Observable
             .stream(from: spin)
             .take(1)

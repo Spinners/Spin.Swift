@@ -5,7 +5,7 @@
 //  Created by Thibault Wittemberg on 2019-12-29.
 //
 
-open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Spin {
+open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: SpinDefinition {
     public var initialState: StateStream.Value
     public var effects: [(StateStream) -> EventStream]
     public var scheduledReducer: (EventStream) -> StateStream
@@ -22,8 +22,8 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
                                                        feedback: FeedbackType,
                                                        reducer: ReducerType)
         where
-        FeedbackType: Feedback,
-        ReducerType: Reducer,
+        FeedbackType: FeedbackDefinition,
+        ReducerType: ReducerDefinition,
         FeedbackType.StateStream == StateStream,
         FeedbackType.EventStream == EventStream,
         FeedbackType.StateStream.Value == StateStream.Value,
@@ -37,8 +37,8 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
                                                        reducer: ReducerType,
                                                        @FeedbackBuilder feedbackBuilder: () -> FeedbackType)
         where
-        FeedbackType: Feedback,
-        ReducerType: Reducer,
+        FeedbackType: FeedbackDefinition,
+        ReducerType: ReducerDefinition,
         FeedbackType.StateStream == ReducerType.StateStream,
         FeedbackType.EventStream == ReducerType.EventStream,
         FeedbackType.StateStream == StateStream,
@@ -51,9 +51,9 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
                                                                reducer: ReducerType,
                                                                @FeedbackBuilder builder: () -> (FeedbackA, FeedbackB))
         where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
-        ReducerType: Reducer,
+        FeedbackA: FeedbackDefinition,
+        FeedbackB: FeedbackDefinition,
+        ReducerType: ReducerDefinition,
         FeedbackA.StateStream == ReducerType.StateStream,
         FeedbackA.EventStream == ReducerType.EventStream,
         FeedbackA.StateStream == FeedbackB.StateStream,
@@ -71,10 +71,10 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
                                                                                                             FeedbackB,
                                                                                                             FeedbackC))
         where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
-        FeedbackC: Feedback,
-        ReducerType: Reducer,
+        FeedbackA: FeedbackDefinition,
+        FeedbackB: FeedbackDefinition,
+        FeedbackC: FeedbackDefinition,
+        ReducerType: ReducerDefinition,
         FeedbackA.StateStream == ReducerType.StateStream,
         FeedbackA.EventStream == ReducerType.EventStream,
         FeedbackA.StateStream == FeedbackB.StateStream,
@@ -95,11 +95,11 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
                                                                                                                         FeedbackC,
                                                                                                                         FeedbackD))
         where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
-        FeedbackC: Feedback,
-        FeedbackD: Feedback,
-        ReducerType: Reducer,
+        FeedbackA: FeedbackDefinition,
+        FeedbackB: FeedbackDefinition,
+        FeedbackC: FeedbackDefinition,
+        FeedbackD: FeedbackDefinition,
+        ReducerType: ReducerDefinition,
         FeedbackA.StateStream == ReducerType.StateStream,
         FeedbackA.EventStream == ReducerType.EventStream,
         FeedbackA.StateStream == FeedbackB.StateStream,
@@ -123,12 +123,12 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
                                                                                                                                     FeedbackD,
                                                                                                                                     FeedbackE))
         where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
-        FeedbackC: Feedback,
-        FeedbackD: Feedback,
-        FeedbackE: Feedback,
-        ReducerType: Reducer,
+        FeedbackA: FeedbackDefinition,
+        FeedbackB: FeedbackDefinition,
+        FeedbackC: FeedbackDefinition,
+        FeedbackD: FeedbackDefinition,
+        FeedbackE: FeedbackDefinition,
+        ReducerType: ReducerDefinition,
         FeedbackA.StateStream == ReducerType.StateStream,
         FeedbackA.EventStream == ReducerType.EventStream,
         FeedbackA.StateStream == FeedbackB.StateStream,
@@ -149,15 +149,15 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
 
 @_functionBuilder
 public struct FeedbackBuilder {
-    public static func buildBlock<FeedbackType: Feedback>(_ feedback: FeedbackType) -> FeedbackType {
+    public static func buildBlock<FeedbackType: FeedbackDefinition>(_ feedback: FeedbackType) -> FeedbackType {
         return feedback
     }
 
     public static func buildBlock<FeedbackA, FeedbackB>(_ feedbackA: FeedbackA,
                                                         _ feedbackB: FeedbackB) -> (FeedbackA, FeedbackB)
         where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
+        FeedbackA: FeedbackDefinition,
+        FeedbackB: FeedbackDefinition,
         FeedbackA.StateStream == FeedbackB.StateStream,
         FeedbackA.EventStream == FeedbackB.EventStream {
             return (feedbackA, feedbackB)
@@ -169,9 +169,9 @@ public struct FeedbackBuilder {
                                                                                                 FeedbackB,
                                                                                                 FeedbackC)
         where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
-        FeedbackC: Feedback,
+        FeedbackA: FeedbackDefinition,
+        FeedbackB: FeedbackDefinition,
+        FeedbackC: FeedbackDefinition,
         FeedbackA.StateStream == FeedbackB.StateStream,
         FeedbackA.EventStream == FeedbackB.EventStream,
         FeedbackB.StateStream == FeedbackC.StateStream,
@@ -187,10 +187,10 @@ public struct FeedbackBuilder {
                                                                                                             FeedbackC,
                                                                                                             FeedbackD)
         where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
-        FeedbackC: Feedback,
-        FeedbackD: Feedback,
+        FeedbackA: FeedbackDefinition,
+        FeedbackB: FeedbackDefinition,
+        FeedbackC: FeedbackDefinition,
+        FeedbackD: FeedbackDefinition,
         FeedbackA.StateStream == FeedbackB.StateStream,
         FeedbackA.EventStream == FeedbackB.EventStream,
         FeedbackB.StateStream == FeedbackC.StateStream,
@@ -207,11 +207,11 @@ public struct FeedbackBuilder {
                                                                                          _ feedbackE: FeedbackE)
         -> (FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE)
         where
-        FeedbackA: Feedback,
-        FeedbackB: Feedback,
-        FeedbackC: Feedback,
-        FeedbackD: Feedback,
-        FeedbackE: Feedback,
+        FeedbackA: FeedbackDefinition,
+        FeedbackB: FeedbackDefinition,
+        FeedbackC: FeedbackDefinition,
+        FeedbackD: FeedbackDefinition,
+        FeedbackE: FeedbackDefinition,
         FeedbackA.StateStream == FeedbackB.StateStream,
         FeedbackA.EventStream == FeedbackB.EventStream,
         FeedbackB.StateStream == FeedbackC.StateStream,
