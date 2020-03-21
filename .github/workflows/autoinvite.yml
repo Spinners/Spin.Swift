@@ -1,0 +1,18 @@
+name: Inclusive Organization
+on:
+  push:
+    branches: master
+jobs:
+  invite:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Invite contributor to the organization
+        uses: lekterable/inclusive-organization-action@v1.1.0
+        with:
+          organization: Spinners
+          team: Contributors
+          comment: |
+            Thank you for your contribution !
+            I've invited you to join the [Spinners](https://github.com/Spinners) organization – no pressure to accept!
+        env:
+          ACCESS_TOKEN: ${{ secrets.AUTO_INVITE_PAT }}
