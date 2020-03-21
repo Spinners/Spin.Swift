@@ -13,3 +13,7 @@ jobs:
     - uses: actions/checkout@master
     - name: Run Unit Tests
       run: swift test --enable-code-coverage
+    - name: Upload coverage to Codecov.io
+      uses: codecov/codecov-action@v1.0.5
+      with:
+        name: Spin.Swift
