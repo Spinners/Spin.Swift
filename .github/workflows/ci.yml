@@ -16,7 +16,6 @@ jobs:
       uses: codecov/codecov-action@v1.0.5
       with:
         name: Spin.Swift
-        token: ${{ secrets.SPIN_CODE_COVERAGE_TOKEN }}
     - name: Upload build artifacts to Github
       uses: actions/upload-artifact@v1
       with:
