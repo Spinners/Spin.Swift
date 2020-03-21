@@ -17,5 +17,5 @@ jobs:
       uses: codecov/codecov-action@v1.0.5
       with:
         name: Spin.Swift
-        token: ${{ secrets.SPIN_CODE_COVERAGE_TOKEN }}
+        token: ${{ secrets.CODECOV_IO_TOKEN }}
         file: .build/x86_64-apple-macosx/debug/codecov/Spin.Swift.json

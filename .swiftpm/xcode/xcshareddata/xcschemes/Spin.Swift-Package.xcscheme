@@ -126,6 +126,64 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
       codeCoverageEnabled = "YES">
+      <CodeCoverageTargets>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "Spin.Combine"
+            BuildableName = "Spin.Combine"
+            BlueprintName = "Spin.Combine"
+            ReferencedContainer = "container:">
+         </BuildableReference>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "Spin.ReactiveSwift"
+            BuildableName = "Spin.ReactiveSwift"
+            BlueprintName = "Spin.ReactiveSwift"
+            ReferencedContainer = "container:">
+         </BuildableReference>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "Spin.RxSwift"
+            BuildableName = "Spin.RxSwift"
+            BlueprintName = "Spin.RxSwift"
+            ReferencedContainer = "container:">
+         </BuildableReference>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "Spin.Swift"
+            BuildableName = "Spin.Swift"
+            BlueprintName = "Spin.Swift"
+            ReferencedContainer = "container:">
+         </BuildableReference>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "Spin.CombineTests"
+            BuildableName = "Spin.CombineTests"
+            BlueprintName = "Spin.CombineTests"
+            ReferencedContainer = "container:">
+         </BuildableReference>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "Spin.ReactiveSwiftTests"
+            BuildableName = "Spin.ReactiveSwiftTests"
+            BlueprintName = "Spin.ReactiveSwiftTests"
+            ReferencedContainer = "container:">
+         </BuildableReference>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "Spin.RxSwiftTests"
+            BuildableName = "Spin.RxSwiftTests"
+            BlueprintName = "Spin.RxSwiftTests"
+            ReferencedContainer = "container:">
+         </BuildableReference>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "Spin.SwiftTests"
+            BuildableName = "Spin.SwiftTests"
+            BlueprintName = "Spin.SwiftTests"
+            ReferencedContainer = "container:">
+         </BuildableReference>
+      </CodeCoverageTargets>
       <Testables>
          <TestableReference
             skipped = "NO">
