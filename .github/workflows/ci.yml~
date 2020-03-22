@@ -1,0 +1,21 @@
+name: Tests
+
+on: [push]
+
+jobs:
+  iOS:
+    name: "iOS"
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Generate Xcode project
+      run: swift package generate-xcodeproj
+    - name: Run Unit Tests
+      run: set -o pipefail && xcodebuild -project Spin.Swift.xcodeproj -scheme Spin.Swift-Package -enableCodeCoverage YES -sdk iphonesimulator -destination "name=iPhone 11" test | xcpretty -c -r html --output logs/iOS.html
+    - name: Upload code coverage to Codecov.io
+      run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_IO_TOKEN }}
+    - name: Upload build artifacts to Github
+      uses: actions/upload-artifact@v1
+      with:
+        name: build-logs-${{ github.run_id }}
+        path: logs
