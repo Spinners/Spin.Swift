@@ -19,3 +19,38 @@ jobs:
       with:
         name: build-logs-${{ github.run_id }}
         path: logs
+  macOS:
+    name: "macOS"
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Generate Xcode project
+      run: swift package generate-xcodeproj
+    - name: Run Unit Tests
+      run: set -o pipefail && xcodebuild -project Spin.Swift.xcodeproj -scheme Spin.Swift-Package -enableCodeCoverage NO -sdk macosx -destination "arch=x86_64" test | xcpretty -c -r html --output logs/macOS.htlm
+    - name: Upload build artifacts to Github
+      uses: actions/upload-artifact@v1
+      with:
+        name: build-logs-${{ github.run_id }}
+        path: logs
+  tvOS:
+    name: "tvOS"
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Generate Xcode project
+      run: swift package generate-xcodeproj
+    - name: Run Unit Tests
+      run: set -o pipefail && xcodebuild -project Spin.Swift.xcodeproj -scheme Spin.Swift-Package -enableCodeCoverage NO -sdk appletvsimulator -destination "name=Apple TV" test | xcpretty -c -r html --output logs/tvOS.thml
+    - name: Upload build artifacts to Github
+      uses: actions/upload-artifact@v1
+      with:
+        name: build-logs-${{ github.run_id }}
+        path: logs
+  SPM:
+    name: "Swift Package Manager"
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run tests
+      run: set -o pipefail && swift test
