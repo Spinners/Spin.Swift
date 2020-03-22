@@ -27,7 +27,7 @@ jobs:
     - name: Generate Xcode project
       run: swift package generate-xcodeproj
     - name: Run Unit Tests
-      run: set -o pipefail && xcodebuild -project Spin.Swift.xcodeproj -scheme Spin.Swift-Package -enableCodeCoverage NO -sdk macosx -destination "arch=x86_64" test | xcpretty -c -r html --output logs/macOS.htlm
+      run: set -o pipefail && xcodebuild -project Spin.Swift.xcodeproj -scheme Spin.Swift-Package -enableCodeCoverage NO -sdk macosx -destination "arch=x86_64" test | xcpretty -c -r html --output logs/macOS.html
     - name: Upload build artifacts to Github
       uses: actions/upload-artifact@v1
       with:
@@ -41,7 +41,7 @@ jobs:
     - name: Generate Xcode project
       run: swift package generate-xcodeproj
     - name: Run Unit Tests
-      run: set -o pipefail && xcodebuild -project Spin.Swift.xcodeproj -scheme Spin.Swift-Package -enableCodeCoverage NO -sdk appletvsimulator -destination "name=Apple TV" test | xcpretty -c -r html --output logs/tvOS.thml
+      run: set -o pipefail && xcodebuild -project Spin.Swift.xcodeproj -scheme Spin.Swift-Package -enableCodeCoverage NO -sdk appletvsimulator -destination "name=Apple TV" test | xcpretty -c -r html --output logs/tvOS.html
     - name: Upload build artifacts to Github
       uses: actions/upload-artifact@v1
       with:
