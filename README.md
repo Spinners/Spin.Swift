@@ -1,7 +1,8 @@
 ![](https://github.com/Spinners/Spin.Swift/workflows/Tests/badge.svg)
 ![](https://github.com/Spinners/Spin.Swift/workflows/SwiftLint/badge.svg)
 [![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
- ![platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20macOS%20%7C%20tvOS-333333.svg)
+[![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+ ![platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20macOS%20%7C%20tvOS%20%7C%20watchOS-333333.svg)
 [![codecov](https://codecov.io/gh/Spinners/Spin.Swift/branch/master/graph/badge.svg)](https://codecov.io/gh/Spinners/Spin.Swift)
 
 <p align="center">
@@ -16,6 +17,7 @@
 
 **Summary:**
 
+- <a href="#change-log">Change Log</a>
 - <a href="#about-state-machines">About State machines</a>
 - <a href="#about-spin">About Spin</a>
 - <a href="#the-multiple-ways-to-build-a-spin">The multiple ways to build a Spin</a>
@@ -28,6 +30,9 @@
 - <a href="#demo-applications">Demo applications</a>
 - <a href="#acknowledgements">Acknowledgements</a>
 
+# Change Log
+
+Please read the [CHANGELOG.md](https://github.com/Spinners/Spin.Swift/blob/master/CHANGELOG.md) for information about evolutions and breaking changes. 
 
 # About State Machines
 

@@ -14,17 +14,17 @@ let package = Package(
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
-            name: "Spin.Swift",
-            targets: ["Spin.Swift"]),
+            name: "SpinCommon",
+            targets: ["SpinCommon"]),
         .library(
-            name: "Spin.Combine",
-            targets: ["Spin.Combine"]),
+            name: "SpinCombine",
+            targets: ["SpinCombine"]),
         .library(
-            name: "Spin.ReactiveSwift",
-            targets: ["Spin.ReactiveSwift"]),
+            name: "SpinReactiveSwift",
+            targets: ["SpinReactiveSwift"]),
         .library(
-            name: "Spin.RxSwift",
-            targets: ["Spin.RxSwift"]),
+            name: "SpinRxSwift",
+            targets: ["SpinRxSwift"]),
     ],
     dependencies: [
         .package(url: "https://github.com/ReactiveCocoa/ReactiveSwift", from: "6.2.1"),
@@ -36,32 +36,37 @@ let package = Package(
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
-            name: "Spin.Swift",
+            name: "SpinCommon",
             dependencies: [],
-            path: "Sources/Spin.Swift"),
+            path: "Sources/Common"),
         .target(
-            name: "Spin.Combine",
-            dependencies: ["Spin.Swift"],
-            path: "Sources/Spin.Combine"),
+            name: "SpinCombine",
+            dependencies: ["SpinCommon"],
+            path: "Sources/Combine"),
         .target(
-            name: "Spin.ReactiveSwift",
-            dependencies: ["Spin.Swift", "ReactiveSwift"],
-            path: "Sources/Spin.ReactiveSwift"),
+            name: "SpinReactiveSwift",
+            dependencies: ["SpinCommon", "ReactiveSwift"],
+            path: "Sources/ReactiveSwift"),
         .target(
-            name: "Spin.RxSwift",
-            dependencies: ["Spin.Swift", "RxSwift", "RxRelay"],
-            path: "Sources/Spin.RxSwift"),
+            name: "SpinRxSwift",
+            dependencies: ["SpinCommon", "RxSwift", "RxRelay"],
+            path: "Sources/RxSwift"),
         .testTarget(
-            name: "Spin.SwiftTests",
-            dependencies: ["Spin.Swift"]),
+            name: "SpinCommonTests",
+            dependencies: ["SpinCommon"],
+            path: "Tests/CommonTests"),
         .testTarget(
-            name: "Spin.CombineTests",
-            dependencies: ["Spin.Combine"]),
+            name: "SpinCombineTests",
+            dependencies: ["SpinCombine"],
+            path: "Tests/CombineTests"),
         .testTarget(
-            name: "Spin.ReactiveSwiftTests",
-            dependencies: ["Spin.ReactiveSwift"]),
+            name: "SpinReactiveSwiftTests",
+            dependencies: ["SpinReactiveSwift"],
+            path: "Tests/ReactiveSwiftTests"),
         .testTarget(
-            name: "Spin.RxSwiftTests",
-            dependencies: ["Spin.RxSwift", "RxRelay", "RxBlocking"]),
+            name: "SpinRxSwiftTests",
+            dependencies: ["SpinRxSwift", "RxBlocking"],
+            path: "Tests/RxSwiftTests"
+        ),
     ]
 )
