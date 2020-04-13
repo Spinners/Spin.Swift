@@ -28,6 +28,7 @@
 - <a href="#using-spin-in-a-swiftUI-based-app">Using Spin in a SwiftUI based app</a>
 - <a href="#using-spin-with-multiple-reactive-frameworks">Using Spin with multiple Reactive Frameworks</a>
 - <a href="#demo-applications">Demo applications</a>
+- <a href="#installation">Installation</a>
 - <a href="#acknowledgements">Acknowledgements</a>
 
 # Change Log
@@ -389,6 +390,30 @@ In the Spinners organization, you can find 2 demo applications demonstrating the
 
 * A basic counter application: [UIKit version](https://github.com/Spinners/Spin.UIKit.Demo.Basic) and [SwiftUI version](https://github.com/Spinners/Spin.SwiftUI.Demo.Basic)
 * A more advanced “network based” application using dependency injection and a coordinator pattern (UIKit): [UIKit version](https://github.com/Spinners/Spin.UIKit.Demo) and [SwiftUI version](https://github.com/Spinners/Spin.SwiftUI.Demo)
+
+# Installation
+
+## Swift Package Manager
+
+Add this URL to your dependencies:
+
+```
+https://github.com/Spinners/Spin.Swift.git
+```
+
+## Carthage
+
+Add the following entry to your Cartfile:
+
+```
+github "Spinners/Spin.Swift" ~> 0.16
+```
+
+and then:
+
+```
+carthage update Spin.Swift
+```
 
 # Acknowledgements
 
