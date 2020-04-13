@@ -415,6 +415,8 @@ and then:
 carthage update Spin.Swift
 ```
 
+You should then be able to import SpinCommon (base implementation), SpinRxSwift, SpinReactiveSwift or SpinCombine
+
 # Acknowledgements
 
 The advanced demo applications use [Alamofire](https://github.com/Alamofire/Alamofire) for their network stack, [Swinject](https://github.com/Swinject/Swinject) for dependency injection, [Reusable](https://github.com/AliSoftware/Reusable) for view instantiation (UIKit version) and [RxFlow](https://github.com/RxSwiftCommunity/RxFlow) for the coordinator pattern (UIKit version).
