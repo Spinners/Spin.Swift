@@ -1,7 +1,7 @@
 import XCTest
 
-import Spin_SwiftTests
-import Spin_CombineTests
+import SpinCommonTests
+import SpinCombineTests
 
 var tests = [XCTestCaseEntry]()
 tests += Spin_SwiftTests.allTests()
