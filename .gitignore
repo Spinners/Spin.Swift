@@ -22,3 +22,4 @@ Pods/
 Carthage
 Carthage/Checkouts
 Carthage/Build
+*.framework.zip
