@@ -43,4 +43,8 @@ public final class UISpin<State, Event>: Spin<State, Event>, StateRenderer, Even
     public func start() {
         SignalProducer.start(spin: self).disposed(by: self.disposeBag)
     }
+
+    deinit {
+        self.disposeBag.dispose()
+    }
 }

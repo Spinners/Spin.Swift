@@ -46,4 +46,8 @@ public final class UISpin<State, Event>: Spin<State, Event>, StateRenderer, Even
     public func start() {
         AnyPublisher.start(spin: self).disposed(by: &self.disposeBag)
     }
+
+    deinit {
+        self.disposeBag.forEach { $0.cancel() }
+    }
 }

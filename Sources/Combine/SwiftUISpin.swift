@@ -38,4 +38,8 @@ public final class SwiftUISpin<State, Event>: Spin<State, Event>, StateRenderer,
     public func start() {
         AnyPublisher.start(spin: self).disposed(by: &self.disposeBag)
     }
+
+    deinit {
+        self.disposeBag.forEach { $0.cancel() }
+    }
 }

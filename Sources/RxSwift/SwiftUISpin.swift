@@ -41,5 +41,4 @@ public final class SwiftUISpin<State, Event>: Spin<State, Event>, StateRenderer,
         Observable.start(spin: self).disposed(by: self.disposeBag)
     }
 }
-
 #endif

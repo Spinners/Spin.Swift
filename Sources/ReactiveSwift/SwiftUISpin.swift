@@ -39,5 +39,9 @@ public final class SwiftUISpin<State, Event>: Spin<State, Event>, StateRenderer,
     public func start() {
         SignalProducer.start(spin: self).disposed(by: self.disposeBag)
     }
+
+    deinit {
+        self.disposeBag.dispose()
+    }
 }
 #endif
