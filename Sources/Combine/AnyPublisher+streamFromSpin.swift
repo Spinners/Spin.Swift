@@ -11,7 +11,10 @@ import SpinCommon
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public extension AnyPublisher where Failure == Never {
     static func stream<Event>(from spin: Spin<Value, Event>) -> AnyPublisher<Value, Never> {
-        return Deferred<AnyPublisher<Value, Never>> {
+        return Deferred<AnyPublisher<Value, Never>> { [weak spin] in
+
+            guard let spin = spin else { return Empty().eraseToAnyPublisher() }
+
             let currentState = CurrentValueSubject<Value, Never>(spin.initialState)
 
             // merging all the effects into one event stream

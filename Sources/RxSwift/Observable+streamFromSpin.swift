@@ -10,7 +10,10 @@ import SpinCommon
 
 public extension Observable {
     static func stream<Event>(from spin: Spin<Element, Event>) -> Observable<Element> {
-        return Observable<Element>.deferred {
+        return Observable<Element>.deferred { [weak spin] in
+
+            guard let spin = spin else { return .empty() }
+
             let currentState = ReplaySubject<Element>.create(bufferSize: 1)
 
             // merging all the effects into one event stream

@@ -44,7 +44,7 @@ public final class UISpin<State, Event>: Spin<State, Event>, StateRenderer, Even
     }
 
     public func start() {
-        AnyPublisher.start(spin: self).disposed(by: &self.disposeBag)
+        AnyPublisher.start(spin: self).store(in: &self.disposeBag)
     }
 
     deinit {
