@@ -11,7 +11,10 @@ import SpinCommon
 public extension SignalProducer where Error == Never {
     
     static func stream<Event>(from spin: Spin<Value, Event>) -> SignalProducer<Value, Never> {
-        return SignalProducer<Value, Never>.deferred {
+        return SignalProducer<Value, Never>.deferred { [weak spin] in
+
+            guard let spin = spin else { return .empty }
+
             let currentState = MutableProperty<Value>(spin.initialState)
             
             // merging all the effects into one event stream
