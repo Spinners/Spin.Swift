@@ -391,8 +391,6 @@ In the Spinners organization, you can find 2 demo applications demonstrating the
 * A basic counter application: [UIKit version](https://github.com/Spinners/Spin.UIKit.Demo.Basic) and [SwiftUI version](https://github.com/Spinners/Spin.SwiftUI.Demo.Basic)
 * A more advanced “network based” application using dependency injection and a coordinator pattern (UIKit): [UIKit version](https://github.com/Spinners/Spin.UIKit.Demo) and [SwiftUI version](https://github.com/Spinners/Spin.SwiftUI.Demo)
 
-**Warning**: it seems that the StarWars API is no longer accessible. As a result, the "advanced" demos are not able to display data anymore. You can still read the code to see how Spin is used. A replacement API will be implemented shortly.
-
 # Installation
 
 ## Swift Package Manager

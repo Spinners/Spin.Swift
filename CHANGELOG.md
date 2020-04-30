@@ -1,3 +1,7 @@
+**version 0.16.1**:
+
+* fix memory leak in the stream creation in the operator from(spin:)
+
 **version 0.16**:
 
 * Add Carthage support.
