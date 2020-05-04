@@ -406,13 +406,23 @@ https://github.com/Spinners/Spin.Swift.git
 Add the following entry to your Cartfile:
 
 ```
-github "Spinners/Spin.Swift" ~> 0.16
+github "Spinners/Spin.Swift" ~> 0.16.1
 ```
 
 and then:
 
 ```
 carthage update Spin.Swift
+```
+
+## CocoaPods
+
+Add the following dependencies to you Podfile:
+
+```
+pod 'SpinReactiveSwift', '~> 0.16.1'
+pod 'SpinCombine', '~> 0.16.1'
+pod 'SpinRxSwift', '~> 0.16.1'
 ```
 
 You should then be able to import SpinCommon (base implementation), SpinRxSwift, SpinReactiveSwift or SpinCombine
