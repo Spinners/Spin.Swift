@@ -418,7 +418,7 @@ carthage update Spin.Swift
 
 ## CocoaPods
 
-Add the following dependencies to you Podfile:
+Add the following dependencies to your Podfile:
 
 ```
 pod 'SpinReactiveSwift', '~> 0.16.1'
