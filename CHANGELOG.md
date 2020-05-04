@@ -1,6 +1,7 @@
 **version 0.16.1**:
 
 * fix memory leak in the stream creation in the operator from(spin:)
+* CocoaPods support
 
 **version 0.16**:
 
