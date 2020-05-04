@@ -214,7 +214,7 @@ Again, with Combine, same syntax considering that effects return AnyPublishers:
 
 ```swift
 let levelsSpin = Spin(initialState: Levels(left: 10, right: 20),
-                      reducer: CombineReducer(levelsReducer)) {
+                      reducer: Reducer(levelsReducer)) {
     Feedback(effect: leftEffect)
     Feedback(effect: rightEffect)
 }
