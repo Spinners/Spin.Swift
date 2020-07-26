@@ -111,6 +111,19 @@
 		742CD4562444BE9400A9AB4C /* AnyScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60672443BAC30054C286 /* AnyScheduler.swift */; };
 		742CD4572444BE9400A9AB4C /* SwiftUISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60682443BAC30054C286 /* SwiftUISpin.swift */; };
 		742CD4582444BE9400A9AB4C /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60692443BAC30054C286 /* Feedback.swift */; };
+		744F1E9824CE206100997FC9 /* GearDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744F1E9724CE206100997FC9 /* GearDefinition.swift */; };
+		744F1E9924CE20D900997FC9 /* Gear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744F1E9124CE204100997FC9 /* Gear.swift */; };
+		744F1E9A24CE20DA00997FC9 /* Gear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744F1E9124CE204100997FC9 /* Gear.swift */; };
+		744F1E9B24CE20DB00997FC9 /* Gear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744F1E9124CE204100997FC9 /* Gear.swift */; };
+		744F1E9C24CE20DB00997FC9 /* Gear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744F1E9124CE204100997FC9 /* Gear.swift */; };
+		744F1E9D24CE20E100997FC9 /* Gear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744F1E9324CE205000997FC9 /* Gear.swift */; };
+		744F1E9E24CE20E100997FC9 /* Gear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744F1E9324CE205000997FC9 /* Gear.swift */; };
+		744F1E9F24CE20E200997FC9 /* Gear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744F1E9324CE205000997FC9 /* Gear.swift */; };
+		744F1EA024CE20E300997FC9 /* Gear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744F1E9324CE205000997FC9 /* Gear.swift */; };
+		744F1EA124CE20F400997FC9 /* Gear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744F1E9524CE205A00997FC9 /* Gear.swift */; };
+		744F1EA224CE20F500997FC9 /* Gear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744F1E9524CE205A00997FC9 /* Gear.swift */; };
+		744F1EA324CE20F500997FC9 /* Gear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744F1E9524CE205A00997FC9 /* Gear.swift */; };
+		744F1EA424CE20F600997FC9 /* Gear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744F1E9524CE205A00997FC9 /* Gear.swift */; };
 		747B70852444F23200C863C2 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 747B70832444F23200C863C2 /* RxRelay.framework */; };
 		747B70872444F23200C863C2 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 747B70842444F23200C863C2 /* RxSwift.framework */; };
 		747B708C2444F26F00C863C2 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 747B708A2444F26E00C863C2 /* RxRelay.framework */; };
@@ -271,6 +284,10 @@
 		742CD43A2444BE6500A9AB4C /* SpinCombine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SpinCombine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		742CD43C2444BE6500A9AB4C /* Spin_Combine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Spin_Combine.h; sourceTree = "<group>"; };
 		742CD43D2444BE6500A9AB4C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		744F1E9124CE204100997FC9 /* Gear.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gear.swift; sourceTree = "<group>"; };
+		744F1E9324CE205000997FC9 /* Gear.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gear.swift; sourceTree = "<group>"; };
+		744F1E9524CE205A00997FC9 /* Gear.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gear.swift; sourceTree = "<group>"; };
+		744F1E9724CE206100997FC9 /* GearDefinition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GearDefinition.swift; sourceTree = "<group>"; };
 		747B70832444F23200C863C2 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = Carthage/Build/watchOS/RxRelay.framework; sourceTree = "<group>"; };
 		747B70842444F23200C863C2 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/watchOS/RxSwift.framework; sourceTree = "<group>"; };
 		747B708A2444F26E00C863C2 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = Carthage/Build/tvOS/RxRelay.framework; sourceTree = "<group>"; };
@@ -588,6 +605,7 @@
 		74FB60432443BAC30054C286 /* ReactiveSwift */ = {
 			isa = PBXGroup;
 			children = (
+				744F1E9324CE205000997FC9 /* Gear.swift */,
 				74FB60442443BAC30054C286 /* Reducer.swift */,
 				74FB60452443BAC30054C286 /* UISpin.swift */,
 				74FB60462443BAC30054C286 /* Spin.swift */,
@@ -604,6 +622,7 @@
 		74FB604D2443BAC30054C286 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				744F1E9724CE206100997FC9 /* GearDefinition.swift */,
 				74FB604E2443BAC30054C286 /* FeedbackDefinition.swift */,
 				74FB604F2443BAC30054C286 /* Spinner.swift */,
 				74FB60502443BAC30054C286 /* SpinDefinition.swift */,
@@ -621,6 +640,7 @@
 		74FB60582443BAC30054C286 /* RxSwift */ = {
 			isa = PBXGroup;
 			children = (
+				744F1E9524CE205A00997FC9 /* Gear.swift */,
 				74FB60592443BAC30054C286 /* Reducer.swift */,
 				74FB605A2443BAC30054C286 /* UISpin.swift */,
 				74FB605B2443BAC30054C286 /* Spin.swift */,
@@ -637,6 +657,7 @@
 			children = (
 				74FB60612443BAC30054C286 /* AnyPublisher+streamFromSpin.swift */,
 				74FB60622443BAC30054C286 /* AnyPublisher+ReactiveStream.swift */,
+				744F1E9124CE204100997FC9 /* Gear.swift */,
 				74FB60632443BAC30054C286 /* Reducer.swift */,
 				74FB60642443BAC30054C286 /* UISpin.swift */,
 				74FB60652443BAC30054C286 /* Spin.swift */,
@@ -1244,6 +1265,7 @@
 				742CD3462443FCBF00A9AB4C /* SwiftUISpin.swift in Sources */,
 				742CD3422443FCBF00A9AB4C /* UISpin.swift in Sources */,
 				742CD3452443FCBF00A9AB4C /* Disposable+DisposeBag.swift in Sources */,
+				744F1E9D24CE20E100997FC9 /* Gear.swift in Sources */,
 				742CD3482443FCBF00A9AB4C /* SignalProducer+streamFromSpin.swift in Sources */,
 				742CD3442443FCBF00A9AB4C /* SignalProducer+Deferred.swift in Sources */,
 				742CD3432443FCBF00A9AB4C /* Spin.swift in Sources */,
@@ -1264,6 +1286,7 @@
 				742CD36C2443FD7100A9AB4C /* ReducerDefinition.swift in Sources */,
 				742CD36B2443FD7100A9AB4C /* StateRenderer.swift in Sources */,
 				742CD3692443FD7100A9AB4C /* Weakify.swift in Sources */,
+				744F1E9824CE206100997FC9 /* GearDefinition.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1277,6 +1300,7 @@
 				742CD3A72443FFA600A9AB4C /* SwiftUISpin.swift in Sources */,
 				742CD3A32443FFA600A9AB4C /* UISpin.swift in Sources */,
 				742CD3A62443FFA600A9AB4C /* Disposable+DisposeBag.swift in Sources */,
+				744F1E9E24CE20E100997FC9 /* Gear.swift in Sources */,
 				742CD3A92443FFA600A9AB4C /* SignalProducer+streamFromSpin.swift in Sources */,
 				742CD3A52443FFA600A9AB4C /* SignalProducer+Deferred.swift in Sources */,
 				742CD3A42443FFA600A9AB4C /* Spin.swift in Sources */,
@@ -1293,6 +1317,7 @@
 				742CD3CA2444BB9500A9AB4C /* SwiftUISpin.swift in Sources */,
 				742CD3C62444BB9500A9AB4C /* UISpin.swift in Sources */,
 				742CD3C92444BB9500A9AB4C /* Disposable+DisposeBag.swift in Sources */,
+				744F1E9F24CE20E200997FC9 /* Gear.swift in Sources */,
 				742CD3CC2444BB9500A9AB4C /* SignalProducer+streamFromSpin.swift in Sources */,
 				742CD3C82444BB9500A9AB4C /* SignalProducer+Deferred.swift in Sources */,
 				742CD3C72444BB9500A9AB4C /* Spin.swift in Sources */,
@@ -1309,6 +1334,7 @@
 				742CD3E92444BC5E00A9AB4C /* SwiftUISpin.swift in Sources */,
 				742CD3E52444BC5E00A9AB4C /* UISpin.swift in Sources */,
 				742CD3E82444BC5E00A9AB4C /* Disposable+DisposeBag.swift in Sources */,
+				744F1EA024CE20E300997FC9 /* Gear.swift in Sources */,
 				742CD3EB2444BC5E00A9AB4C /* SignalProducer+streamFromSpin.swift in Sources */,
 				742CD3E72444BC5E00A9AB4C /* SignalProducer+Deferred.swift in Sources */,
 				742CD3E62444BC5E00A9AB4C /* Spin.swift in Sources */,
@@ -1325,6 +1351,7 @@
 				742CD4002444BCA700A9AB4C /* AnyPublisher+ReactiveStream.swift in Sources */,
 				742CD3FF2444BCA700A9AB4C /* AnyPublisher+streamFromSpin.swift in Sources */,
 				742CD4052444BCA700A9AB4C /* AnyScheduler.swift in Sources */,
+				744F1E9924CE20D900997FC9 /* Gear.swift in Sources */,
 				742CD4012444BCA700A9AB4C /* Reducer.swift in Sources */,
 				742CD4032444BCA700A9AB4C /* Spin.swift in Sources */,
 				742CD4022444BCA700A9AB4C /* UISpin.swift in Sources */,
@@ -1341,6 +1368,7 @@
 				742CD41B2444BE0800A9AB4C /* AnyPublisher+ReactiveStream.swift in Sources */,
 				742CD41A2444BE0800A9AB4C /* AnyPublisher+streamFromSpin.swift in Sources */,
 				742CD4202444BE0800A9AB4C /* AnyScheduler.swift in Sources */,
+				744F1E9A24CE20DA00997FC9 /* Gear.swift in Sources */,
 				742CD41C2444BE0800A9AB4C /* Reducer.swift in Sources */,
 				742CD41E2444BE0800A9AB4C /* Spin.swift in Sources */,
 				742CD41D2444BE0800A9AB4C /* UISpin.swift in Sources */,
@@ -1357,6 +1385,7 @@
 				742CD4512444BE9400A9AB4C /* AnyPublisher+ReactiveStream.swift in Sources */,
 				742CD4502444BE9400A9AB4C /* AnyPublisher+streamFromSpin.swift in Sources */,
 				742CD4562444BE9400A9AB4C /* AnyScheduler.swift in Sources */,
+				744F1E9B24CE20DB00997FC9 /* Gear.swift in Sources */,
 				742CD4522444BE9400A9AB4C /* Reducer.swift in Sources */,
 				742CD4542444BE9400A9AB4C /* Spin.swift in Sources */,
 				742CD4532444BE9400A9AB4C /* UISpin.swift in Sources */,
@@ -1373,6 +1402,7 @@
 				742CD4482444BE9400A9AB4C /* AnyPublisher+ReactiveStream.swift in Sources */,
 				742CD4472444BE9400A9AB4C /* AnyPublisher+streamFromSpin.swift in Sources */,
 				742CD44D2444BE9400A9AB4C /* AnyScheduler.swift in Sources */,
+				744F1E9C24CE20DB00997FC9 /* Gear.swift in Sources */,
 				742CD4492444BE9400A9AB4C /* Reducer.swift in Sources */,
 				742CD44B2444BE9400A9AB4C /* Spin.swift in Sources */,
 				742CD44A2444BE9400A9AB4C /* UISpin.swift in Sources */,
@@ -1387,6 +1417,7 @@
 				74FB60A92443BCDD0054C286 /* SwiftUISpin.swift in Sources */,
 				74FB60A82443BCDD0054C286 /* Observable+streamFromSpin.swift in Sources */,
 				74FB60A72443BCDD0054C286 /* Observable+ReactiveStream.swift in Sources */,
+				744F1EA124CE20F400997FC9 /* Gear.swift in Sources */,
 				74FB60A52443BCDD0054C286 /* UISpin.swift in Sources */,
 				74FB60AA2443BCDD0054C286 /* Feedback.swift in Sources */,
 				74FB60A62443BCDD0054C286 /* Spin.swift in Sources */,
@@ -1401,6 +1432,7 @@
 				74FB60E52443C2790054C286 /* Reducer.swift in Sources */,
 				74FB60EB2443C2790054C286 /* Feedback.swift in Sources */,
 				74FB60E82443C2790054C286 /* Observable+ReactiveStream.swift in Sources */,
+				744F1EA224CE20F500997FC9 /* Gear.swift in Sources */,
 				74FB60E92443C2790054C286 /* Observable+streamFromSpin.swift in Sources */,
 				74FB60E72443C2790054C286 /* Spin.swift in Sources */,
 				74FB60E62443C2790054C286 /* UISpin.swift in Sources */,
@@ -1415,6 +1447,7 @@
 				74FB61182443C40D0054C286 /* Reducer.swift in Sources */,
 				74FB611E2443C40D0054C286 /* Feedback.swift in Sources */,
 				74FB611B2443C40D0054C286 /* Observable+ReactiveStream.swift in Sources */,
+				744F1EA324CE20F500997FC9 /* Gear.swift in Sources */,
 				74FB611C2443C40D0054C286 /* Observable+streamFromSpin.swift in Sources */,
 				74FB611A2443C40D0054C286 /* Spin.swift in Sources */,
 				74FB61192443C40D0054C286 /* UISpin.swift in Sources */,
@@ -1429,6 +1462,7 @@
 				74FB61382443C4610054C286 /* SwiftUISpin.swift in Sources */,
 				74FB61372443C4610054C286 /* Observable+streamFromSpin.swift in Sources */,
 				74FB61362443C4610054C286 /* Observable+ReactiveStream.swift in Sources */,
+				744F1EA424CE20F600997FC9 /* Gear.swift in Sources */,
 				74FB61342443C4610054C286 /* UISpin.swift in Sources */,
 				74FB61392443C4610054C286 /* Feedback.swift in Sources */,
 				74FB61352443C4610054C286 /* Spin.swift in Sources */,
@@ -1526,7 +1560,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1562,7 +1596,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1596,7 +1630,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCommon;
 				PRODUCT_NAME = SpinCommon;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1627,7 +1661,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCommon;
 				PRODUCT_NAME = SpinCommon;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1662,7 +1696,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1696,7 +1730,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1730,7 +1764,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1766,7 +1800,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1802,7 +1836,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1837,7 +1871,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1868,7 +1902,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1899,7 +1933,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1932,7 +1966,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1961,7 +1995,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1990,7 +2024,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2021,7 +2055,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2052,7 +2086,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2082,7 +2116,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2237,7 +2271,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2273,7 +2307,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2311,7 +2345,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2345,7 +2379,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2379,7 +2413,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2415,7 +2449,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2451,7 +2485,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2486,7 +2520,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.16;
+				MARKETING_VERSION = 0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
