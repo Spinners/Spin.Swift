@@ -238,7 +238,7 @@ final class FeedbackTests: XCTestCase {
         var receivedEvents = [String]()
 
         // Given: a feedback attached to a Gear and triggering en event only of the gear event is 1
-        let sut = Feedback<Int, String>(attachTo: spyGear, propagating: { gearEvent -> String? in
+        let sut = Feedback<Int, String>(attachedTo: spyGear, propagating: { gearEvent -> String? in
             numberOfCallsGearSideEffect += 1
             if gearEvent == 1 {
                 return "event"

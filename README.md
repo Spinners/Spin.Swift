@@ -28,6 +28,7 @@
 - <a href="#using-spin-in-a-uikit-or-appkit-based-app">Using Spin in a UIKit or AppKit based app</a>
 - <a href="#using-spin-in-a-swiftUI-based-app">Using Spin in a SwiftUI based app</a>
 - <a href="#using-spin-with-multiple-reactive-frameworks">Using Spin with multiple Reactive Frameworks</a>
+- <a href="#how-to-make-spins-talk-together">How to make spins talk together</a>
 - <a href="#demo-applications">Demo applications</a>
 - <a href="#installation">Installation</a>
 - <a href="#acknowledgements">Acknowledgements</a>
@@ -378,13 +379,90 @@ Toggle(isOn: self.uiSpin.binding(for: \.isPaused, event: .toggle) {
 
 As stated in the introduction, Spin aims to ease the cohabitation between several reactive frameworks inside your apps to allow a smoother transition. As a result, you may have to differentiate a RxSwift Feedback from a Combine Feedback since they share the same type name, which is `Feedback`. The same goes for `Reducer`, `Spin`, `UISpin` and `SwiftUISpin`.
 
-The Spin frameworks (Spin_RxSwift, Spin_ReactiveSwift and Spin_Combine) come with typealiases to differentiate their inner types.
+The Spin frameworks (SpinRxSwift, SpinReactiveSwift and SpinCombine) come with typealiases to differentiate their inner types.
 
-For instance `RxFeedback` is a typealias for `Spin_RxSwift.Feedback`, `CombineFeedback` is the one for `Spin_Combine.Feedback`.
+For instance `RxFeedback` is a typealias for `SpinRxSwift.Feedback`, `CombineFeedback` is the one for `SpinCombine.Feedback`.
 
 By using those typealiases, it is safe to use all the Spin flavors inside the same source file.
 
 All the Demo applications use the three reactive frameworks at the same time. But the [advanced demo application](https://github.com/Spinners/Spin.UIKit.Demo) is the most interesting one since it uses those frameworks in the same source files (for dependency injection) and take advantage of the provided typealiases.
+
+# How to make spins talk together
+
+There are some use cases where two (or more) feedback loops have to talk together directly, without involving existing side effects (like the UI for instance).
+
+A typical use case would be when you have a feedbackloop that handles the routing of your application and checks for the user's authentication state when the app starts. If the user is authorized then the home screen is presented, otherwise a login screen is presented. Assuredly, once authorized, the user will use features that fetch data from a backend and as a consequence that can lead to a authorization issues. In that case you'd like the feedbackloops that drive those features to communicate with the routing one in order to trigger a new authorization state checking.
+
+In design patterns, this kind of need is fulfilled thanks to a Mediator. This is a transversale object used as a communication bus between independent systems.
+
+The mediator equivalent in Spin is called a Gear. A Gear can be attached to several feedbacks, allowing them to push and receive events.
+
+<img alt="Gear" src="https://raw.githubusercontent.com/Spinners/Spin.Swift/master/Resources/gear.png" border="1"/>
+
+**How to attach Feedbacks to a Gear so it can push/receive events from it ?**
+
+First thing first, a Gear must be created:
+
+```swift
+// A Gear has its own event type:
+enum GearEvent {
+    case authorizationIssueHappened
+}
+
+let gear = Gear<GearEvent>()
+```
+
+We have to tell a Feedback from the check authorization Spin how to react to events happening in the Gear:
+
+```swift
+let feedback = Feedback<State, Event>(attachedTo: gear, propagating: { (event: GearEvent) in
+	if event == .authorizationIssueHappened {
+		// the feedback will emit an event only in case of .authorizationIssueHappened
+		return .checkAuthorization
+	}
+	return nil
+})
+
+...
+// create the Check Authorization Spin with this feedback
+...
+```
+
+At last we have to tell Feedback from the feature Spin how it will push events in the Gear:
+
+```swift
+let feedback = Feedback<State, Event>(attachedTo: gear, propagating: { (state: State) in
+	if state == .unauthorized {
+		// only the .unauthorized state should trigger en event in the Gear
+		return . authorizationIssueHappened
+	}
+	return nil
+})
+
+...
+// create the Feature Spin with this feedback
+...
+```
+
+This is what will happen when the feature spin is in state .unauthorized:
+
+**FeatureSpin**: state = .unauthorized
+
+**↓**
+
+**Gear**: propagate event = .authorizationIssueHappened
+
+**↓**
+
+**AuthorizationSpin**: event = .checkAuthorization
+
+**↓**
+
+**AuthorizationSpin**: state = authorized/unauthorized
+
+
+Of course it this case, the Gear must be shared between Spins. You might have to make it a Singleton depending on your use case.
+
 
 # Demo applications
 

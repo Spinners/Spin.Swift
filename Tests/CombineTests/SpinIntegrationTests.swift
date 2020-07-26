@@ -230,7 +230,7 @@ private extension SpinIntegrationTests {
             return Just<CheckAuthorizationSpinEvent>(.revokeUser).eraseToAnyPublisher()
         }
 
-        let attachedCheckAuthorizationFeedback = Feedback<CheckAuthorizationSpinState, CheckAuthorizationSpinEvent>(attachTo: gear,
+        let attachedCheckAuthorizationFeedback = Feedback<CheckAuthorizationSpinState, CheckAuthorizationSpinEvent>(attachedTo: gear,
                                                                                                                     propagating: { (event: GearEvent) in
                                                                                                                         if event == .authorizedIssueDetected {
                                                                                                                             return CheckAuthorizationSpinEvent.checkAuthorization
@@ -262,7 +262,7 @@ private extension SpinIntegrationTests {
             return Just<FetchFeatureSpinEvent>(.userIsNotAuthorized).eraseToAnyPublisher()
         }
 
-        let attachedFetchFeatureFeedback = Feedback<FetchFeatureSpinState, FetchFeatureSpinEvent>(attachTo: gear,
+        let attachedFetchFeatureFeedback = Feedback<FetchFeatureSpinState, FetchFeatureSpinEvent>(attachedTo: gear,
                                                                                                   propagating: { (state: FetchFeatureSpinState) in
                                                                                                     if state == .unauthorized {
                                                                                                         return GearEvent.authorizedIssueDetected

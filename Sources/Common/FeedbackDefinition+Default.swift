@@ -197,7 +197,7 @@ public extension FeedbackDefinition {
         self.init(effect: effectFromKeyPath, filteredBy: filterState, on: executer, applying: strategy)
     }
     
-    init<GearType: GearDefinition>(attachTo gear: GearType,
+    init<GearType: GearDefinition>(attachedTo gear: GearType,
                                    propagating block: @escaping (StateStream.Value) -> GearType.Event?,
                                    on executer: Executer? = nil,
                                    applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy) {

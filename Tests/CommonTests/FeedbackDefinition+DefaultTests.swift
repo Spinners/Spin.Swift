@@ -359,7 +359,7 @@ final class FeedbackDefinition_DefaultTests: XCTestCase {
         let spyGear = MockGear()
 
         // Given: a feedback built with a gear attachment that return a nil MockGearEVent
-        let sut = SpyFeedback<MockState, MockEvent>(attachTo: spyGear, propagating: { state -> MockGearEvent? in
+        let sut = SpyFeedback<MockState, MockEvent>(attachedTo: spyGear, propagating: { state -> MockGearEvent? in
             return nil
         })
 
@@ -381,7 +381,7 @@ final class FeedbackDefinition_DefaultTests: XCTestCase {
         let expectedMockGearEvent = MockGearEvent.event
 
         // Given: a feedback built with a gear attachment
-        let sut = SpyFeedback<MockState, MockEvent>(attachTo: spyGear, propagating: { state -> MockGearEvent? in
+        let sut = SpyFeedback<MockState, MockEvent>(attachedTo: spyGear, propagating: { state -> MockGearEvent? in
             return expectedMockGearEvent
         })
 
