@@ -1,3 +1,8 @@
+**version 0.17.0**:
+
+* introduce Gear: a mediatior pattern between spin that allows them to communicate together
+* include the Reducer in the Spin definition with the DSL like syntax
+
 **version 0.16.1**:
 
 * fix memory leak in the stream creation in the operator from(spin:)
