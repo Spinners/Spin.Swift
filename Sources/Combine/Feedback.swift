@@ -66,6 +66,20 @@ where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConv
 
         self.init(effect: fullEffect, on: nil)
     }
+
+    public init<Event>(attachTo gear: Gear<Event>,
+                       propagating block: @escaping (Event) -> EventStream.Value?,
+                       on executer: Executer? = nil) {
+        let effect: (StateStream) -> EventStream = { _ in
+            gear
+                .eventStream
+                .map { block($0) }
+                .compactMap { $0 }
+                .eraseToAnyPublisher()
+        }
+
+        self.init(effect: effect, on: executer)
+    }
 }
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)

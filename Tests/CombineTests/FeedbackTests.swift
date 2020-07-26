@@ -6,9 +6,16 @@
 //
 
 import Combine
-import SpinCombine
+@testable import SpinCombine
 import SpinCommon
 import XCTest
+
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+private class SpyGear: Gear<Int> {
+    func finishEventStream() {
+        self.eventSubject.send(completion: .finished)
+    }
+}
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 final class FeedbackTests: XCTestCase {
@@ -184,5 +191,35 @@ final class FeedbackTests: XCTestCase {
         // Then: the effects are called
         XCTAssertTrue(effectAIsCalled)
         XCTAssertTrue(effectBIsCalled)
+    }
+
+    func testFeedback_call_gearSideEffect_and_does_only_trigger_a_feedbackEvent_when_attachment_return_not_nil() throws {
+        let spyGear = SpyGear()
+        var numberOfCallsGearSideEffect = 0
+
+        // Given: a feedback attached to a Gear and triggering en event only of the gear event is 1
+        let sut = Feedback<Int, String>(attachTo: spyGear, propagating: { gearEvent -> String? in
+            numberOfCallsGearSideEffect += 1
+            if gearEvent == 1 {
+                return "event"
+            }
+
+            return nil
+        })
+
+        // When: executing the feedback
+        let inputStream = Just<Int>(1701).eraseToAnyPublisher()
+        let recorder = sut.effect(inputStream).record()
+
+        // When: sending 0 and then 1 as gear event
+        spyGear.eventSubject.send(0)
+        spyGear.eventSubject.send(1)
+        spyGear.finishEventStream()
+        let receivedElements = try wait(for: recorder.elements, timeout: 5)
+
+        // Then: the gear dedicated side effect is called twice
+        // Then: the only event triggered by the feedback is the one when attachment is not nil
+        XCTAssertEqual(numberOfCallsGearSideEffect, 2)
+        XCTAssertEqual(receivedElements, ["event"])
     }
 }

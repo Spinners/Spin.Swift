@@ -6,8 +6,14 @@
 //
 
 import ReactiveSwift
-import SpinReactiveSwift
+@testable import SpinReactiveSwift
 import XCTest
+
+private class SpyGear: Gear<Int> {
+    func finishEventStream() {
+        self.eventsObserver.sendCompleted()
+    }
+}
 
 final class FeedbackTests: XCTestCase {
 
@@ -174,5 +180,44 @@ final class FeedbackTests: XCTestCase {
         // Then: the effects are called
         XCTAssertTrue(effectAIsCalled)
         XCTAssertTrue(effectBIsCalled)
+    }
+
+    func testFeedback_call_gearSideEffect_and_does_only_trigger_a_feedbackEvent_when_attachment_return_not_nil() {
+        let exp = expectation(description: "attach")
+        let spyGear = SpyGear()
+        var numberOfCallsGearSideEffect = 0
+        var receivedEvents = [String]()
+
+        // Given: a feedback attached to a Gear and triggering en event only of the gear event is 1
+        let sut = Feedback<Int, String>(attachTo: spyGear, propagating: { gearEvent -> String? in
+            numberOfCallsGearSideEffect += 1
+            if gearEvent == 1 {
+                return "event"
+            }
+
+            return nil
+        })
+
+        // When: executing the feedback
+        let inputStream = SignalProducer<Int, Never>(value: 1701)
+        sut.effect(inputStream)
+            .collect()
+            .startWithValues({ events in
+                receivedEvents = events
+                exp.fulfill()
+            })
+            .disposed(by: self.disposeBag)
+
+        // When: sending 0 and then 1 as gear event
+        spyGear.eventsObserver.send(value: 0)
+        spyGear.eventsObserver.send(value: 1)
+        spyGear.finishEventStream()
+
+        waitForExpectations(timeout: 0.5)
+
+        // Then: the gear dedicated side effect is called twice
+        // Then: the only event triggered by the feedback is the one when attachment is not nil
+        XCTAssertEqual(numberOfCallsGearSideEffect, 2)
+        XCTAssertEqual(receivedEvents, ["event"])
     }
 }

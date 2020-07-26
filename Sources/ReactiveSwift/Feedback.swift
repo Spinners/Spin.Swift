@@ -59,4 +59,17 @@ public struct Feedback<State, Event>: FeedbackDefinition {
 
         self.init(effect: fullEffect, on: nil)
     }
+
+    public init<Event>(attachTo gear: Gear<Event>,
+                       propagating block: @escaping (Event) -> EventStream.Value?,
+                       on executer: Executer? = nil) {
+        let effect: (StateStream) -> EventStream = { _ in
+            gear
+                .eventStream
+                .map { block($0) }
+                .compactMap { $0 }
+        }
+
+        self.init(effect: effect, on: executer)
+    }
 }

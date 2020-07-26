@@ -354,4 +354,47 @@ final class FeedbackDefinition_DefaultTests: XCTestCase {
         XCTAssertEqual(receivedMockEventStream.value, MockEvent(value: 10))
         XCTAssertEqual(receivedMockEventStreamWhenFilteredIsFalse.value, MockEvent.toEmpty)
     }
+
+    func testGear_does_not_propagate_event_if_attach_return_nil() {
+        let spyGear = MockGear()
+
+        // Given: a feedback built with a gear attachment that return a nil MockGearEVent
+        let sut = SpyFeedback<MockState, MockEvent>(attachTo: spyGear, propagating: { state -> MockGearEvent? in
+            return nil
+        })
+
+        // When: executing the feedback
+        _ = sut.effect(MockStream<MockState>(value: MockState(subState: 15)))
+
+        // Then: the default initializer of the feedback is called
+        // Then: the Executer inside the feedback is nil
+        // Then: the ExecutionStrategy is the default one
+        // Then: the event is not propagated to the gear
+        XCTAssertTrue(sut.initIsCalled)
+        XCTAssertNil(sut.feedbackExecuter)
+        XCTAssertEqual(spyExecutionStrategy, MockFeedback<MockState, MockEvent>.defaultExecutionStrategy)
+        XCTAssertNil(spyGear.receivedEvent)
+    }
+
+    func testGear_propagate_event_if_attach_return_event() {
+        let spyGear = MockGear()
+        let expectedMockGearEvent = MockGearEvent.event
+
+        // Given: a feedback built with a gear attachment
+        let sut = SpyFeedback<MockState, MockEvent>(attachTo: spyGear, propagating: { state -> MockGearEvent? in
+            return expectedMockGearEvent
+        })
+
+        // Given: a feedback built with a gear attachment that return a MockGearEVent
+        _ = sut.effect(MockStream<MockState>(value: MockState(subState: 15)))
+
+        // Then: the default initializer of the feedback is called
+        // Then: the Executer inside the feedback is nil
+        // Then: the ExecutionStrategy is the default one
+        // Then: the event is propagated to the gear
+        XCTAssertTrue(sut.initIsCalled)
+        XCTAssertNil(sut.feedbackExecuter)
+        XCTAssertEqual(spyExecutionStrategy, MockFeedback<MockState, MockEvent>.defaultExecutionStrategy)
+        XCTAssertEqual(spyGear.receivedEvent, expectedMockGearEvent)
+    }
 }
