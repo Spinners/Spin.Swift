@@ -40,8 +40,9 @@ final class UISpinTests: XCTestCase {
             return "newState"
         })
 
-        let spin = Spin<String, String>(initialState: initialState, reducer: reducer) {
+        let spin = Spin<String, String>(initialState: initialState) {
             feedback
+            reducer
         }
 
         // When: building a UISpin with the Spin
@@ -65,8 +66,9 @@ final class UISpinTests: XCTestCase {
             return "newState"
         })
 
-        let spin = Spin<String, String>(initialState: initialState, reducer: reducer) {
+        let spin = Spin<String, String>(initialState: initialState) {
             feedback
+            reducer
         }
 
         // When: building a UISpin with the Spin
@@ -92,8 +94,9 @@ final class UISpinTests: XCTestCase {
             return "newState"
         })
 
-        let spin = Spin<String, String>(initialState: initialState, reducer: reducer) {
+        let spin = Spin<String, String>(initialState: initialState) {
             feedback
+            reducer
         }
 
         // When: building a UISpin with the Spin and running the UISpin and emitting an event
@@ -166,8 +169,9 @@ final class UISpinTests: XCTestCase {
             return "newState"
         })
 
-        let spin = Spin<String, String>(initialState: initialState, reducer: reducer) {
+        let spin = Spin<String, String>(initialState: initialState) {
             feedback
+            reducer
         }
 
         // When: building a UISpin with the Spin and attaching the spyRenderer as the renderer of the uiSpin

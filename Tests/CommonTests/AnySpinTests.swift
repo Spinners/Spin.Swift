@@ -88,11 +88,10 @@ final class AnySpinTests: XCTestCase {
             return MockState(subState: 0)
         }
 
-        let reducer = MockReducer(reducerFunction)
-
         // When: building an AnySpin based on those feedback and reducer, with a declarative syntax
-        let sut = AnySpin(initialState: MockState(subState: 0), reducer: reducer) {
+        let sut = AnySpin(initialState: MockState(subState: 0)) {
             MockFeedback(effect: effectFunction)
+            MockReducer(reducerFunction)
         }
         _ = sut.effects.forEach { _ = $0(MockStream<MockState>(value: .toEmpty)) }
         _ = sut.scheduledReducer(MockStream<MockEvent>(value: .toEmpty))
@@ -125,12 +124,11 @@ final class AnySpinTests: XCTestCase {
             return MockState(subState: 0)
         }
 
-        let reducer = MockReducer(reducerFunction)
-
         // When: building an AnySpin based on those feedbacks and reducer, with a declarative syntax
-        let sut = AnySpin(initialState: MockState(subState: 0), reducer: reducer) {
+        let sut = AnySpin(initialState: MockState(subState: 0)) {
             MockFeedback(effect: effectAFunction)
             MockFeedback(effect: effectBFunction)
+            MockReducer(reducerFunction)
         }
         _ = sut.effects.forEach { _ = $0(MockStream<MockState>(value: .toEmpty)) }
         _ = sut.scheduledReducer(MockStream<MockEvent>(value: .toEmpty))
@@ -170,13 +168,12 @@ final class AnySpinTests: XCTestCase {
             return MockState(subState: 0)
         }
 
-        let reducer = MockReducer(reducerFunction)
-
         // When: building an AnySpin based on those feedbacks and reducer, with a declarative syntax
-        let sut = AnySpin(initialState: MockState(subState: 0), reducer: reducer) {
+        let sut = AnySpin(initialState: MockState(subState: 0)) {
             MockFeedback(effect: effectAFunction)
             MockFeedback(effect: effectBFunction)
             MockFeedback(effect: effectCFunction)
+            MockReducer(reducerFunction)
         }
         _ = sut.effects.forEach { _ = $0(MockStream<MockState>(value: .toEmpty)) }
         _ = sut.scheduledReducer(MockStream<MockEvent>(value: .toEmpty))
@@ -223,14 +220,13 @@ final class AnySpinTests: XCTestCase {
             return MockState(subState: 0)
         }
 
-        let reducer = MockReducer(reducerFunction)
-
         // When: building an AnySpin based on those feedbacks and reducer, with a declarative syntax
-        let sut = AnySpin(initialState: MockState(subState: 0), reducer: reducer) {
+        let sut = AnySpin(initialState: MockState(subState: 0)) {
             MockFeedback(effect: effectAFunction)
             MockFeedback(effect: effectBFunction)
             MockFeedback(effect: effectCFunction)
             MockFeedback(effect: effectDFunction)
+            MockReducer(reducerFunction)
         }
         _ = sut.effects.forEach { _ = $0(MockStream<MockState>(value: .toEmpty)) }
         _ = sut.scheduledReducer(MockStream<MockEvent>(value: .toEmpty))
@@ -284,15 +280,14 @@ final class AnySpinTests: XCTestCase {
             return MockState(subState: 0)
         }
 
-        let reducer = MockReducer(reducerFunction)
-
         // When: building an AnySpin based on those feedbacks and reducer, with a declarative syntax
-        let sut = AnySpin(initialState: MockState(subState: 0), reducer: reducer) {
+        let sut = AnySpin(initialState: MockState(subState: 0)) {
             MockFeedback(effect: effectAFunction)
             MockFeedback(effect: effectBFunction)
             MockFeedback(effect: effectCFunction)
             MockFeedback(effect: effectDFunction)
             MockFeedback(effect: effectEFunction)
+            MockReducer(reducerFunction)
         }
         _ = sut.effects.forEach { _ = $0(MockStream<MockState>(value: .toEmpty)) }
         _ = sut.scheduledReducer(MockStream<MockEvent>(value: .toEmpty))

@@ -34,8 +34,7 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
     }
 
     public convenience init<FeedbackType, ReducerType>(initialState: StateStream.Value,
-                                                       reducer: ReducerType,
-                                                       @FeedbackBuilder feedbackBuilder: () -> FeedbackType)
+                                                       @FeedbackBuilder builder: () -> (FeedbackType, ReducerType))
         where
         FeedbackType: FeedbackDefinition,
         ReducerType: ReducerDefinition,
@@ -43,13 +42,13 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
         FeedbackType.EventStream == ReducerType.EventStream,
         FeedbackType.StateStream == StateStream,
         FeedbackType.EventStream == EventStream {
-            let effects = [feedbackBuilder().effect]
+            let (feedback, reducer) = builder()
+            let effects = [feedback.effect]
             self.init(initialState: initialState, effects: effects, scheduledReducer: reducer.scheduledReducer(with: initialState))
     }
 
     public convenience init<FeedbackA, FeedbackB, ReducerType>(initialState: StateStream.Value,
-                                                               reducer: ReducerType,
-                                                               @FeedbackBuilder builder: () -> (FeedbackA, FeedbackB))
+                                                               @FeedbackBuilder builder: () -> (FeedbackA, FeedbackB, ReducerType))
         where
         FeedbackA: FeedbackDefinition,
         FeedbackB: FeedbackDefinition,
@@ -60,16 +59,16 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
         FeedbackA.EventStream == FeedbackB.EventStream,
         FeedbackA.StateStream == StateStream,
         FeedbackA.EventStream == EventStream {
-            let feedbacks = builder()
-            let effects = [feedbacks.0.effect, feedbacks.1.effect]
+            let (feedback1, feedback2, reducer) = builder()
+            let effects = [feedback1.effect, feedback2.effect]
             self.init(initialState: initialState, effects: effects, scheduledReducer: reducer.scheduledReducer(with: initialState))
     }
 
     public convenience init<FeedbackA, FeedbackB, FeedbackC, ReducerType>(initialState: StateStream.Value,
-                                                                          reducer: ReducerType,
                                                                           @FeedbackBuilder builder: () -> ( FeedbackA,
                                                                                                             FeedbackB,
-                                                                                                            FeedbackC))
+                                                                                                            FeedbackC,
+                                                                                                            ReducerType))
         where
         FeedbackA: FeedbackDefinition,
         FeedbackB: FeedbackDefinition,
@@ -83,17 +82,17 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
         FeedbackB.EventStream == FeedbackC.EventStream,
         FeedbackA.StateStream == StateStream,
         FeedbackA.EventStream == EventStream {
-            let feedbacks = builder()
-            let effects = [feedbacks.0.effect, feedbacks.1.effect, feedbacks.2.effect]
+            let (feedback1, feedback2, feedback3, reducer) = builder()
+            let effects = [feedback1.effect, feedback2.effect, feedback3.effect]
             self.init(initialState: initialState, effects: effects, scheduledReducer: reducer.scheduledReducer(with: initialState))
     }
 
     public convenience init<FeedbackA, FeedbackB, FeedbackC, FeedbackD, ReducerType>(initialState: StateStream.Value,
-                                                                                     reducer: ReducerType,
                                                                                      @FeedbackBuilder builder: () -> (  FeedbackA,
                                                                                                                         FeedbackB,
                                                                                                                         FeedbackC,
-                                                                                                                        FeedbackD))
+                                                                                                                        FeedbackD,
+                                                                                                                        ReducerType))
         where
         FeedbackA: FeedbackDefinition,
         FeedbackB: FeedbackDefinition,
@@ -110,18 +109,18 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
         FeedbackC.EventStream == FeedbackD.EventStream,
         FeedbackA.StateStream == StateStream,
         FeedbackA.EventStream == EventStream {
-            let feedbacks = builder()
-            let effects = [feedbacks.0.effect, feedbacks.1.effect, feedbacks.2.effect, feedbacks.3.effect]
+            let (feedback1, feedback2, feedback3, feedback4, reducer) = builder()
+            let effects = [feedback1.effect, feedback2.effect, feedback3.effect, feedback4.effect]
             self.init(initialState: initialState, effects: effects, scheduledReducer: reducer.scheduledReducer(with: initialState))
     }
 
     public convenience init<FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE, ReducerType>(initialState: StateStream.Value,
-                                                                                                reducer: ReducerType,
                                                                                                 @FeedbackBuilder builder: () -> (   FeedbackA,
                                                                                                                                     FeedbackB,
                                                                                                                                     FeedbackC,
                                                                                                                                     FeedbackD,
-                                                                                                                                    FeedbackE))
+                                                                                                                                    FeedbackE,
+                                                                                                                                    ReducerType))
         where
         FeedbackA: FeedbackDefinition,
         FeedbackB: FeedbackDefinition,
@@ -141,77 +140,95 @@ open class AnySpin<StateStream: ReactiveStream, EventStream: ReactiveStream>: Sp
         FeedbackD.EventStream == FeedbackE.EventStream,
         FeedbackA.StateStream == StateStream,
         FeedbackA.EventStream == EventStream {
-            let feedbacks = builder()
-            let effects = [feedbacks.0.effect, feedbacks.1.effect, feedbacks.2.effect, feedbacks.3.effect, feedbacks.4.effect]
+            let (feedback1, feedback2, feedback3, feedback4, feedback5, reducer) = builder()
+            let effects = [feedback1.effect, feedback2.effect, feedback3.effect, feedback4.effect, feedback5.effect]
             self.init(initialState: initialState, effects: effects, scheduledReducer: reducer.scheduledReducer(with: initialState))
     }
 }
 
 @_functionBuilder
 public struct FeedbackBuilder {
-    public static func buildBlock<FeedbackType: FeedbackDefinition>(_ feedback: FeedbackType) -> FeedbackType {
-        return feedback
+    public static func buildBlock<FeedbackType, ReducerType>(_ feedback: FeedbackType, _ reducer: ReducerType)
+        -> (FeedbackType, ReducerType)
+        where
+        FeedbackType: FeedbackDefinition,
+        ReducerType: ReducerDefinition,
+        FeedbackType.StateStream == ReducerType.StateStream,
+        FeedbackType.EventStream == ReducerType.EventStream {
+            return (feedback, reducer)
     }
 
-    public static func buildBlock<FeedbackA, FeedbackB>(_ feedbackA: FeedbackA,
-                                                        _ feedbackB: FeedbackB) -> (FeedbackA, FeedbackB)
+    public static func buildBlock<FeedbackA, FeedbackB, ReducerType>(_ feedbackA: FeedbackA,
+                                                                     _ feedbackB: FeedbackB,
+                                                                     _ reducer: ReducerType)
+        -> (FeedbackA, FeedbackB, ReducerType)
         where
         FeedbackA: FeedbackDefinition,
         FeedbackB: FeedbackDefinition,
+        ReducerType: ReducerDefinition,
         FeedbackA.StateStream == FeedbackB.StateStream,
-        FeedbackA.EventStream == FeedbackB.EventStream {
-            return (feedbackA, feedbackB)
+        FeedbackA.EventStream == FeedbackB.EventStream,
+        FeedbackA.StateStream == ReducerType.StateStream,
+        FeedbackA.EventStream == ReducerType.EventStream {
+            return (feedbackA, feedbackB, reducer)
     }
 
-    public static func buildBlock<FeedbackA, FeedbackB, FeedbackC>(_ feedbackA: FeedbackA,
-                                                                   _ feedbackB: FeedbackB,
-                                                                   _ feedbackC: FeedbackC) -> ( FeedbackA,
-                                                                                                FeedbackB,
-                                                                                                FeedbackC)
+    public static func buildBlock<FeedbackA, FeedbackB, FeedbackC, ReducerType>(_ feedbackA: FeedbackA,
+                                                                                _ feedbackB: FeedbackB,
+                                                                                _ feedbackC: FeedbackC,
+                                                                                _ reducer: ReducerType)
+        -> (FeedbackA, FeedbackB, FeedbackC, ReducerType)
         where
         FeedbackA: FeedbackDefinition,
         FeedbackB: FeedbackDefinition,
         FeedbackC: FeedbackDefinition,
+        ReducerType: ReducerDefinition,
         FeedbackA.StateStream == FeedbackB.StateStream,
         FeedbackA.EventStream == FeedbackB.EventStream,
         FeedbackB.StateStream == FeedbackC.StateStream,
-        FeedbackB.EventStream == FeedbackC.EventStream {
-            return (feedbackA, feedbackB, feedbackC)
+        FeedbackB.EventStream == FeedbackC.EventStream,
+        FeedbackA.StateStream == ReducerType.StateStream,
+        FeedbackA.EventStream == ReducerType.EventStream  {
+            return (feedbackA, feedbackB, feedbackC, reducer)
     }
 
-    public static func buildBlock<FeedbackA, FeedbackB, FeedbackC, FeedbackD>(_ feedbackA: FeedbackA,
-                                                                              _ feedbackB: FeedbackB,
-                                                                              _ feedbackC: FeedbackC,
-                                                                              _ feedbackD: FeedbackD) -> (  FeedbackA,
-                                                                                                            FeedbackB,
-                                                                                                            FeedbackC,
-                                                                                                            FeedbackD)
+    public static func buildBlock<FeedbackA, FeedbackB, FeedbackC, FeedbackD, ReducerType>(_ feedbackA: FeedbackA,
+                                                                                           _ feedbackB: FeedbackB,
+                                                                                           _ feedbackC: FeedbackC,
+                                                                                           _ feedbackD: FeedbackD,
+                                                                                           _ reducer: ReducerType)
+        -> (FeedbackA, FeedbackB, FeedbackC, FeedbackD, ReducerType)
         where
         FeedbackA: FeedbackDefinition,
         FeedbackB: FeedbackDefinition,
         FeedbackC: FeedbackDefinition,
         FeedbackD: FeedbackDefinition,
+        ReducerType: ReducerDefinition,
         FeedbackA.StateStream == FeedbackB.StateStream,
         FeedbackA.EventStream == FeedbackB.EventStream,
         FeedbackB.StateStream == FeedbackC.StateStream,
         FeedbackB.EventStream == FeedbackC.EventStream,
         FeedbackC.StateStream == FeedbackD.StateStream,
-        FeedbackC.EventStream == FeedbackD.EventStream {
-            return (feedbackA, feedbackB, feedbackC, feedbackD)
+        FeedbackC.EventStream == FeedbackD.EventStream,
+        FeedbackA.StateStream == ReducerType.StateStream,
+        FeedbackA.EventStream == ReducerType.EventStream {
+            return (feedbackA, feedbackB, feedbackC, feedbackD, reducer)
     }
 
-    public static func buildBlock<FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE>(_ feedbackA: FeedbackA,
-                                                                                         _ feedbackB: FeedbackB,
-                                                                                         _ feedbackC: FeedbackC,
-                                                                                         _ feedbackD: FeedbackD,
-                                                                                         _ feedbackE: FeedbackE)
-        -> (FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE)
+    public static func buildBlock<FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE, ReducerType>(_ feedbackA: FeedbackA,
+                                                                                                      _ feedbackB: FeedbackB,
+                                                                                                      _ feedbackC: FeedbackC,
+                                                                                                      _ feedbackD: FeedbackD,
+                                                                                                      _ feedbackE: FeedbackE,
+                                                                                                      _ reducer: ReducerType)
+        -> (FeedbackA, FeedbackB, FeedbackC, FeedbackD, FeedbackE, ReducerType)
         where
         FeedbackA: FeedbackDefinition,
         FeedbackB: FeedbackDefinition,
         FeedbackC: FeedbackDefinition,
         FeedbackD: FeedbackDefinition,
         FeedbackE: FeedbackDefinition,
+        ReducerType: ReducerDefinition,
         FeedbackA.StateStream == FeedbackB.StateStream,
         FeedbackA.EventStream == FeedbackB.EventStream,
         FeedbackB.StateStream == FeedbackC.StateStream,
@@ -219,7 +236,9 @@ public struct FeedbackBuilder {
         FeedbackC.StateStream == FeedbackD.StateStream,
         FeedbackC.EventStream == FeedbackD.EventStream,
         FeedbackD.StateStream == FeedbackE.StateStream,
-        FeedbackD.EventStream == FeedbackE.EventStream {
-            return (feedbackA, feedbackB, feedbackC, feedbackD, feedbackE)
+        FeedbackD.EventStream == FeedbackE.EventStream,
+        FeedbackA.StateStream == ReducerType.StateStream,
+        FeedbackA.EventStream == ReducerType.EventStream  {
+            return (feedbackA, feedbackB, feedbackC, feedbackD, feedbackE, reducer)
     }
 }

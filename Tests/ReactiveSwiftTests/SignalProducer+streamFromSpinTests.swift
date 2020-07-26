@@ -37,9 +37,10 @@ final class SignalProducer_streamFromSpinTests: XCTestCase {
             return "newState"
         })
 
-        let spin = Spin<String, String>(initialState: initialState, reducer: reducer) {
+        let spin = Spin<String, String>(initialState: initialState) {
             feedbackA
             feedbackB
+            reducer
         }
 
         // When: producing/subscribing to a stream based on the Spin
@@ -74,8 +75,9 @@ final class SignalProducer_streamFromSpinTests: XCTestCase {
             return "newState"
         })
 
-        let spin = Spin<String, String>(initialState: initialState, reducer: reducer) {
+        let spin = Spin<String, String>(initialState: initialState) {
             feedbackA
+            reducer
         }
 
         // When: producing/subscribing to a stream based on the ReactiveSpin

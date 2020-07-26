@@ -113,10 +113,11 @@ final class SpinIntegrationTests: XCTestCase {
             }
         }
 
-        let spin = Spin<String, StringAction>(initialState: "initialState", reducer: Reducer(reducerFunction)) {
+        let spin = Spin<String, StringAction>(initialState: "initialState") {
             Feedback(effect: effectA).execute(on: QueueScheduler.main)
             Feedback(effect: effectB).execute(on: QueueScheduler.main)
             Feedback(effect: effectC).execute(on: QueueScheduler.main)
+            Reducer(reducerFunction)
         }
 
         // When: spinning the feedbacks and the reducer on the default executer

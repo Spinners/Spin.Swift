@@ -203,20 +203,20 @@ AnyPublisher
 In this case we use a "DSL like" syntax thanks to Swift 5.1 function builder:
 
 ```swift
-let levelsSpin = Spin(initialState: Levels(left: 10, right: 20),
-                      reducer: Reducer(levelsReducer)) {
+let levelsSpin = Spin(initialState: Levels(left: 10, right: 20)) {
     Feedback(effect: leftEffect)
     Feedback(effect: rightEffect)
+    Reducer(levelsReducer)
 }
 ```
 
 Again, with Combine, same syntax considering that effects return AnyPublishers:
 
 ```swift
-let levelsSpin = Spin(initialState: Levels(left: 10, right: 20),
-                      reducer: Reducer(levelsReducer)) {
+let levelsSpin = Spin(initialState: Levels(left: 10, right: 20)) {
     Feedback(effect: leftEffect)
     Feedback(effect: rightEffect)
+    Reducer(levelsReducer)
 }
 ```
 
@@ -262,11 +262,12 @@ Spinner
 or
 
 ```swift
-Spin(initialState: Levels(left: 10, right: 20), reducer: Reducer(levelsReducer)) {
+Spin(initialState: Levels(left: 10, right: 20)) {
     Feedback(effect: leftEffect)
         .execute(on: SerialDispatchQueueScheduler(qos: .userInitiated))
     Feedback(effect: rightEffect)
         .execute(on: SerialDispatchQueueScheduler(qos: .userInitiated))
+    Reducer(levelsReducer)
 }
 ```
 

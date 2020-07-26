@@ -39,8 +39,9 @@ final class SwiftUISpinTests: XCTestCase {
             return "newState"
         })
 
-        let spin = Spin<String, String>(initialState: initialState, reducer: reducer) {
+        let spin = Spin<String, String>(initialState: initialState) {
             feedback
+            reducer
         }
 
         // When: building a SwiftUISpin with the Spin
@@ -64,8 +65,9 @@ final class SwiftUISpinTests: XCTestCase {
             return "newState"
         })
 
-        let spin = Spin<String, String>(initialState: initialState, reducer: reducer) {
+        let spin = Spin<String, String>(initialState: initialState) {
             feedback
+            reducer
         }
 
         // When: building a SwiftUISpin with the Spin
@@ -91,8 +93,9 @@ final class SwiftUISpinTests: XCTestCase {
             return "newState"
         })
 
-        let spin = Spin<String, String>(initialState: initialState, reducer: reducer) {
+        let spin = Spin<String, String>(initialState: initialState) {
             feedback
+            reducer
         }
 
         // When: building a SwiftUISpin with the Spin and running the SwiftUISpin and emitting an event
@@ -127,8 +130,9 @@ final class SwiftUISpinTests: XCTestCase {
             return "newState"
         })
 
-        let spin = Spin<String, String>(initialState: initialState, reducer: reducer) {
+        let spin = Spin<String, String>(initialState: initialState) {
             feedback
+            reducer
         }
 
         // When: building a SwiftUISpin with the Spin and running the SwiftUISpin and getting a binding
@@ -165,8 +169,9 @@ final class SwiftUISpinTests: XCTestCase {
             return "newState"
         })
 
-        let spin = Spin<String, String>(initialState: initialState, reducer: reducer) {
+        let spin = Spin<String, String>(initialState: initialState) {
             feedback
+            reducer
         }
 
         // When: building a SwiftUISpin with the Spin and running the SwiftUISpin and getting a binding
@@ -203,8 +208,9 @@ final class SwiftUISpinTests: XCTestCase {
             return "newState"
         })
 
-        let spin = Spin<String, String>(initialState: initialState, reducer: reducer) {
+        let spin = Spin<String, String>(initialState: initialState) {
             feedback
+            reducer
         }
 
         // When: building a SwiftUISpin with the Spin and running the SwiftUISpin
@@ -233,8 +239,9 @@ final class SwiftUISpinTests: XCTestCase {
             return "newState"
         })
 
-        let spin = Spin<String, String>(initialState: initialState, reducer: reducer) {
+        let spin = Spin<String, String>(initialState: initialState) {
             feedback
+            reducer
         }
 
         // When: building a UISpin with the Spin
