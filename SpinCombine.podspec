@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = "SpinCombine"
-  s.version = "0.16.1"
+  s.version = "0.17.0"
   s.swift_version = "5.2.2"
   s.summary = "Spin is a tool whose only purpose is to help you build feedback loops called Spins"
   s.description = <<-DESC
