@@ -24,6 +24,6 @@ Spin is a tool to build feedback loops within a Swift based application allowing
 
   s.dependency 'RxSwift', '>= 5.1.0'
   s.dependency 'RxRelay', '>= 5.1.0'
-  s.dependency 'SpinCommon', '>= 0.16.1'
+  s.dependency 'SpinCommon', '>= 0.17.0'
 
 end

@@ -22,6 +22,6 @@ Spin is a tool to build feedback loops within a Swift based application allowing
 
   s.source_files = 'Sources/Combine/*.swift'
 
-  s.dependency 'SpinCommon', '>= 0.16.1'
+  s.dependency 'SpinCommon', '>= 0.17.0'
 
 end
