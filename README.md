@@ -461,7 +461,7 @@ This is what will happen when the feature spin is in state .unauthorized:
 **AuthorizationSpin**: state = authorized/unauthorized
 
 
-Of course it this case, the Gear must be shared between Spins. You might have to make it a Singleton depending on your use case.
+Of course in this case, the Gear must be shared between the two Spins. You might have to make it a Singleton depending on your use case.
 
 
 # Demo applications
@@ -486,7 +486,7 @@ https://github.com/Spinners/Spin.Swift.git
 Add the following entry to your Cartfile:
 
 ```
-github "Spinners/Spin.Swift" ~> 0.16.1
+github "Spinners/Spin.Swift" ~> 0.17.0
 ```
 
 and then:
@@ -500,9 +500,9 @@ carthage update Spin.Swift
 Add the following dependencies to your Podfile:
 
 ```
-pod 'SpinReactiveSwift', '~> 0.16.1'
-pod 'SpinCombine', '~> 0.16.1'
-pod 'SpinRxSwift', '~> 0.16.1'
+pod 'SpinReactiveSwift', '~> 0.17.0'
+pod 'SpinCombine', '~> 0.17.0'
+pod 'SpinRxSwift', '~> 0.17.0'
 ```
 
 You should then be able to import SpinCommon (base implementation), SpinRxSwift, SpinReactiveSwift or SpinCombine
