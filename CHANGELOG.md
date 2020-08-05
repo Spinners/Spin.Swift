@@ -1,3 +1,7 @@
+**version 0.18.0**:
+
+* breaking: Executers are no longer associated to a Reducer but to the whole Spin instead (and can still be overriden in each Feedback) 
+
 **version 0.17.0**:
 
 * introduce Gear: a mediator pattern between Spins that allows them to communicate together

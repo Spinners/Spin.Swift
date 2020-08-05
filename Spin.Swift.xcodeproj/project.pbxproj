@@ -8,35 +8,29 @@
 
 /* Begin PBXBuildFile section */
 		742CD33D2443FC8900A9AB4C /* Spin_ReactiveSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 742CD33B2443FC8900A9AB4C /* Spin_ReactiveSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		742CD3412443FCBF00A9AB4C /* Reducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60442443BAC30054C286 /* Reducer.swift */; };
 		742CD3422443FCBF00A9AB4C /* UISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60452443BAC30054C286 /* UISpin.swift */; };
 		742CD3432443FCBF00A9AB4C /* Spin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60462443BAC30054C286 /* Spin.swift */; };
 		742CD3442443FCBF00A9AB4C /* SignalProducer+Deferred.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60472443BAC30054C286 /* SignalProducer+Deferred.swift */; };
-		742CD3452443FCBF00A9AB4C /* Disposable+DisposeBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60482443BAC30054C286 /* Disposable+DisposeBag.swift */; };
 		742CD3462443FCBF00A9AB4C /* SwiftUISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60492443BAC30054C286 /* SwiftUISpin.swift */; };
 		742CD3472443FCBF00A9AB4C /* SignalProducer+ReactiveStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB604A2443BAC30054C286 /* SignalProducer+ReactiveStream.swift */; };
 		742CD3482443FCBF00A9AB4C /* SignalProducer+streamFromSpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB604B2443BAC30054C286 /* SignalProducer+streamFromSpin.swift */; };
 		742CD3492443FCBF00A9AB4C /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB604C2443BAC30054C286 /* Feedback.swift */; };
 		742CD3612443FD2300A9AB4C /* Spin_Swift.h in Headers */ = {isa = PBXBuildFile; fileRef = 742CD35F2443FD2300A9AB4C /* Spin_Swift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		742CD3652443FD7100A9AB4C /* FeedbackDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB604E2443BAC30054C286 /* FeedbackDefinition.swift */; };
-		742CD3662443FD7100A9AB4C /* Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB604F2443BAC30054C286 /* Spinner.swift */; };
 		742CD3672443FD7100A9AB4C /* SpinDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60502443BAC30054C286 /* SpinDefinition.swift */; };
 		742CD3682443FD7100A9AB4C /* ReactiveStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60512443BAC30054C286 /* ReactiveStream.swift */; };
 		742CD3692443FD7100A9AB4C /* Weakify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60522443BAC30054C286 /* Weakify.swift */; };
 		742CD36A2443FD7100A9AB4C /* AnySpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60532443BAC30054C286 /* AnySpin.swift */; };
 		742CD36B2443FD7100A9AB4C /* StateRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60542443BAC30054C286 /* StateRenderer.swift */; };
-		742CD36C2443FD7100A9AB4C /* ReducerDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60552443BAC30054C286 /* ReducerDefinition.swift */; };
 		742CD36D2443FD7100A9AB4C /* FeedbackDefinition+Default.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60562443BAC30054C286 /* FeedbackDefinition+Default.swift */; };
 		742CD36E2443FD7100A9AB4C /* EventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60572443BAC30054C286 /* EventEmitter.swift */; };
 		742CD37E2443FE9000A9AB4C /* SpinCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 742CD35D2443FD2300A9AB4C /* SpinCommon.framework */; };
 		742CD3832443FE9700A9AB4C /* SpinCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 742CD35D2443FD2300A9AB4C /* SpinCommon.framework */; };
 		742CD3872443FE9D00A9AB4C /* SpinCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 742CD35D2443FD2300A9AB4C /* SpinCommon.framework */; platformFilter = ios; };
 		742CD39D2443FF9E00A9AB4C /* SpinCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 742CD35D2443FD2300A9AB4C /* SpinCommon.framework */; };
-		742CD3A22443FFA600A9AB4C /* Reducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60442443BAC30054C286 /* Reducer.swift */; };
 		742CD3A32443FFA600A9AB4C /* UISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60452443BAC30054C286 /* UISpin.swift */; };
 		742CD3A42443FFA600A9AB4C /* Spin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60462443BAC30054C286 /* Spin.swift */; };
 		742CD3A52443FFA600A9AB4C /* SignalProducer+Deferred.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60472443BAC30054C286 /* SignalProducer+Deferred.swift */; };
-		742CD3A62443FFA600A9AB4C /* Disposable+DisposeBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60482443BAC30054C286 /* Disposable+DisposeBag.swift */; };
 		742CD3A72443FFA600A9AB4C /* SwiftUISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60492443BAC30054C286 /* SwiftUISpin.swift */; };
 		742CD3A82443FFA600A9AB4C /* SignalProducer+ReactiveStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB604A2443BAC30054C286 /* SignalProducer+ReactiveStream.swift */; };
 		742CD3A92443FFA600A9AB4C /* SignalProducer+streamFromSpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB604B2443BAC30054C286 /* SignalProducer+streamFromSpin.swift */; };
@@ -47,22 +41,18 @@
 		742CD3AE2443FFC400A9AB4C /* Spin_RxSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 74FB609E2443BC990054C286 /* Spin_RxSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		742CD3B82444BB4300A9AB4C /* Spin_ReactiveSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 742CD3B62444BB4300A9AB4C /* Spin_ReactiveSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		742CD3C02444BB8A00A9AB4C /* SpinCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 742CD35D2443FD2300A9AB4C /* SpinCommon.framework */; };
-		742CD3C52444BB9500A9AB4C /* Reducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60442443BAC30054C286 /* Reducer.swift */; };
 		742CD3C62444BB9500A9AB4C /* UISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60452443BAC30054C286 /* UISpin.swift */; };
 		742CD3C72444BB9500A9AB4C /* Spin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60462443BAC30054C286 /* Spin.swift */; };
 		742CD3C82444BB9500A9AB4C /* SignalProducer+Deferred.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60472443BAC30054C286 /* SignalProducer+Deferred.swift */; };
-		742CD3C92444BB9500A9AB4C /* Disposable+DisposeBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60482443BAC30054C286 /* Disposable+DisposeBag.swift */; };
 		742CD3CA2444BB9500A9AB4C /* SwiftUISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60492443BAC30054C286 /* SwiftUISpin.swift */; };
 		742CD3CB2444BB9500A9AB4C /* SignalProducer+ReactiveStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB604A2443BAC30054C286 /* SignalProducer+ReactiveStream.swift */; };
 		742CD3CC2444BB9500A9AB4C /* SignalProducer+streamFromSpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB604B2443BAC30054C286 /* SignalProducer+streamFromSpin.swift */; };
 		742CD3CD2444BB9500A9AB4C /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB604C2443BAC30054C286 /* Feedback.swift */; };
 		742CD3D72444BC1D00A9AB4C /* Spin_ReactiveSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 742CD3D52444BC1D00A9AB4C /* Spin_ReactiveSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		742CD3DF2444BC3200A9AB4C /* SpinCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 742CD35D2443FD2300A9AB4C /* SpinCommon.framework */; };
-		742CD3E42444BC5E00A9AB4C /* Reducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60442443BAC30054C286 /* Reducer.swift */; };
 		742CD3E52444BC5E00A9AB4C /* UISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60452443BAC30054C286 /* UISpin.swift */; };
 		742CD3E62444BC5E00A9AB4C /* Spin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60462443BAC30054C286 /* Spin.swift */; };
 		742CD3E72444BC5E00A9AB4C /* SignalProducer+Deferred.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60472443BAC30054C286 /* SignalProducer+Deferred.swift */; };
-		742CD3E82444BC5E00A9AB4C /* Disposable+DisposeBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60482443BAC30054C286 /* Disposable+DisposeBag.swift */; };
 		742CD3E92444BC5E00A9AB4C /* SwiftUISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60492443BAC30054C286 /* SwiftUISpin.swift */; };
 		742CD3EA2444BC5E00A9AB4C /* SignalProducer+ReactiveStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB604A2443BAC30054C286 /* SignalProducer+ReactiveStream.swift */; };
 		742CD3EB2444BC5E00A9AB4C /* SignalProducer+streamFromSpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB604B2443BAC30054C286 /* SignalProducer+streamFromSpin.swift */; };
@@ -71,10 +61,8 @@
 		742CD3FA2444BC9C00A9AB4C /* SpinCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 742CD35D2443FD2300A9AB4C /* SpinCommon.framework */; platformFilter = ios; };
 		742CD3FF2444BCA700A9AB4C /* AnyPublisher+streamFromSpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60612443BAC30054C286 /* AnyPublisher+streamFromSpin.swift */; };
 		742CD4002444BCA700A9AB4C /* AnyPublisher+ReactiveStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60622443BAC30054C286 /* AnyPublisher+ReactiveStream.swift */; };
-		742CD4012444BCA700A9AB4C /* Reducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60632443BAC30054C286 /* Reducer.swift */; };
 		742CD4022444BCA700A9AB4C /* UISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60642443BAC30054C286 /* UISpin.swift */; };
 		742CD4032444BCA700A9AB4C /* Spin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60652443BAC30054C286 /* Spin.swift */; };
-		742CD4042444BCA700A9AB4C /* AnyCancellable+DisposeBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60662443BAC30054C286 /* AnyCancellable+DisposeBag.swift */; };
 		742CD4052444BCA700A9AB4C /* AnyScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60672443BAC30054C286 /* AnyScheduler.swift */; };
 		742CD4062444BCA700A9AB4C /* SwiftUISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60682443BAC30054C286 /* SwiftUISpin.swift */; };
 		742CD4072444BCA700A9AB4C /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60692443BAC30054C286 /* Feedback.swift */; };
@@ -82,10 +70,8 @@
 		742CD4152444BDE900A9AB4C /* SpinCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 742CD35D2443FD2300A9AB4C /* SpinCommon.framework */; };
 		742CD41A2444BE0800A9AB4C /* AnyPublisher+streamFromSpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60612443BAC30054C286 /* AnyPublisher+streamFromSpin.swift */; };
 		742CD41B2444BE0800A9AB4C /* AnyPublisher+ReactiveStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60622443BAC30054C286 /* AnyPublisher+ReactiveStream.swift */; };
-		742CD41C2444BE0800A9AB4C /* Reducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60632443BAC30054C286 /* Reducer.swift */; };
 		742CD41D2444BE0800A9AB4C /* UISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60642443BAC30054C286 /* UISpin.swift */; };
 		742CD41E2444BE0800A9AB4C /* Spin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60652443BAC30054C286 /* Spin.swift */; };
-		742CD41F2444BE0800A9AB4C /* AnyCancellable+DisposeBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60662443BAC30054C286 /* AnyCancellable+DisposeBag.swift */; };
 		742CD4202444BE0800A9AB4C /* AnyScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60672443BAC30054C286 /* AnyScheduler.swift */; };
 		742CD4212444BE0800A9AB4C /* SwiftUISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60682443BAC30054C286 /* SwiftUISpin.swift */; };
 		742CD4222444BE0800A9AB4C /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60692443BAC30054C286 /* Feedback.swift */; };
@@ -95,19 +81,15 @@
 		742CD4422444BE7100A9AB4C /* SpinCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 742CD35D2443FD2300A9AB4C /* SpinCommon.framework */; };
 		742CD4472444BE9400A9AB4C /* AnyPublisher+streamFromSpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60612443BAC30054C286 /* AnyPublisher+streamFromSpin.swift */; };
 		742CD4482444BE9400A9AB4C /* AnyPublisher+ReactiveStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60622443BAC30054C286 /* AnyPublisher+ReactiveStream.swift */; };
-		742CD4492444BE9400A9AB4C /* Reducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60632443BAC30054C286 /* Reducer.swift */; };
 		742CD44A2444BE9400A9AB4C /* UISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60642443BAC30054C286 /* UISpin.swift */; };
 		742CD44B2444BE9400A9AB4C /* Spin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60652443BAC30054C286 /* Spin.swift */; };
-		742CD44C2444BE9400A9AB4C /* AnyCancellable+DisposeBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60662443BAC30054C286 /* AnyCancellable+DisposeBag.swift */; };
 		742CD44D2444BE9400A9AB4C /* AnyScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60672443BAC30054C286 /* AnyScheduler.swift */; };
 		742CD44E2444BE9400A9AB4C /* SwiftUISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60682443BAC30054C286 /* SwiftUISpin.swift */; };
 		742CD44F2444BE9400A9AB4C /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60692443BAC30054C286 /* Feedback.swift */; };
 		742CD4502444BE9400A9AB4C /* AnyPublisher+streamFromSpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60612443BAC30054C286 /* AnyPublisher+streamFromSpin.swift */; };
 		742CD4512444BE9400A9AB4C /* AnyPublisher+ReactiveStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60622443BAC30054C286 /* AnyPublisher+ReactiveStream.swift */; };
-		742CD4522444BE9400A9AB4C /* Reducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60632443BAC30054C286 /* Reducer.swift */; };
 		742CD4532444BE9400A9AB4C /* UISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60642443BAC30054C286 /* UISpin.swift */; };
 		742CD4542444BE9400A9AB4C /* Spin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60652443BAC30054C286 /* Spin.swift */; };
-		742CD4552444BE9400A9AB4C /* AnyCancellable+DisposeBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60662443BAC30054C286 /* AnyCancellable+DisposeBag.swift */; };
 		742CD4562444BE9400A9AB4C /* AnyScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60672443BAC30054C286 /* AnyScheduler.swift */; };
 		742CD4572444BE9400A9AB4C /* SwiftUISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60682443BAC30054C286 /* SwiftUISpin.swift */; };
 		742CD4582444BE9400A9AB4C /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60692443BAC30054C286 /* Feedback.swift */; };
@@ -132,27 +114,63 @@
 		747B70962444F29C00C863C2 /* ReactiveSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 747B70952444F29C00C863C2 /* ReactiveSwift.framework */; };
 		747B709A2444F2B000C863C2 /* ReactiveSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 747B70992444F2B000C863C2 /* ReactiveSwift.framework */; };
 		747B709E2444F2C700C863C2 /* ReactiveSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 747B709D2444F2C700C863C2 /* ReactiveSwift.framework */; };
+		749A9C9424DCF9D70095032C /* ExecuterDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9C9124DCF9D60095032C /* ExecuterDefinition.swift */; };
+		749A9C9524DCF9D70095032C /* Reducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9C9224DCF9D60095032C /* Reducer.swift */; };
+		749A9C9624DCF9D70095032C /* AnySpinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9C9324DCF9D70095032C /* AnySpinner.swift */; };
+		749A9C9B24DCFA130095032C /* Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9C9724DCFA0E0095032C /* Executer.swift */; };
+		749A9C9C24DCFA130095032C /* Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9C9824DCFA0E0095032C /* Spinner.swift */; };
+		749A9C9D24DCFA140095032C /* Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9C9724DCFA0E0095032C /* Executer.swift */; };
+		749A9C9E24DCFA140095032C /* Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9C9824DCFA0E0095032C /* Spinner.swift */; };
+		749A9C9F24DCFA150095032C /* Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9C9724DCFA0E0095032C /* Executer.swift */; };
+		749A9CA024DCFA150095032C /* Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9C9824DCFA0E0095032C /* Spinner.swift */; };
+		749A9CA124DCFA150095032C /* Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9C9724DCFA0E0095032C /* Executer.swift */; };
+		749A9CA224DCFA150095032C /* Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9C9824DCFA0E0095032C /* Spinner.swift */; };
+		749A9CA924DCFA340095032C /* Disposable+add.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CA324DCFA2D0095032C /* Disposable+add.swift */; };
+		749A9CAA24DCFA340095032C /* Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CA424DCFA2D0095032C /* Executer.swift */; };
+		749A9CAB24DCFA340095032C /* Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CA524DCFA2D0095032C /* Spinner.swift */; };
+		749A9CAC24DCFA350095032C /* Disposable+add.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CA324DCFA2D0095032C /* Disposable+add.swift */; };
+		749A9CAD24DCFA350095032C /* Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CA424DCFA2D0095032C /* Executer.swift */; };
+		749A9CAE24DCFA350095032C /* Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CA524DCFA2D0095032C /* Spinner.swift */; };
+		749A9CAF24DCFA350095032C /* Disposable+add.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CA324DCFA2D0095032C /* Disposable+add.swift */; };
+		749A9CB024DCFA350095032C /* Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CA424DCFA2D0095032C /* Executer.swift */; };
+		749A9CB124DCFA350095032C /* Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CA524DCFA2D0095032C /* Spinner.swift */; };
+		749A9CB224DCFA360095032C /* Disposable+add.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CA324DCFA2D0095032C /* Disposable+add.swift */; };
+		749A9CB324DCFA360095032C /* Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CA424DCFA2D0095032C /* Executer.swift */; };
+		749A9CB424DCFA360095032C /* Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CA524DCFA2D0095032C /* Spinner.swift */; };
+		749A9CBD24DCFA4E0095032C /* DispatchQueue+Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CB724DCFA490095032C /* DispatchQueue+Executer.swift */; };
+		749A9CBE24DCFA4E0095032C /* OperationQueue+Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CB624DCFA490095032C /* OperationQueue+Executer.swift */; };
+		749A9CBF24DCFA4E0095032C /* RunLoop+Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CB824DCFA490095032C /* RunLoop+Executer.swift */; };
+		749A9CC024DCFA4E0095032C /* Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CB524DCFA490095032C /* Spinner.swift */; };
+		749A9CC124DCFA4F0095032C /* DispatchQueue+Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CB724DCFA490095032C /* DispatchQueue+Executer.swift */; };
+		749A9CC224DCFA4F0095032C /* OperationQueue+Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CB624DCFA490095032C /* OperationQueue+Executer.swift */; };
+		749A9CC324DCFA4F0095032C /* RunLoop+Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CB824DCFA490095032C /* RunLoop+Executer.swift */; };
+		749A9CC424DCFA4F0095032C /* Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CB524DCFA490095032C /* Spinner.swift */; };
+		749A9CC524DCFA4F0095032C /* DispatchQueue+Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CB724DCFA490095032C /* DispatchQueue+Executer.swift */; };
+		749A9CC624DCFA4F0095032C /* OperationQueue+Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CB624DCFA490095032C /* OperationQueue+Executer.swift */; };
+		749A9CC724DCFA4F0095032C /* RunLoop+Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CB824DCFA490095032C /* RunLoop+Executer.swift */; };
+		749A9CC824DCFA4F0095032C /* Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CB524DCFA490095032C /* Spinner.swift */; };
+		749A9CC924DCFA500095032C /* DispatchQueue+Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CB724DCFA490095032C /* DispatchQueue+Executer.swift */; };
+		749A9CCA24DCFA500095032C /* OperationQueue+Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CB624DCFA490095032C /* OperationQueue+Executer.swift */; };
+		749A9CCB24DCFA500095032C /* RunLoop+Executer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CB824DCFA490095032C /* RunLoop+Executer.swift */; };
+		749A9CCC24DCFA500095032C /* Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749A9CB524DCFA490095032C /* Spinner.swift */; };
 		74CB98182444E4280017C2E9 /* SpinCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 742CD35D2443FD2300A9AB4C /* SpinCommon.framework */; };
 		74CB98222444EC900017C2E9 /* SpinCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 742CD35D2443FD2300A9AB4C /* SpinCommon.framework */; platformFilter = ios; };
 		74CB98292444EEE20017C2E9 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 74CB98272444EEE20017C2E9 /* RxSwift.framework */; };
 		74CB982B2444EEE20017C2E9 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 74CB98282444EEE20017C2E9 /* RxRelay.framework */; };
 		74CB98302444EEFB0017C2E9 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 74CB982E2444EEFB0017C2E9 /* RxSwift.framework */; };
 		74CB98322444EEFB0017C2E9 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 74CB982F2444EEFB0017C2E9 /* RxRelay.framework */; };
-		74FB60A42443BCDD0054C286 /* Reducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60592443BAC30054C286 /* Reducer.swift */; };
 		74FB60A52443BCDD0054C286 /* UISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605A2443BAC30054C286 /* UISpin.swift */; };
 		74FB60A62443BCDD0054C286 /* Spin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605B2443BAC30054C286 /* Spin.swift */; };
 		74FB60A72443BCDD0054C286 /* Observable+ReactiveStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605C2443BAC30054C286 /* Observable+ReactiveStream.swift */; };
 		74FB60A82443BCDD0054C286 /* Observable+streamFromSpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605D2443BAC30054C286 /* Observable+streamFromSpin.swift */; };
 		74FB60A92443BCDD0054C286 /* SwiftUISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605E2443BAC30054C286 /* SwiftUISpin.swift */; };
 		74FB60AA2443BCDD0054C286 /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605F2443BAC30054C286 /* Feedback.swift */; };
-		74FB60E52443C2790054C286 /* Reducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60592443BAC30054C286 /* Reducer.swift */; };
 		74FB60E62443C2790054C286 /* UISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605A2443BAC30054C286 /* UISpin.swift */; };
 		74FB60E72443C2790054C286 /* Spin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605B2443BAC30054C286 /* Spin.swift */; };
 		74FB60E82443C2790054C286 /* Observable+ReactiveStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605C2443BAC30054C286 /* Observable+ReactiveStream.swift */; };
 		74FB60E92443C2790054C286 /* Observable+streamFromSpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605D2443BAC30054C286 /* Observable+streamFromSpin.swift */; };
 		74FB60EA2443C2790054C286 /* SwiftUISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605E2443BAC30054C286 /* SwiftUISpin.swift */; };
 		74FB60EB2443C2790054C286 /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605F2443BAC30054C286 /* Feedback.swift */; };
-		74FB61182443C40D0054C286 /* Reducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60592443BAC30054C286 /* Reducer.swift */; };
 		74FB61192443C40D0054C286 /* UISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605A2443BAC30054C286 /* UISpin.swift */; };
 		74FB611A2443C40D0054C286 /* Spin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605B2443BAC30054C286 /* Spin.swift */; };
 		74FB611B2443C40D0054C286 /* Observable+ReactiveStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605C2443BAC30054C286 /* Observable+ReactiveStream.swift */; };
@@ -160,7 +178,6 @@
 		74FB611D2443C40D0054C286 /* SwiftUISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605E2443BAC30054C286 /* SwiftUISpin.swift */; };
 		74FB611E2443C40D0054C286 /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605F2443BAC30054C286 /* Feedback.swift */; };
 		74FB61282443C42B0054C286 /* Spin_RxSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 74FB61262443C42B0054C286 /* Spin_RxSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		74FB61332443C4610054C286 /* Reducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB60592443BAC30054C286 /* Reducer.swift */; };
 		74FB61342443C4610054C286 /* UISpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605A2443BAC30054C286 /* UISpin.swift */; };
 		74FB61352443C4610054C286 /* Spin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605B2443BAC30054C286 /* Spin.swift */; };
 		74FB61362443C4610054C286 /* Observable+ReactiveStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FB605C2443BAC30054C286 /* Observable+ReactiveStream.swift */; };
@@ -296,30 +313,37 @@
 		747B70952444F29C00C863C2 /* ReactiveSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveSwift.framework; path = Carthage/Build/Mac/ReactiveSwift.framework; sourceTree = "<group>"; };
 		747B70992444F2B000C863C2 /* ReactiveSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveSwift.framework; path = Carthage/Build/watchOS/ReactiveSwift.framework; sourceTree = "<group>"; };
 		747B709D2444F2C700C863C2 /* ReactiveSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveSwift.framework; path = Carthage/Build/tvOS/ReactiveSwift.framework; sourceTree = "<group>"; };
+		749A9C9124DCF9D60095032C /* ExecuterDefinition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExecuterDefinition.swift; sourceTree = "<group>"; };
+		749A9C9224DCF9D60095032C /* Reducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reducer.swift; sourceTree = "<group>"; };
+		749A9C9324DCF9D70095032C /* AnySpinner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnySpinner.swift; sourceTree = "<group>"; };
+		749A9C9724DCFA0E0095032C /* Executer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Executer.swift; sourceTree = "<group>"; };
+		749A9C9824DCFA0E0095032C /* Spinner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spinner.swift; sourceTree = "<group>"; };
+		749A9CA324DCFA2D0095032C /* Disposable+add.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Disposable+add.swift"; sourceTree = "<group>"; };
+		749A9CA424DCFA2D0095032C /* Executer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Executer.swift; sourceTree = "<group>"; };
+		749A9CA524DCFA2D0095032C /* Spinner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spinner.swift; sourceTree = "<group>"; };
+		749A9CB524DCFA490095032C /* Spinner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spinner.swift; sourceTree = "<group>"; };
+		749A9CB624DCFA490095032C /* OperationQueue+Executer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "OperationQueue+Executer.swift"; sourceTree = "<group>"; };
+		749A9CB724DCFA490095032C /* DispatchQueue+Executer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Executer.swift"; sourceTree = "<group>"; };
+		749A9CB824DCFA490095032C /* RunLoop+Executer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RunLoop+Executer.swift"; sourceTree = "<group>"; };
 		74CB98272444EEE20017C2E9 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
 		74CB98282444EEE20017C2E9 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = Carthage/Build/iOS/RxRelay.framework; sourceTree = "<group>"; };
 		74CB982E2444EEFB0017C2E9 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/Mac/RxSwift.framework; sourceTree = "<group>"; };
 		74CB982F2444EEFB0017C2E9 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = Carthage/Build/Mac/RxRelay.framework; sourceTree = "<group>"; };
-		74FB60442443BAC30054C286 /* Reducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reducer.swift; sourceTree = "<group>"; };
 		74FB60452443BAC30054C286 /* UISpin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UISpin.swift; sourceTree = "<group>"; };
 		74FB60462443BAC30054C286 /* Spin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spin.swift; sourceTree = "<group>"; };
 		74FB60472443BAC30054C286 /* SignalProducer+Deferred.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SignalProducer+Deferred.swift"; sourceTree = "<group>"; };
-		74FB60482443BAC30054C286 /* Disposable+DisposeBag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Disposable+DisposeBag.swift"; sourceTree = "<group>"; };
 		74FB60492443BAC30054C286 /* SwiftUISpin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftUISpin.swift; sourceTree = "<group>"; };
 		74FB604A2443BAC30054C286 /* SignalProducer+ReactiveStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SignalProducer+ReactiveStream.swift"; sourceTree = "<group>"; };
 		74FB604B2443BAC30054C286 /* SignalProducer+streamFromSpin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SignalProducer+streamFromSpin.swift"; sourceTree = "<group>"; };
 		74FB604C2443BAC30054C286 /* Feedback.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Feedback.swift; sourceTree = "<group>"; };
 		74FB604E2443BAC30054C286 /* FeedbackDefinition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedbackDefinition.swift; sourceTree = "<group>"; };
-		74FB604F2443BAC30054C286 /* Spinner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spinner.swift; sourceTree = "<group>"; };
 		74FB60502443BAC30054C286 /* SpinDefinition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpinDefinition.swift; sourceTree = "<group>"; };
 		74FB60512443BAC30054C286 /* ReactiveStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReactiveStream.swift; sourceTree = "<group>"; };
 		74FB60522443BAC30054C286 /* Weakify.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Weakify.swift; sourceTree = "<group>"; };
 		74FB60532443BAC30054C286 /* AnySpin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnySpin.swift; sourceTree = "<group>"; };
 		74FB60542443BAC30054C286 /* StateRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StateRenderer.swift; sourceTree = "<group>"; };
-		74FB60552443BAC30054C286 /* ReducerDefinition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReducerDefinition.swift; sourceTree = "<group>"; };
 		74FB60562443BAC30054C286 /* FeedbackDefinition+Default.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "FeedbackDefinition+Default.swift"; sourceTree = "<group>"; };
 		74FB60572443BAC30054C286 /* EventEmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventEmitter.swift; sourceTree = "<group>"; };
-		74FB60592443BAC30054C286 /* Reducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reducer.swift; sourceTree = "<group>"; };
 		74FB605A2443BAC30054C286 /* UISpin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UISpin.swift; sourceTree = "<group>"; };
 		74FB605B2443BAC30054C286 /* Spin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spin.swift; sourceTree = "<group>"; };
 		74FB605C2443BAC30054C286 /* Observable+ReactiveStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Observable+ReactiveStream.swift"; sourceTree = "<group>"; };
@@ -328,10 +352,8 @@
 		74FB605F2443BAC30054C286 /* Feedback.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Feedback.swift; sourceTree = "<group>"; };
 		74FB60612443BAC30054C286 /* AnyPublisher+streamFromSpin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AnyPublisher+streamFromSpin.swift"; sourceTree = "<group>"; };
 		74FB60622443BAC30054C286 /* AnyPublisher+ReactiveStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AnyPublisher+ReactiveStream.swift"; sourceTree = "<group>"; };
-		74FB60632443BAC30054C286 /* Reducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reducer.swift; sourceTree = "<group>"; };
 		74FB60642443BAC30054C286 /* UISpin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UISpin.swift; sourceTree = "<group>"; };
 		74FB60652443BAC30054C286 /* Spin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spin.swift; sourceTree = "<group>"; };
-		74FB60662443BAC30054C286 /* AnyCancellable+DisposeBag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AnyCancellable+DisposeBag.swift"; sourceTree = "<group>"; };
 		74FB60672443BAC30054C286 /* AnyScheduler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnyScheduler.swift; sourceTree = "<group>"; };
 		74FB60682443BAC30054C286 /* SwiftUISpin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftUISpin.swift; sourceTree = "<group>"; };
 		74FB60692443BAC30054C286 /* Feedback.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Feedback.swift; sourceTree = "<group>"; };
@@ -605,12 +627,13 @@
 		74FB60432443BAC30054C286 /* ReactiveSwift */ = {
 			isa = PBXGroup;
 			children = (
+				749A9CA324DCFA2D0095032C /* Disposable+add.swift */,
+				749A9CA424DCFA2D0095032C /* Executer.swift */,
+				749A9CA524DCFA2D0095032C /* Spinner.swift */,
 				744F1E9324CE205000997FC9 /* Gear.swift */,
-				74FB60442443BAC30054C286 /* Reducer.swift */,
 				74FB60452443BAC30054C286 /* UISpin.swift */,
 				74FB60462443BAC30054C286 /* Spin.swift */,
 				74FB60472443BAC30054C286 /* SignalProducer+Deferred.swift */,
-				74FB60482443BAC30054C286 /* Disposable+DisposeBag.swift */,
 				74FB60492443BAC30054C286 /* SwiftUISpin.swift */,
 				74FB604A2443BAC30054C286 /* SignalProducer+ReactiveStream.swift */,
 				74FB604B2443BAC30054C286 /* SignalProducer+streamFromSpin.swift */,
@@ -622,15 +645,16 @@
 		74FB604D2443BAC30054C286 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				749A9C9324DCF9D70095032C /* AnySpinner.swift */,
+				749A9C9124DCF9D60095032C /* ExecuterDefinition.swift */,
+				749A9C9224DCF9D60095032C /* Reducer.swift */,
 				744F1E9724CE206100997FC9 /* GearDefinition.swift */,
 				74FB604E2443BAC30054C286 /* FeedbackDefinition.swift */,
-				74FB604F2443BAC30054C286 /* Spinner.swift */,
 				74FB60502443BAC30054C286 /* SpinDefinition.swift */,
 				74FB60512443BAC30054C286 /* ReactiveStream.swift */,
 				74FB60522443BAC30054C286 /* Weakify.swift */,
 				74FB60532443BAC30054C286 /* AnySpin.swift */,
 				74FB60542443BAC30054C286 /* StateRenderer.swift */,
-				74FB60552443BAC30054C286 /* ReducerDefinition.swift */,
 				74FB60562443BAC30054C286 /* FeedbackDefinition+Default.swift */,
 				74FB60572443BAC30054C286 /* EventEmitter.swift */,
 			);
@@ -640,8 +664,9 @@
 		74FB60582443BAC30054C286 /* RxSwift */ = {
 			isa = PBXGroup;
 			children = (
+				749A9C9724DCFA0E0095032C /* Executer.swift */,
+				749A9C9824DCFA0E0095032C /* Spinner.swift */,
 				744F1E9524CE205A00997FC9 /* Gear.swift */,
-				74FB60592443BAC30054C286 /* Reducer.swift */,
 				74FB605A2443BAC30054C286 /* UISpin.swift */,
 				74FB605B2443BAC30054C286 /* Spin.swift */,
 				74FB605C2443BAC30054C286 /* Observable+ReactiveStream.swift */,
@@ -655,13 +680,15 @@
 		74FB60602443BAC30054C286 /* Combine */ = {
 			isa = PBXGroup;
 			children = (
+				749A9CB724DCFA490095032C /* DispatchQueue+Executer.swift */,
+				749A9CB624DCFA490095032C /* OperationQueue+Executer.swift */,
+				749A9CB824DCFA490095032C /* RunLoop+Executer.swift */,
+				749A9CB524DCFA490095032C /* Spinner.swift */,
 				74FB60612443BAC30054C286 /* AnyPublisher+streamFromSpin.swift */,
 				74FB60622443BAC30054C286 /* AnyPublisher+ReactiveStream.swift */,
 				744F1E9124CE204100997FC9 /* Gear.swift */,
-				74FB60632443BAC30054C286 /* Reducer.swift */,
 				74FB60642443BAC30054C286 /* UISpin.swift */,
 				74FB60652443BAC30054C286 /* Spin.swift */,
-				74FB60662443BAC30054C286 /* AnyCancellable+DisposeBag.swift */,
 				74FB60672443BAC30054C286 /* AnyScheduler.swift */,
 				74FB60682443BAC30054C286 /* SwiftUISpin.swift */,
 				74FB60692443BAC30054C286 /* Feedback.swift */,
@@ -1259,13 +1286,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				749A9CAB24DCFA340095032C /* Spinner.swift in Sources */,
 				742CD3472443FCBF00A9AB4C /* SignalProducer+ReactiveStream.swift in Sources */,
-				742CD3412443FCBF00A9AB4C /* Reducer.swift in Sources */,
 				742CD3492443FCBF00A9AB4C /* Feedback.swift in Sources */,
 				742CD3462443FCBF00A9AB4C /* SwiftUISpin.swift in Sources */,
 				742CD3422443FCBF00A9AB4C /* UISpin.swift in Sources */,
-				742CD3452443FCBF00A9AB4C /* Disposable+DisposeBag.swift in Sources */,
+				749A9CA924DCFA340095032C /* Disposable+add.swift in Sources */,
 				744F1E9D24CE20E100997FC9 /* Gear.swift in Sources */,
+				749A9CAA24DCFA340095032C /* Executer.swift in Sources */,
 				742CD3482443FCBF00A9AB4C /* SignalProducer+streamFromSpin.swift in Sources */,
 				742CD3442443FCBF00A9AB4C /* SignalProducer+Deferred.swift in Sources */,
 				742CD3432443FCBF00A9AB4C /* Spin.swift in Sources */,
@@ -1276,14 +1304,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				749A9C9624DCF9D70095032C /* AnySpinner.swift in Sources */,
 				742CD3652443FD7100A9AB4C /* FeedbackDefinition.swift in Sources */,
 				742CD3672443FD7100A9AB4C /* SpinDefinition.swift in Sources */,
+				749A9C9524DCF9D70095032C /* Reducer.swift in Sources */,
 				742CD36A2443FD7100A9AB4C /* AnySpin.swift in Sources */,
 				742CD36E2443FD7100A9AB4C /* EventEmitter.swift in Sources */,
 				742CD36D2443FD7100A9AB4C /* FeedbackDefinition+Default.swift in Sources */,
 				742CD3682443FD7100A9AB4C /* ReactiveStream.swift in Sources */,
-				742CD3662443FD7100A9AB4C /* Spinner.swift in Sources */,
-				742CD36C2443FD7100A9AB4C /* ReducerDefinition.swift in Sources */,
+				749A9C9424DCF9D70095032C /* ExecuterDefinition.swift in Sources */,
 				742CD36B2443FD7100A9AB4C /* StateRenderer.swift in Sources */,
 				742CD3692443FD7100A9AB4C /* Weakify.swift in Sources */,
 				744F1E9824CE206100997FC9 /* GearDefinition.swift in Sources */,
@@ -1294,13 +1323,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				749A9CAE24DCFA350095032C /* Spinner.swift in Sources */,
 				742CD3A82443FFA600A9AB4C /* SignalProducer+ReactiveStream.swift in Sources */,
-				742CD3A22443FFA600A9AB4C /* Reducer.swift in Sources */,
 				742CD3AA2443FFA600A9AB4C /* Feedback.swift in Sources */,
 				742CD3A72443FFA600A9AB4C /* SwiftUISpin.swift in Sources */,
 				742CD3A32443FFA600A9AB4C /* UISpin.swift in Sources */,
-				742CD3A62443FFA600A9AB4C /* Disposable+DisposeBag.swift in Sources */,
+				749A9CAC24DCFA350095032C /* Disposable+add.swift in Sources */,
 				744F1E9E24CE20E100997FC9 /* Gear.swift in Sources */,
+				749A9CAD24DCFA350095032C /* Executer.swift in Sources */,
 				742CD3A92443FFA600A9AB4C /* SignalProducer+streamFromSpin.swift in Sources */,
 				742CD3A52443FFA600A9AB4C /* SignalProducer+Deferred.swift in Sources */,
 				742CD3A42443FFA600A9AB4C /* Spin.swift in Sources */,
@@ -1311,13 +1341,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				749A9CB124DCFA350095032C /* Spinner.swift in Sources */,
 				742CD3CB2444BB9500A9AB4C /* SignalProducer+ReactiveStream.swift in Sources */,
-				742CD3C52444BB9500A9AB4C /* Reducer.swift in Sources */,
 				742CD3CD2444BB9500A9AB4C /* Feedback.swift in Sources */,
 				742CD3CA2444BB9500A9AB4C /* SwiftUISpin.swift in Sources */,
 				742CD3C62444BB9500A9AB4C /* UISpin.swift in Sources */,
-				742CD3C92444BB9500A9AB4C /* Disposable+DisposeBag.swift in Sources */,
+				749A9CAF24DCFA350095032C /* Disposable+add.swift in Sources */,
 				744F1E9F24CE20E200997FC9 /* Gear.swift in Sources */,
+				749A9CB024DCFA350095032C /* Executer.swift in Sources */,
 				742CD3CC2444BB9500A9AB4C /* SignalProducer+streamFromSpin.swift in Sources */,
 				742CD3C82444BB9500A9AB4C /* SignalProducer+Deferred.swift in Sources */,
 				742CD3C72444BB9500A9AB4C /* Spin.swift in Sources */,
@@ -1328,13 +1359,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				749A9CB424DCFA360095032C /* Spinner.swift in Sources */,
 				742CD3EA2444BC5E00A9AB4C /* SignalProducer+ReactiveStream.swift in Sources */,
-				742CD3E42444BC5E00A9AB4C /* Reducer.swift in Sources */,
 				742CD3EC2444BC5E00A9AB4C /* Feedback.swift in Sources */,
 				742CD3E92444BC5E00A9AB4C /* SwiftUISpin.swift in Sources */,
 				742CD3E52444BC5E00A9AB4C /* UISpin.swift in Sources */,
-				742CD3E82444BC5E00A9AB4C /* Disposable+DisposeBag.swift in Sources */,
+				749A9CB224DCFA360095032C /* Disposable+add.swift in Sources */,
 				744F1EA024CE20E300997FC9 /* Gear.swift in Sources */,
+				749A9CB324DCFA360095032C /* Executer.swift in Sources */,
 				742CD3EB2444BC5E00A9AB4C /* SignalProducer+streamFromSpin.swift in Sources */,
 				742CD3E72444BC5E00A9AB4C /* SignalProducer+Deferred.swift in Sources */,
 				742CD3E62444BC5E00A9AB4C /* Spin.swift in Sources */,
@@ -1345,14 +1377,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				742CD4042444BCA700A9AB4C /* AnyCancellable+DisposeBag.swift in Sources */,
+				749A9CBD24DCFA4E0095032C /* DispatchQueue+Executer.swift in Sources */,
 				742CD4062444BCA700A9AB4C /* SwiftUISpin.swift in Sources */,
 				742CD4072444BCA700A9AB4C /* Feedback.swift in Sources */,
+				749A9CC024DCFA4E0095032C /* Spinner.swift in Sources */,
+				749A9CBE24DCFA4E0095032C /* OperationQueue+Executer.swift in Sources */,
 				742CD4002444BCA700A9AB4C /* AnyPublisher+ReactiveStream.swift in Sources */,
 				742CD3FF2444BCA700A9AB4C /* AnyPublisher+streamFromSpin.swift in Sources */,
 				742CD4052444BCA700A9AB4C /* AnyScheduler.swift in Sources */,
+				749A9CBF24DCFA4E0095032C /* RunLoop+Executer.swift in Sources */,
 				744F1E9924CE20D900997FC9 /* Gear.swift in Sources */,
-				742CD4012444BCA700A9AB4C /* Reducer.swift in Sources */,
 				742CD4032444BCA700A9AB4C /* Spin.swift in Sources */,
 				742CD4022444BCA700A9AB4C /* UISpin.swift in Sources */,
 			);
@@ -1362,14 +1396,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				742CD41F2444BE0800A9AB4C /* AnyCancellable+DisposeBag.swift in Sources */,
+				749A9CC124DCFA4F0095032C /* DispatchQueue+Executer.swift in Sources */,
 				742CD4212444BE0800A9AB4C /* SwiftUISpin.swift in Sources */,
 				742CD4222444BE0800A9AB4C /* Feedback.swift in Sources */,
+				749A9CC424DCFA4F0095032C /* Spinner.swift in Sources */,
+				749A9CC224DCFA4F0095032C /* OperationQueue+Executer.swift in Sources */,
 				742CD41B2444BE0800A9AB4C /* AnyPublisher+ReactiveStream.swift in Sources */,
 				742CD41A2444BE0800A9AB4C /* AnyPublisher+streamFromSpin.swift in Sources */,
 				742CD4202444BE0800A9AB4C /* AnyScheduler.swift in Sources */,
+				749A9CC324DCFA4F0095032C /* RunLoop+Executer.swift in Sources */,
 				744F1E9A24CE20DA00997FC9 /* Gear.swift in Sources */,
-				742CD41C2444BE0800A9AB4C /* Reducer.swift in Sources */,
 				742CD41E2444BE0800A9AB4C /* Spin.swift in Sources */,
 				742CD41D2444BE0800A9AB4C /* UISpin.swift in Sources */,
 			);
@@ -1379,14 +1415,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				742CD4552444BE9400A9AB4C /* AnyCancellable+DisposeBag.swift in Sources */,
+				749A9CC524DCFA4F0095032C /* DispatchQueue+Executer.swift in Sources */,
 				742CD4572444BE9400A9AB4C /* SwiftUISpin.swift in Sources */,
 				742CD4582444BE9400A9AB4C /* Feedback.swift in Sources */,
+				749A9CC824DCFA4F0095032C /* Spinner.swift in Sources */,
+				749A9CC624DCFA4F0095032C /* OperationQueue+Executer.swift in Sources */,
 				742CD4512444BE9400A9AB4C /* AnyPublisher+ReactiveStream.swift in Sources */,
 				742CD4502444BE9400A9AB4C /* AnyPublisher+streamFromSpin.swift in Sources */,
 				742CD4562444BE9400A9AB4C /* AnyScheduler.swift in Sources */,
+				749A9CC724DCFA4F0095032C /* RunLoop+Executer.swift in Sources */,
 				744F1E9B24CE20DB00997FC9 /* Gear.swift in Sources */,
-				742CD4522444BE9400A9AB4C /* Reducer.swift in Sources */,
 				742CD4542444BE9400A9AB4C /* Spin.swift in Sources */,
 				742CD4532444BE9400A9AB4C /* UISpin.swift in Sources */,
 			);
@@ -1396,14 +1434,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				742CD44C2444BE9400A9AB4C /* AnyCancellable+DisposeBag.swift in Sources */,
+				749A9CC924DCFA500095032C /* DispatchQueue+Executer.swift in Sources */,
 				742CD44E2444BE9400A9AB4C /* SwiftUISpin.swift in Sources */,
 				742CD44F2444BE9400A9AB4C /* Feedback.swift in Sources */,
+				749A9CCC24DCFA500095032C /* Spinner.swift in Sources */,
+				749A9CCA24DCFA500095032C /* OperationQueue+Executer.swift in Sources */,
 				742CD4482444BE9400A9AB4C /* AnyPublisher+ReactiveStream.swift in Sources */,
 				742CD4472444BE9400A9AB4C /* AnyPublisher+streamFromSpin.swift in Sources */,
 				742CD44D2444BE9400A9AB4C /* AnyScheduler.swift in Sources */,
+				749A9CCB24DCFA500095032C /* RunLoop+Executer.swift in Sources */,
 				744F1E9C24CE20DB00997FC9 /* Gear.swift in Sources */,
-				742CD4492444BE9400A9AB4C /* Reducer.swift in Sources */,
 				742CD44B2444BE9400A9AB4C /* Spin.swift in Sources */,
 				742CD44A2444BE9400A9AB4C /* UISpin.swift in Sources */,
 			);
@@ -1413,13 +1453,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				74FB60A42443BCDD0054C286 /* Reducer.swift in Sources */,
 				74FB60A92443BCDD0054C286 /* SwiftUISpin.swift in Sources */,
+				749A9C9C24DCFA130095032C /* Spinner.swift in Sources */,
 				74FB60A82443BCDD0054C286 /* Observable+streamFromSpin.swift in Sources */,
 				74FB60A72443BCDD0054C286 /* Observable+ReactiveStream.swift in Sources */,
 				744F1EA124CE20F400997FC9 /* Gear.swift in Sources */,
 				74FB60A52443BCDD0054C286 /* UISpin.swift in Sources */,
 				74FB60AA2443BCDD0054C286 /* Feedback.swift in Sources */,
+				749A9C9B24DCFA130095032C /* Executer.swift in Sources */,
 				74FB60A62443BCDD0054C286 /* Spin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1429,12 +1470,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				74FB60EA2443C2790054C286 /* SwiftUISpin.swift in Sources */,
-				74FB60E52443C2790054C286 /* Reducer.swift in Sources */,
+				749A9C9E24DCFA140095032C /* Spinner.swift in Sources */,
 				74FB60EB2443C2790054C286 /* Feedback.swift in Sources */,
 				74FB60E82443C2790054C286 /* Observable+ReactiveStream.swift in Sources */,
 				744F1EA224CE20F500997FC9 /* Gear.swift in Sources */,
 				74FB60E92443C2790054C286 /* Observable+streamFromSpin.swift in Sources */,
 				74FB60E72443C2790054C286 /* Spin.swift in Sources */,
+				749A9C9D24DCFA140095032C /* Executer.swift in Sources */,
 				74FB60E62443C2790054C286 /* UISpin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1444,12 +1486,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				74FB611D2443C40D0054C286 /* SwiftUISpin.swift in Sources */,
-				74FB61182443C40D0054C286 /* Reducer.swift in Sources */,
+				749A9CA024DCFA150095032C /* Spinner.swift in Sources */,
 				74FB611E2443C40D0054C286 /* Feedback.swift in Sources */,
 				74FB611B2443C40D0054C286 /* Observable+ReactiveStream.swift in Sources */,
 				744F1EA324CE20F500997FC9 /* Gear.swift in Sources */,
 				74FB611C2443C40D0054C286 /* Observable+streamFromSpin.swift in Sources */,
 				74FB611A2443C40D0054C286 /* Spin.swift in Sources */,
+				749A9C9F24DCFA150095032C /* Executer.swift in Sources */,
 				74FB61192443C40D0054C286 /* UISpin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1458,13 +1501,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				74FB61332443C4610054C286 /* Reducer.swift in Sources */,
 				74FB61382443C4610054C286 /* SwiftUISpin.swift in Sources */,
+				749A9CA224DCFA150095032C /* Spinner.swift in Sources */,
 				74FB61372443C4610054C286 /* Observable+streamFromSpin.swift in Sources */,
 				74FB61362443C4610054C286 /* Observable+ReactiveStream.swift in Sources */,
 				744F1EA424CE20F600997FC9 /* Gear.swift in Sources */,
 				74FB61342443C4610054C286 /* UISpin.swift in Sources */,
 				74FB61392443C4610054C286 /* Feedback.swift in Sources */,
+				749A9CA124DCFA150095032C /* Executer.swift in Sources */,
 				74FB61352443C4610054C286 /* Spin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1560,7 +1604,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1596,7 +1640,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1630,7 +1674,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCommon;
 				PRODUCT_NAME = SpinCommon;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1661,7 +1705,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCommon;
 				PRODUCT_NAME = SpinCommon;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1696,7 +1740,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1730,7 +1774,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1764,7 +1808,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1800,7 +1844,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1836,7 +1880,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1871,7 +1915,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1902,7 +1946,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1933,7 +1977,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1966,7 +2010,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1995,7 +2039,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2024,7 +2068,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2055,7 +2099,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2086,7 +2130,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2116,7 +2160,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2271,7 +2315,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2307,7 +2351,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2345,7 +2389,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2379,7 +2423,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2413,7 +2457,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2449,7 +2493,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2485,7 +2529,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2520,7 +2564,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.17;
+				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";

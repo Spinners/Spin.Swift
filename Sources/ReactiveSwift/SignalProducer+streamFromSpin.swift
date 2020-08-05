@@ -15,16 +15,19 @@ public extension SignalProducer where Error == Never {
 
             guard let spin = spin else { return .empty }
 
-            let currentState = MutableProperty<Value>(spin.initialState)
+            let (signal, currentState) = Signal<Value, Never>.pipe()
             
             // merging all the effects into one event stream
-            let eventStreams = spin.effects.map { $0(currentState.producer) }
+            let stateInputStream = signal.producer
+            let eventStreams = spin.effects.map { $0(stateInputStream) }
             let eventStream = SignalProducer<Event, Never>.merge(eventStreams)
-            
-            return spin
-                .scheduledReducer(eventStream)
+
+            return eventStream
+                .observe(on: spin.executer)
+                .scan(spin.initialState, spin.reducer)
                 .prefix(value: spin.initialState)
-                .on(value: { currentState.swap($0) })
+                .on(started: { currentState.send(value: spin.initialState) })
+                .on(value: { currentState.send(value: $0) })
         }
     }
     

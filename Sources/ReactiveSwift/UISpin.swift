@@ -11,7 +11,7 @@ import SpinCommon
 public typealias ReactiveUISpin = SpinReactiveSwift.UISpin
 
 public final class UISpin<State, Event>: Spin<State, Event>, StateRenderer, EventEmitter {
-    private let disposeBag = CompositeDisposable()
+    private let subscriptions = CompositeDisposable()
     private let (eventsProducer, eventsObserver) = Signal<Event, Never>.pipe()
     private var externalRenderFunction: ((State) -> Void)?
     public var state: State {
@@ -22,7 +22,7 @@ public final class UISpin<State, Event>: Spin<State, Event>, StateRenderer, Even
     
     public init(spin: Spin<State, Event>) {
         self.state = spin.initialState
-        super.init(initialState: spin.initialState, effects: spin.effects, scheduledReducer: spin.scheduledReducer)
+        super.init(initialState: spin.initialState, effects: spin.effects, reducer: spin.reducer, executer: spin.executer)
         let uiFeedback = Feedback<State, Event>(uiEffects: { [weak self] state in
             self?.state = state
             }, { [weak self] in
@@ -37,14 +37,16 @@ public final class UISpin<State, Event>: Spin<State, Event>, StateRenderer, Even
     }
     
     public func emit(_ event: Event) {
-        self.eventsObserver.send(value: event)
+        self.executer.schedule { [weak self] in
+            self?.eventsObserver.send(value: event)
+        }
     }
 
     public func start() {
-        SignalProducer.start(spin: self).disposed(by: self.disposeBag)
+        SignalProducer.start(spin: self).add(to: self.subscriptions)
     }
 
     deinit {
-        self.disposeBag.dispose()
+        self.subscriptions.dispose()
     }
 }

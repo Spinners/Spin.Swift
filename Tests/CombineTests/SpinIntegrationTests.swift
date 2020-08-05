@@ -20,10 +20,13 @@ final class SpinIntegrationTests: XCTestCase {
     private var subscriptions = [AnyCancellable]()
 
     func test_multiple_feedbacks_produces_incremental_states_while_executed_on_default_executer() throws {
+        let exp = expectation(description: "Integration")
+        var receivedStatesInEffects = [String]()
 
         // Given: an initial state, effects and a reducer
         var counterA = 0
         let effectA = { (state: String) -> AnyPublisher<StringAction, Never> in
+            guard state == "initialState" || state.dropLast().last == "c" else { return Empty().eraseToAnyPublisher() }
             counterA += 1
             let counter = counterA
             return Just<StringAction>(.append("_a\(counter)")).eraseToAnyPublisher()
@@ -31,6 +34,7 @@ final class SpinIntegrationTests: XCTestCase {
 
         var counterB = 0
         let effectB = { (state: String) -> AnyPublisher<StringAction, Never> in
+            guard state.dropLast().last == "a" else { return Empty().eraseToAnyPublisher() }
             counterB += 1
             let counter = counterB
             return Just<StringAction>(.append("_b\(counter)")).eraseToAnyPublisher()
@@ -38,9 +42,15 @@ final class SpinIntegrationTests: XCTestCase {
 
         var counterC = 0
         let effectC = { (state: String) -> AnyPublisher<StringAction, Never> in
+            guard state.dropLast().last == "b" else { return Empty().eraseToAnyPublisher() }
             counterC += 1
             let counter = counterC
             return Just<StringAction>(.append("_c\(counter)")).eraseToAnyPublisher()
+        }
+
+        let spyEffect = { (state: String) -> AnyPublisher<StringAction, Never> in
+            receivedStatesInEffects.append(state)
+            return Empty().eraseToAnyPublisher()
         }
 
         let reducerFunction = { (state: String, action: StringAction) -> String in
@@ -56,29 +66,35 @@ final class SpinIntegrationTests: XCTestCase {
             .feedback(Feedback(effect: effectA))
             .feedback(Feedback(effect: effectB))
             .feedback(Feedback(effect: effectC))
+            .feedback(Feedback(effect: spyEffect))
             .reducer(Reducer(reducerFunction))
 
-        let recorder = AnyPublisher<String, Never>.stream(from: spin)
-            .output(in: (0...6))
-            .record()
+        AnyPublisher<String, Never>.stream(from: spin)
+            .output(in: 0...5)
+            .sink(receiveCompletion: { _ in exp.fulfill() }, receiveValue: { _ in })
+            .store(in: &self.subscriptions)
 
-        let receivedElements = try wait(for: recorder.elements, timeout: 5)
+        waitForExpectations(timeout: 1)
 
         // Then: the states is constructed incrementally
-        XCTAssertEqual(receivedElements, ["initialState",
-                                          "initialState_a1",
-                                          "initialState_a1_b1",
-                                          "initialState_a1_b1_c1",
-                                          "initialState_a1_b1_c1_a2",
-                                          "initialState_a1_b1_c1_a2_b2",
-                                          "initialState_a1_b1_c1_a2_b2_c2"])
+        XCTAssertEqual(receivedStatesInEffects, ["initialState",
+                                                 "initialState_a1",
+                                                 "initialState_a1_b1",
+                                                 "initialState_a1_b1_c1",
+                                                 "initialState_a1_b1_c1_a2",
+                                                 "initialState_a1_b1_c1_a2_b2",
+                                                 "initialState_a1_b1_c1_a2_b2_c2"])
     }
 
     func test_multiple_feedbacks_produces_incremental_states_while_executed_on_default_executer_using_declarative_syntax() throws {
+        let exp = expectation(description: "Integration")
+
+        var receivedStatesInEffects = [String]()
 
         // Given: an initial state, effect and a reducer
         var counterA = 0
         let effectA = { (state: String) -> AnyPublisher<StringAction, Never> in
+            guard state == "initialState" || state.dropLast().last == "c" else { return Empty().eraseToAnyPublisher() }
             counterA += 1
             let counter = counterA
             return Just<StringAction>(.append("_a\(counter)")).eraseToAnyPublisher()
@@ -86,6 +102,7 @@ final class SpinIntegrationTests: XCTestCase {
 
         var counterB = 0
         let effectB = { (state: String) -> AnyPublisher<StringAction, Never> in
+            guard state.dropLast().last == "a" else { return Empty().eraseToAnyPublisher() }
             counterB += 1
             let counter = counterB
             return Just<StringAction>(.append("_b\(counter)")).eraseToAnyPublisher()
@@ -93,9 +110,16 @@ final class SpinIntegrationTests: XCTestCase {
 
         var counterC = 0
         let effectC = { (state: String) -> AnyPublisher<StringAction, Never> in
+            print("C" + state)
+            guard state.dropLast().last == "b" else { return Empty().eraseToAnyPublisher() }
             counterC += 1
             let counter = counterC
             return Just<StringAction>(.append("_c\(counter)")).eraseToAnyPublisher()
+        }
+
+        let spyEffect = { (state: String) -> AnyPublisher<StringAction, Never> in
+            receivedStatesInEffects.append(state)
+            return Empty().eraseToAnyPublisher()
         }
 
         let reducerFunction = { (state: String, action: StringAction) -> String in
@@ -106,27 +130,29 @@ final class SpinIntegrationTests: XCTestCase {
         }
 
         let spin = Spin<String, StringAction>(initialState: "initialState") {
-            Feedback(effect: effectA).execute(on: DispatchQueue.main.eraseToAnyScheduler())
-            Feedback(effect: effectB).execute(on: DispatchQueue.main.eraseToAnyScheduler())
-            Feedback(effect: effectC).execute(on: DispatchQueue.main.eraseToAnyScheduler())
+            Feedback(effect: effectA)
+            Feedback(effect: effectB)
+            Feedback(effect: effectC)
+            Feedback(effect: spyEffect)
             Reducer(reducerFunction)
         }
 
         // When: spinning the feedbacks and the reducer on the default executer
-        let recorder = AnyPublisher<String, Never>.stream(from: spin)
-            .output(in: (0...6))
-            .record()
+        AnyPublisher<String, Never>.stream(from: spin)
+            .output(in: 0...5)
+            .sink(receiveCompletion: { _ in exp.fulfill() }, receiveValue: { _ in })
+            .store(in: &self.subscriptions)
 
-        let receivedElements = try wait(for: recorder.elements, timeout: 5)
+        waitForExpectations(timeout: 1)
 
         // Then: the states is constructed incrementally
-        XCTAssertEqual(receivedElements, ["initialState",
-                                          "initialState_a1",
-                                          "initialState_a1_b1",
-                                          "initialState_a1_b1_c1",
-                                          "initialState_a1_b1_c1_a2",
-                                          "initialState_a1_b1_c1_a2_b2",
-                                          "initialState_a1_b1_c1_a2_b2_c2"])
+        XCTAssertEqual(receivedStatesInEffects, ["initialState",
+                                        "initialState_a1",
+                                        "initialState_a1_b1",
+                                        "initialState_a1_b1_c1",
+                                        "initialState_a1_b1_c1_a2",
+                                        "initialState_a1_b1_c1_a2_b2",
+                                        "initialState_a1_b1_c1_a2_b2_c2"])
     }
 }
 
@@ -179,35 +205,46 @@ extension SpinIntegrationTests {
     func testAttach_trigger_checkAuthorizationSpin_when_fetchFeatureSpin_trigger_gear() {
         let exp = expectation(description: "Gear")
 
-        var receivedStates = [Any]()
+        var receivedCheckAuthorization = [CheckAuthorizationSpinState]()
+        var receivedFeatureStates = [FetchFeatureSpinState]()
 
         // Given: 2 independents spins and a shared gear
         let gear = Gear<GearEvent>()
         let fetchFeatureSpin = self.makeFetchFeatureSpin(attachedTo: gear)
         let checkAuthorizationSpin = self.makeCheckAuthorizationSpin(attachedTo: gear)
 
-        // When: executing the 2 spins
-        AnyPublisher.stream(from: checkAuthorizationSpin)
-            .sink(receiveCompletion: { _ in }) { state in
-            receivedStates.append(state)
+        let spyEffectFeatureSpin = { (state: FetchFeatureSpinState) -> AnyPublisher<FetchFeatureSpinEvent, Never> in
+            receivedFeatureStates.append(state)
+            return Empty().eraseToAnyPublisher()
+        }
+        fetchFeatureSpin.effects.append(Feedback<FetchFeatureSpinState, FetchFeatureSpinEvent>(effect: spyEffectFeatureSpin).effect)
+
+        let spyEffectCheckAuthorizationSpin = { (state: CheckAuthorizationSpinState) -> AnyPublisher<CheckAuthorizationSpinEvent, Never> in
+            receivedCheckAuthorization.append(state)
             if state == .userHasBeenRevoked {
                 exp.fulfill()
             }
-        }.store(in: &self.subscriptions)
+            return Empty().eraseToAnyPublisher()
+        }
+        checkAuthorizationSpin.effects.append(Feedback<CheckAuthorizationSpinState, CheckAuthorizationSpinEvent>(effect: spyEffectCheckAuthorizationSpin).effect)
+
+        // When: executing the 2 spins
+        AnyPublisher.stream(from: checkAuthorizationSpin)
+            .sink(receiveCompletion: { _ in }, receiveValue: { _ in } )
+            .store(in: &self.subscriptions)
 
         AnyPublisher.stream(from:fetchFeatureSpin)
-        .sink(receiveCompletion: { _ in }) { state in
-            receivedStates.append(state)
-        }.store(in: &self.subscriptions)
+            .sink(receiveCompletion: { _ in }, receiveValue: { _ in } )
+            .store(in: &self.subscriptions)
 
         waitForExpectations(timeout: 0.5)
 
         // Then: the stream of states produced by the spins are the expected one thanks to the propagation of the gear
-        XCTAssertEqual(receivedStates[0] as? CheckAuthorizationSpinState, CheckAuthorizationSpinState.initial)
-        XCTAssertEqual(receivedStates[1] as? FetchFeatureSpinState, FetchFeatureSpinState.initial)
-        XCTAssertEqual(receivedStates[2] as? FetchFeatureSpinState, FetchFeatureSpinState.unauthorized)
-        XCTAssertEqual(receivedStates[3] as? CheckAuthorizationSpinState, CheckAuthorizationSpinState.authorizationShouldBeChecked)
-        XCTAssertEqual(receivedStates[4] as? CheckAuthorizationSpinState, CheckAuthorizationSpinState.userHasBeenRevoked)
+        XCTAssertEqual(receivedCheckAuthorization[0], .initial)
+        XCTAssertEqual(receivedFeatureStates[0], .initial)
+        XCTAssertEqual(receivedFeatureStates[1], .unauthorized)
+        XCTAssertEqual(receivedCheckAuthorization[1], .authorizationShouldBeChecked)
+        XCTAssertEqual(receivedCheckAuthorization[2], .userHasBeenRevoked)
     }
 }
 

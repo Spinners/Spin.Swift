@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = "SpinRxSwift"
-  s.version = "0.17.0"
+  s.version = "0.18.0"
   s.swift_version = "5.2.2"
   s.summary = "Spin is a tool whose only purpose is to help you build feedback loops called Spins"
   s.description = <<-DESC
@@ -22,8 +22,8 @@ Spin is a tool to build feedback loops within a Swift based application allowing
 
   s.source_files = 'Sources/RxSwift/*.swift'
 
-  s.dependency 'RxSwift', '>= 5.1.0'
-  s.dependency 'RxRelay', '>= 5.1.0'
-  s.dependency 'SpinCommon', '>= 0.17.0'
+  s.dependency 'RxSwift', '>= 5.1.1'
+  s.dependency 'RxRelay', '>= 5.1.1'
+  s.dependency 'SpinCommon', '>= 0.18.0'
 
 end

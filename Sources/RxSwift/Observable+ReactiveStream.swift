@@ -14,7 +14,7 @@ extension Observable: ReactiveStream {
 
     public static func emptyStream() -> Self {
         guard let emptyStream = Observable<Value>.empty() as? Self else {
-            fatalError("Observable cannot be subclassed to be able to use the framework")
+            fatalError("Observable cannot be subclassed to be able to get an emptyStream()")
         }
 
         return emptyStream

@@ -9,15 +9,8 @@ import ReactiveSwift
 @testable import SpinReactiveSwift
 import XCTest
 
-private class SpyGear: Gear<Int> {
-    func finishEventStream() {
-        self.eventsObserver.sendCompleted()
-    }
-}
-
 final class FeedbackTests: XCTestCase {
-
-    private let disposeBag = CompositeDisposable()
+    private let disposables = CompositeDisposable()
 
     func test_effect_observes_on_current_executer_when_nilExecuter_is_passed_to_initializer() {
         var effectIsCalled = false
@@ -184,12 +177,12 @@ final class FeedbackTests: XCTestCase {
 
     func testFeedback_call_gearSideEffect_and_does_only_trigger_a_feedbackEvent_when_attachment_return_not_nil() {
         let exp = expectation(description: "attach")
-        let spyGear = SpyGear()
+        let gear = Gear<Int>()
         var numberOfCallsGearSideEffect = 0
         var receivedEvents = [String]()
 
         // Given: a feedback attached to a Gear and triggering en event only of the gear event is 1
-        let sut = Feedback<Int, String>(attachedTo: spyGear, propagating: { gearEvent -> String? in
+        let sut = Feedback<Int, String>(attachedTo: gear, propagating: { gearEvent -> String? in
             numberOfCallsGearSideEffect += 1
             if gearEvent == 1 {
                 return "event"
@@ -206,13 +199,13 @@ final class FeedbackTests: XCTestCase {
                 receivedEvents = events
                 exp.fulfill()
             })
-            .disposed(by: self.disposeBag)
+            .add(to: self.disposables)
 
         // When: sending 0 and then 1 as gear event
-        spyGear.eventsObserver.send(value: 0)
-        spyGear.eventsObserver.send(value: 1)
-        spyGear.finishEventStream()
-
+        gear.eventsObserver.send(value: 0)
+        gear.eventsObserver.send(value: 1)
+        gear.eventsObserver.sendCompleted()
+        
         waitForExpectations(timeout: 0.5)
 
         // Then: the gear dedicated side effect is called twice

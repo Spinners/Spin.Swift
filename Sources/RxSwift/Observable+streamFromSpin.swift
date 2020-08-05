@@ -5,6 +5,7 @@
 //  Created by Thibault Wittemberg on 2020-02-07.
 //
 
+import RxRelay
 import RxSwift
 import SpinCommon
 
@@ -14,16 +15,18 @@ public extension Observable {
 
             guard let spin = spin else { return .empty() }
 
-            let currentState = ReplaySubject<Element>.create(bufferSize: 1)
+            let currentState = BehaviorRelay<Element>(value: spin.initialState)
 
             // merging all the effects into one event stream
-            let eventStreams = spin.effects.map { $0(currentState.asObservable()) }
+            let stateInputStream = currentState.asObservable()
+            let eventStreams = spin.effects.map { $0(stateInputStream) }
             let eventStream = Observable<Event>.merge(eventStreams).catchError { _ in return .empty() }
 
-            return spin
-                .scheduledReducer(eventStream)
-                .startWith(spin.initialState)
-                .do(onNext: { currentState.onNext($0) })
+            return eventStream
+                .subscribeOn(spin.executer)
+                .observeOn(spin.executer)
+                .scan(spin.initialState, accumulator: spin.reducer)
+                .do(onNext: { currentState.accept($0) })
         }
     }
 

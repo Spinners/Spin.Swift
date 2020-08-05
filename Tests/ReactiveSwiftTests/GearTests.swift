@@ -10,7 +10,7 @@ import ReactiveSwift
 import XCTest
 
 final class GearTests: XCTestCase {
-    private var subscriptions = CompositeDisposable()
+    private var disposables = CompositeDisposable()
 
     func testPropagate_trigger_eventStream() throws {
         let exp = expectation(description: "Gear")
@@ -25,7 +25,8 @@ final class GearTests: XCTestCase {
             .startWithValues { value in
                 receivedValue = value
                 exp.fulfill()
-        }.disposed(by: self.subscriptions)
+        }
+        .add(to: self.disposables)
 
         // When: propagating en event
         sut.propagate(event: 1)

@@ -20,20 +20,24 @@ final class AnySpinTests: XCTestCase {
             effectAIsCalled = true
             return MockStream<MockEvent>(value: .toEmpty)
         }
+
         let effectB = { (states: MockStream<MockState>) -> MockStream<MockEvent> in
             effectBIsCalled = true
             return MockStream<MockEvent>(value: .toEmpty)
         }
 
-        let scheduledReducer = { (events: MockStream<MockEvent>) -> MockStream<MockState> in
+        let reducer = { (state: MockState, evernt: MockEvent) -> MockState in
             reducerIsCalled = true
-            return MockStream<MockState>(value: .toEmpty)
+            return MockState.toEmpty
         }
 
         // When: building an AnySpin based on those feedback stream and reducer
-        let sut = AnySpin(initialState: MockState(subState: 0), effects: [effectA, effectB], scheduledReducer: scheduledReducer)
+        let sut = AnySpin<MockStream<MockState>, MockStream<MockEvent>, MockExecuter>(initialState: MockState(subState: 0),
+                                                                                      effects: [effectA, effectB],
+                                                                                      reducer: reducer,
+                                                                                      executer: MockExecuter())
         _ = sut.effects.forEach { _ = $0(MockStream<MockState>(value: .toEmpty)) }
-        _ = sut.scheduledReducer(MockStream<MockEvent>(value: .toEmpty))
+        _ = sut.reducer(MockState.toEmpty, MockEvent.toEmpty)
 
         // Then: the AnySpin initializer produces a reactive stream based on those elements
         XCTAssertEqual(sut.initialState, MockState(subState: 0))
@@ -53,18 +57,19 @@ final class AnySpinTests: XCTestCase {
             return MockStream<MockEvent>(value: .toEmpty)
         }
 
-        let reducerFunction = { (state: MockState, event: MockEvent) -> MockState in
+        let spyFeedback = MockFeedback(effect: effectFunction)
+        let spyReducer = Reducer<MockState, MockEvent> { _, _ in
             reducerIsCalled = true
-            return MockState(subState: 0)
+            return MockState.toEmpty
         }
 
-        let feedback = MockFeedback(effect: effectFunction)
-        let reducer = MockReducer(reducerFunction)
-
         // When: building an AnySpin based on those feedback and reducer
-        let sut = AnySpin(initialState: MockState(subState: 0), feedback: feedback, reducer: reducer)
+        let sut = AnySpin<MockStream<MockState>, MockStream<MockEvent>, MockExecuter>(initialState: MockState(subState: 0),
+                                                                                      feedback: spyFeedback,
+                                                                                      reducer: spyReducer,
+                                                                                      executeOn: MockExecuter())
         _ = sut.effects.forEach { _ = $0(MockStream<MockState>(value: .toEmpty)) }
-        _ = sut.scheduledReducer(MockStream<MockEvent>(value: .toEmpty))
+        _ = sut.reducer(MockState.toEmpty, MockEvent.toEmpty)
 
         // Then: the AnySpin initializer produces a reactive stream based on those elements
         XCTAssertEqual(sut.initialState, MockState(subState: 0))
@@ -89,12 +94,13 @@ final class AnySpinTests: XCTestCase {
         }
 
         // When: building an AnySpin based on those feedback and reducer, with a declarative syntax
-        let sut = AnySpin(initialState: MockState(subState: 0)) {
+        let sut = AnySpin<MockStream<MockState>, MockStream<MockEvent>, MockExecuter>(initialState: MockState(subState: 0),
+                                                                                      executeOn: MockExecuter()) {
             MockFeedback(effect: effectFunction)
-            MockReducer(reducerFunction)
+            Reducer(reducerFunction)
         }
         _ = sut.effects.forEach { _ = $0(MockStream<MockState>(value: .toEmpty)) }
-        _ = sut.scheduledReducer(MockStream<MockEvent>(value: .toEmpty))
+        _ = sut.reducer(MockState.toEmpty, MockEvent.toEmpty)
 
         // Then: the AnySpin initializer produces a reactive stream based on those elements
         XCTAssertEqual(sut.initialState, MockState(subState: 0))
@@ -125,13 +131,14 @@ final class AnySpinTests: XCTestCase {
         }
 
         // When: building an AnySpin based on those feedbacks and reducer, with a declarative syntax
-        let sut = AnySpin(initialState: MockState(subState: 0)) {
+        let sut = AnySpin<MockStream<MockState>, MockStream<MockEvent>, MockExecuter>(initialState: MockState(subState: 0),
+                                                                                      executeOn: MockExecuter()) {
             MockFeedback(effect: effectAFunction)
             MockFeedback(effect: effectBFunction)
-            MockReducer(reducerFunction)
+            Reducer(reducerFunction)
         }
         _ = sut.effects.forEach { _ = $0(MockStream<MockState>(value: .toEmpty)) }
-        _ = sut.scheduledReducer(MockStream<MockEvent>(value: .toEmpty))
+        _ = sut.reducer(MockState.toEmpty, MockEvent.toEmpty)
 
         // Then: the AnySpin initializer produces a reactive stream based on those elements
         XCTAssertEqual(sut.initialState, MockState(subState: 0))
@@ -169,14 +176,15 @@ final class AnySpinTests: XCTestCase {
         }
 
         // When: building an AnySpin based on those feedbacks and reducer, with a declarative syntax
-        let sut = AnySpin(initialState: MockState(subState: 0)) {
+        let sut = AnySpin<MockStream<MockState>, MockStream<MockEvent>, MockExecuter>(initialState: MockState(subState: 0),
+                                                                                      executeOn: MockExecuter()) {
             MockFeedback(effect: effectAFunction)
             MockFeedback(effect: effectBFunction)
             MockFeedback(effect: effectCFunction)
-            MockReducer(reducerFunction)
+            Reducer(reducerFunction)
         }
         _ = sut.effects.forEach { _ = $0(MockStream<MockState>(value: .toEmpty)) }
-        _ = sut.scheduledReducer(MockStream<MockEvent>(value: .toEmpty))
+        _ = sut.reducer(MockState.toEmpty, MockEvent.toEmpty)
 
         // Then: the AnySpin initializer produces a reactive stream based on those elements
         XCTAssertEqual(sut.initialState, MockState(subState: 0))
@@ -221,15 +229,16 @@ final class AnySpinTests: XCTestCase {
         }
 
         // When: building an AnySpin based on those feedbacks and reducer, with a declarative syntax
-        let sut = AnySpin(initialState: MockState(subState: 0)) {
+        let sut = AnySpin<MockStream<MockState>, MockStream<MockEvent>, MockExecuter>(initialState: MockState(subState: 0),
+                                                                                      executeOn: MockExecuter()) {
             MockFeedback(effect: effectAFunction)
             MockFeedback(effect: effectBFunction)
             MockFeedback(effect: effectCFunction)
             MockFeedback(effect: effectDFunction)
-            MockReducer(reducerFunction)
+            Reducer(reducerFunction)
         }
         _ = sut.effects.forEach { _ = $0(MockStream<MockState>(value: .toEmpty)) }
-        _ = sut.scheduledReducer(MockStream<MockEvent>(value: .toEmpty))
+        _ = sut.reducer(MockState.toEmpty, MockEvent.toEmpty)
 
         // Then: the AnySpin initializer produces a reactive stream based on those elements
         XCTAssertEqual(sut.initialState, MockState(subState: 0))
@@ -281,16 +290,17 @@ final class AnySpinTests: XCTestCase {
         }
 
         // When: building an AnySpin based on those feedbacks and reducer, with a declarative syntax
-        let sut = AnySpin(initialState: MockState(subState: 0)) {
+        let sut = AnySpin<MockStream<MockState>, MockStream<MockEvent>, MockExecuter>(initialState: MockState(subState: 0),
+                                                                                      executeOn: MockExecuter()) {
             MockFeedback(effect: effectAFunction)
             MockFeedback(effect: effectBFunction)
             MockFeedback(effect: effectCFunction)
             MockFeedback(effect: effectDFunction)
             MockFeedback(effect: effectEFunction)
-            MockReducer(reducerFunction)
+            Reducer(reducerFunction)
         }
         _ = sut.effects.forEach { _ = $0(MockStream<MockState>(value: .toEmpty)) }
-        _ = sut.scheduledReducer(MockStream<MockEvent>(value: .toEmpty))
+        _ = sut.reducer(MockState.toEmpty, MockEvent.toEmpty)
 
         // Then: the AnySpin initializer produces a reactive stream based on those elements
         XCTAssertEqual(sut.initialState, MockState(subState: 0))

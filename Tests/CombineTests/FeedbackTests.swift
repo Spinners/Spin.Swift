@@ -11,16 +11,12 @@ import SpinCommon
 import XCTest
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-private class SpyGear: Gear<Int> {
-    func finishEventStream() {
-        self.eventSubject.send(completion: .finished)
-    }
-}
-
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 final class FeedbackTests: XCTestCase {
+    private var subscriptions = [AnyCancellable]()
 
     func test_effect_observes_on_current_executer_when_nilExecuter_is_passed_to_initializer() throws {
+        let exp = expectation(description: "Effects")
+
         var effectIsCalled = false
         var receivedExecuterName = ""
         let expectedExecuterName = "FEEDBACK_QUEUE_\(UUID().uuidString)"
@@ -41,8 +37,12 @@ final class FeedbackTests: XCTestCase {
             .eraseToAnyPublisher()
 
         // When: executing the feedback
-        let recorder = sut.effect(inputStream).record()
-        _ = try wait(for: recorder.completion, timeout: 5)
+        sut
+            .effect(inputStream)
+            .sink(receiveCompletion: { _ in }, receiveValue: { _ in exp.fulfill() })
+            .store(in: &self.subscriptions)
+
+        waitForExpectations(timeout: 0.5)
 
         // Then: the effect is called
         // Then: the effect happens on the dedicated Executer specified in the inputStream, since no Executer has been given
@@ -52,6 +52,8 @@ final class FeedbackTests: XCTestCase {
     }
 
     func test_effect_observes_on_an_executer_when_one_is_passed_to_initializer() throws {
+        let exp = expectation(description: "Effects")
+
         var effectIsCalled = false
         var receivedExecuterName = ""
         let expectedExecuterName = "FEEDBACK_QUEUE_\(UUID().uuidString)"
@@ -71,8 +73,11 @@ final class FeedbackTests: XCTestCase {
             .eraseToAnyPublisher()
 
         // When: executing the feedback
-        let recorder = sut.effect(inputStream).record()
-        _ = try wait(for: recorder.completion, timeout: 5)
+        sut.effect(inputStream)
+            .sink(receiveCompletion: { _ in }, receiveValue: { _ in exp.fulfill() })
+            .store(in: &self.subscriptions)
+
+        waitForExpectations(timeout: 0.5)
 
         // Then: the effect is called
         // Then: the effect happens on the dedicated Executer given in the Feedback initializer, not on the one defined
@@ -82,6 +87,9 @@ final class FeedbackTests: XCTestCase {
     }
 
     func test_init_produces_a_non_cancellable_stream_when_called_with_continueOnNewEvent_strategy() throws {
+        let exp = expectation(description: "ContinueOnEvent")
+        var receivedElements = [String]()
+
         // Given: an effect that performs a long operation when given 1 as an input, and an immediate operation otherwise
         func makeLongOperationEffect(outputing: Int) -> AnyPublisher<String, Never> {
             return Future<String, Never> { (observer) in
@@ -107,14 +115,20 @@ final class FeedbackTests: XCTestCase {
         let sut = Feedback<Int, String>(effect: effect, applying: .continueOnNewState).effect
 
         // When: feeding this effect with 2 events: 1 and 2
-        let recorder = sut([1, 2].publisher.eraseToAnyPublisher()).record()
-        let receivedElements = try wait(for: recorder.elements, timeout: 5)
+        sut([1, 2].publisher.eraseToAnyPublisher())
+            .sink(receiveCompletion: { _ in exp.fulfill() }, receiveValue: { element in receivedElements.append(element) })
+            .store(in: &self.subscriptions)
+
+        waitForExpectations(timeout: 5)
 
         // Then: the stream waits for the long operation to end before completing
         XCTAssertEqual(receivedElements, ["2", "1"])
     }
 
     func test_init_produces_a_cancellable_stream_when_called_with_cancelOnNewEvent_strategy() throws {
+        let exp = expectation(description: "ContinueOnEvent")
+        var receivedElements = [String]()
+
         // Given: an effect that performs a long operation when given 1 as an input, and an immediate operation otherwise
         func makeLongOperationEffect(outputing: Int) -> AnyPublisher<String, Never> {
             return Future<String, Never> { (observer) in
@@ -140,8 +154,11 @@ final class FeedbackTests: XCTestCase {
         let sut = Feedback<Int, String>(effect: effect, applying: .cancelOnNewState).effect
 
         // When: feeding this stream with 2 events: 1 and 2
-        let recorder = sut([1, 2].publisher.eraseToAnyPublisher()).record()
-        let receivedElements = try wait(for: recorder.elements, timeout: 5)
+        sut([1, 2].publisher.eraseToAnyPublisher())
+            .sink(receiveCompletion: { _ in exp.fulfill() }, receiveValue: { element in receivedElements.append(element) })
+            .store(in: &self.subscriptions)
+
+        waitForExpectations(timeout: 5)
 
         // Then: the stream does not wait for the long operation to end before completing, the first operation is cancelled in favor
         // of the immediate one
@@ -149,6 +166,8 @@ final class FeedbackTests: XCTestCase {
     }
 
     func test_directEffect_is_used() throws {
+        let exp = expectation(description: "Effects")
+
         var effectIsCalled = false
 
         // Given: a feedback from a directEffect
@@ -160,14 +179,18 @@ final class FeedbackTests: XCTestCase {
 
         // When: executing the feedback
         let inputStream = Just<Int>(1701).eraseToAnyPublisher()
-        let recorder = sut.effect(inputStream).record()
-        _ = try wait(for: recorder.completion, timeout: 5)
+        sut.effect(inputStream)
+            .sink(receiveCompletion: { _ in exp.fulfill() }, receiveValue: { _ in })
+            .store(in: &self.subscriptions)
+
+        waitForExpectations(timeout: 0.5)
 
         // Then: the directEffect is called
         XCTAssertTrue(effectIsCalled)
     }
 
     func test_effects_are_used() throws {
+        let exp = expectation(description: "Effects")
         var effectAIsCalled = false
         var effectBIsCalled = false
 
@@ -185,8 +208,12 @@ final class FeedbackTests: XCTestCase {
 
         // When: executing the feedback
         let inputStream = Just<Int>(1701).eraseToAnyPublisher()
-        let recorder = sut.effect(inputStream).record()
-        _ = try wait(for: recorder.completion, timeout: 5)
+        sut
+            .effect(inputStream)
+            .sink(receiveCompletion: { _ in exp.fulfill() }, receiveValue: { _ in })
+            .store(in: &self.subscriptions)
+
+        waitForExpectations(timeout: 0.5)
 
         // Then: the effects are called
         XCTAssertTrue(effectAIsCalled)
@@ -194,11 +221,14 @@ final class FeedbackTests: XCTestCase {
     }
 
     func testFeedback_call_gearSideEffect_and_does_only_trigger_a_feedbackEvent_when_attachment_return_not_nil() throws {
-        let spyGear = SpyGear()
+        let exp = expectation(description: "Gear")
+
+        let gear = Gear<Int>()
         var numberOfCallsGearSideEffect = 0
+        var receivedElements = [String]()
 
         // Given: a feedback attached to a Gear and triggering en event only of the gear event is 1
-        let sut = Feedback<Int, String>(attachedTo: spyGear, propagating: { gearEvent -> String? in
+        let sut = Feedback<Int, String>(attachedTo: gear, propagating: { gearEvent -> String? in
             numberOfCallsGearSideEffect += 1
             if gearEvent == 1 {
                 return "event"
@@ -209,13 +239,17 @@ final class FeedbackTests: XCTestCase {
 
         // When: executing the feedback
         let inputStream = Just<Int>(1701).eraseToAnyPublisher()
-        let recorder = sut.effect(inputStream).record()
+        sut
+            .effect(inputStream)
+            .sink(receiveCompletion: { _ in exp.fulfill() }, receiveValue: { element in receivedElements.append(element) })
+            .store(in: &self.subscriptions)
 
         // When: sending 0 and then 1 as gear event
-        spyGear.eventSubject.send(0)
-        spyGear.eventSubject.send(1)
-        spyGear.finishEventStream()
-        let receivedElements = try wait(for: recorder.elements, timeout: 5)
+        gear.eventSubject.send(0)
+        gear.eventSubject.send(1)
+        gear.eventSubject.send(completion: .finished)
+
+        waitForExpectations(timeout: 0.5)
 
         // Then: the gear dedicated side effect is called twice
         // Then: the only event triggered by the feedback is the one when attachment is not nil

@@ -23,7 +23,7 @@ public final class UISpin<State, Event>: Spin<State, Event>, StateRenderer, Even
 
     public init(spin: Spin<State, Event>) {
         self.state = spin.initialState
-        super.init(initialState: spin.initialState, effects: spin.effects, scheduledReducer: spin.scheduledReducer)
+        super.init(initialState: spin.initialState, effects: spin.effects, reducer: spin.reducer, executer: spin.executer)
         let uiFeedback = Feedback<State, Event>(uiEffects: { [weak self] state in
             self?.state = state
             }, { [weak self] in
@@ -38,7 +38,10 @@ public final class UISpin<State, Event>: Spin<State, Event>, StateRenderer, Even
     }
 
     public func emit(_ event: Event) {
-        self.events.accept(event)
+        _ = self.executer.schedule(()) { [weak self] _ -> Disposable in
+            self?.events.accept(event)
+            return Disposables.create()
+        }
     }
 
     public func start() {

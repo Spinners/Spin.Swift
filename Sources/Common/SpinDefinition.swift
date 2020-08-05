@@ -11,8 +11,10 @@
 public protocol SpinDefinition {
     associatedtype StateStream: ReactiveStream
     associatedtype EventStream: ReactiveStream
+    associatedtype Executer
 
     var initialState: StateStream.Value { get }
     var effects: [(StateStream) -> EventStream] { get }
-    var scheduledReducer: (EventStream) -> StateStream { get }
+    var reducer: (StateStream.Value, EventStream.Value) -> StateStream.Value { get }
+    var executer: Executer { get }
 }

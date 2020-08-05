@@ -16,6 +16,10 @@ public typealias ScheduledCombineFeedback = SpinCombine.ScheduledFeedback
 public typealias CombineFeedback = SpinCombine.Feedback
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+public typealias Feedback<State, Event> =
+    ScheduledFeedback<State, Event, DispatchQueue.SchedulerTimeType, DispatchQueue.SchedulerOptions>
+
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct ScheduledFeedback<State, Event, SchedulerTime, SchedulerOptions>: FeedbackDefinition
 where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConvertible {
     public typealias StateStream = AnyPublisher<State, Never>
@@ -81,7 +85,3 @@ where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConv
         self.init(effect: effect, on: executer)
     }
 }
-
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-public typealias Feedback<State, Event> =
-    ScheduledFeedback<State, Event, DispatchQueue.SchedulerTimeType, DispatchQueue.SchedulerOptions>

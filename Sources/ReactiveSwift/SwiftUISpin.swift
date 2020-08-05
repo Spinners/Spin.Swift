@@ -14,17 +14,20 @@ import SwiftUI
 public typealias ReactiveSwiftUISpin = SpinReactiveSwift.SwiftUISpin
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-public final class SwiftUISpin<State, Event>: Spin<State, Event>, StateRenderer, EventEmitter, ObservableObject {
+public final class SwiftUISpin<State, Event>: Spin<State, Event>, StateRenderer, EventEmitter, ObservableObject
+where State: Equatable {
     @Published
     public var state: State
     private let (eventsProducer, eventsObserver) = Signal<Event, Never>.pipe()
-    private let disposeBag = CompositeDisposable()
+    private let subscriptions = CompositeDisposable()
 
-    public init(spin: Spin<State, Event>) {
+    public init(spin: Spin<State, Event>, extraRenderStateFunction: @escaping () -> Void = {}) {
         self.state = spin.initialState
-        super.init(initialState: spin.initialState, effects: spin.effects, scheduledReducer: spin.scheduledReducer)
+        super.init(initialState: spin.initialState, effects: spin.effects, reducer: spin.reducer, executer: spin.executer)
         let uiFeedback = Feedback<State, Event>(uiEffects: { [weak self] state in
+            guard state != self?.state else { return }
             self?.state = state
+            extraRenderStateFunction()
             }, { [weak self] in
                 guard let `self` = self else { return .empty }
                 return self.eventsProducer.producer
@@ -33,15 +36,17 @@ public final class SwiftUISpin<State, Event>: Spin<State, Event>, StateRenderer,
     }
 
     public func emit(_ event: Event) {
-        self.eventsObserver.send(value: event)
+        self.executer.schedule { [weak self] in
+            self?.eventsObserver.send(value: event)
+        }
     }
 
     public func start() {
-        SignalProducer.start(spin: self).disposed(by: self.disposeBag)
+        SignalProducer.start(spin: self).add(to: self.subscriptions)
     }
 
     deinit {
-        self.disposeBag.dispose()
+        self.subscriptions.dispose()
     }
 }
 #endif
