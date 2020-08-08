@@ -7,12 +7,13 @@
 
 import Combine
 import RxSwift
+import SpinCommon
 import SpinRxSwift
 import XCTest
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 final class SwiftUISpinTests: XCTestCase {
-
+    private var subscriptions = [AnyCancellable]()
     private let disposeBag = DisposeBag()
 
     func test_SwiftUISpin_sets_the_published_state_with_the_initialState_of_the_inner_spin() {
@@ -218,16 +219,17 @@ final class SwiftUISpinTests: XCTestCase {
     func test_SwiftUISpin_mutates_the_inner_state() {
         // Given: a Spin with an initialState and 1 effect
         let exp = expectation(description: "spin")
+        // we are expecting 2 fulfillment since the ui state will receive initialState and then newState
+        exp.expectedFulfillmentCount = 2
+        let expectedExecutionQueue = "com.apple.main-thread"
+        var receivedExecutionQueue = ""
+        let expectedState = "newState"
 
         let initialState = "initialState"
 
-        let feedback = Feedback<String, String>(effect: { states in
-            states.map { state -> String in
-                if state == "newState" {
-                    exp.fulfill()
-                }
-                return "event"
-            }
+        let feedback = Feedback<String, String>(effect: { (state: String) -> Observable<String> in
+            guard state == "initialState" else { return .empty() }
+            return .just("event")
         })
 
         let reducer = Reducer<String, String>({ state, _ in
@@ -239,19 +241,25 @@ final class SwiftUISpinTests: XCTestCase {
             reducer
         }
 
-        // When: building a UISpin with the Spin
+        // When: building a SwiftUISpin with the Spin
         // When: starting the spin
-        let sut = UISpin(spin: spin)
+        let sut = SwiftUISpin(spin: spin, extraRenderStateFunction: {
+            receivedExecutionQueue = DispatchQueue.currentLabel
+        })
 
         Observable
             .stream(from: sut)
-            .take(2)
             .subscribe()
             .disposed(by: self.disposeBag)
 
+        sut.$state.sink { _ in
+            exp.fulfill()
+        }.store(in: &self.subscriptions)
+
         waitForExpectations(timeout: 5)
 
-        // Then: the state is mutated
-        XCTAssertEqual(sut.state, "newState")
+        // Then: the state is mutated on the main thread
+        XCTAssertEqual(sut.state, expectedState)
+        XCTAssertEqual(receivedExecutionQueue, expectedExecutionQueue)
     }
 }

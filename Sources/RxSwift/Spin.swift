@@ -8,6 +8,6 @@
 import RxSwift
 import SpinCommon
 
-public typealias Spin<State, Event> = AnySpin<Observable<State>, Observable<Event>>
+public typealias Spin<State, Event> = AnySpin<Observable<State>, Observable<Event>, Executer>
 
 public typealias RxSpin = SpinRxSwift.Spin

@@ -12,19 +12,23 @@ import SpinCommon
 import XCTest
 
 fileprivate class SpyRenderer {
-
-    var isRenderCalled = false
     var receivedState = ""
+    var executionQueue = ""
+    let expectation: XCTestExpectation
+
+    init(expectation: XCTestExpectation) {
+        self.expectation = expectation
+    }
 
     func render(state: String) {
+        self.executionQueue = DispatchQueue.currentLabel
         self.receivedState = state
-        self.isRenderCalled = true
+        self.expectation.fulfill()
     }
 }
 
 final class UISpinTests: XCTestCase {
-
-    private let disposeBag = CompositeDisposable()
+    private let disposables = CompositeDisposable()
 
     func test_UISpin_sets_the_initial_state_with_the_initialState_of_the_inner_spin() {
         // Given: a Spin with an initialState
@@ -105,7 +109,7 @@ final class UISpinTests: XCTestCase {
             .stream(from: sut)
             .take(first: 2)
             .start()
-            .disposed(by: self.disposeBag)
+            .add(to: self.disposables)
 
         sut.emit("newEvent")
 
@@ -140,7 +144,7 @@ final class UISpinTests: XCTestCase {
         let sut = UISpin(spin: spin)
         SignalProducer
             .start(spin: sut)
-            .disposed(by: self.disposeBag)
+            .add(to: self.disposables)
 
         waitForExpectations(timeout: 5)
 
@@ -149,20 +153,21 @@ final class UISpinTests: XCTestCase {
     }
 
     func test_UISpin_runs_the_external_render_function() {
+        let exp = expectation(description: "Render")
+        // we are awaiting 2 expectations (one for each rendered state initialState/newState)
+        exp.expectedFulfillmentCount = 2
+
         // Given: a Spin with an initialState and 1 effect
         // Given: a SpyRenderer that will render the state mutations
-        let exp = expectation(description: "spin")
-        let spyRenderer = SpyRenderer()
+        let expectedState = "newState"
+        let expectedExecutionQueue = "com.apple.main-thread"
+        let spyRenderer = SpyRenderer(expectation: exp)
 
         let initialState = "initialState"
 
-        let feedback = Feedback<String, String>(effect: { states in
-            states.map { state -> String in
-                if state == "newState" {
-                    exp.fulfill()
-                }
-                return "event"
-            }
+        let feedback = Feedback<String, String>(effect: { (state: String) -> SignalProducer<String, Never> in
+            guard state == "initialState" else { return .empty }
+            return SignalProducer<String, Never>(value: "event")
         })
 
         let reducer = Reducer<String, String>({ state, _ in
@@ -181,14 +186,13 @@ final class UISpinTests: XCTestCase {
 
         SignalProducer
             .stream(from: sut)
-            .take(first: 2)
             .start()
-            .disposed(by: self.disposeBag)
+            .add(to: self.disposables)
 
-        waitForExpectations(timeout: 5)
+        waitForExpectations(timeout: 0.5)
 
-        // Then: the spyRenderer is called
-        XCTAssertTrue(spyRenderer.isRenderCalled)
-        XCTAssertEqual(spyRenderer.receivedState, "newState")
+        // Then: the spyRenderer is called on the main thread
+        XCTAssertEqual(spyRenderer.executionQueue, expectedExecutionQueue)
+        XCTAssertEqual(spyRenderer.receivedState, expectedState)
     }
 }

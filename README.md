@@ -10,7 +10,7 @@
 <img alt="Spin Logo" src="https://raw.githubusercontent.com/Spinners/Spin.Swift/master/Resources/spin-logo.png" height="250"/>
 </p>
 
-**With the recent introduction of Combine and SwiftUI, we will face some transition periods in our code base. Our applications will use both Combine and a third-party reactive framework, or both UIKit and SwiftUI, which makes it potentially difficult to guarantee a consistent architecture over time.**
+**With the introduction of Combine and SwiftUI, we will face some transition periods in our code base. Our applications will use both Combine and a third-party reactive framework, or both UIKit and SwiftUI, which makes it potentially difficult to guarantee a consistent architecture over time.**
 
 **Spin is a tool to build feedback loops within a Swift based application allowing you to use a unified syntax whatever the underlying reactive programming framework and whatever Apple UI technology you use (RxSwift, ReactiveSwift, Combine and UIKit, AppKit, SwiftUI).**
 
@@ -251,11 +251,13 @@ Choose wisely the option that fits your needs. Not cancelling previous operation
 
 Reactive programming is often associated with asynchronous execution. Even though every reactive framework comes with its own GCD abstraction, it is always about stating which scheduler the side effect should be executed on. 
 
-Spin provides a way to specify this scheduler for each feedback you add to a loop while still being as declarative as possible:
+By default, a Spin will be executed on a background thread created by the framework.
+
+However, Spin provides a way to specify a scheduler for the Spin it-self and for each feedback you add to it:
 
 ```swift
 Spinner
-    .initialState(Levels(left: 10, right: 20))
+    .initialState(Levels(left: 10, right: 20), executeOn: MainScheduler.instance)
     .feedback(Feedback(effect: leftEffect, on: SerialDispatchQueueScheduler(qos: .userInitiated)))
     .feedback(Feedback(effect: rightEffect, on: SerialDispatchQueueScheduler(qos: .userInitiated)))
     .reducer(Reducer(levelsReducer))
@@ -263,7 +265,7 @@ Spinner
 or
 
 ```swift
-Spin(initialState: Levels(left: 10, right: 20)) {
+Spin(initialState: Levels(left: 10, right: 20), executeOn: MainScheduler.instance) {
     Feedback(effect: leftEffect)
         .execute(on: SerialDispatchQueueScheduler(qos: .userInitiated))
     Feedback(effect: rightEffect)
@@ -486,7 +488,7 @@ https://github.com/Spinners/Spin.Swift.git
 Add the following entry to your Cartfile:
 
 ```
-github "Spinners/Spin.Swift" ~> 0.17.0
+github "Spinners/Spin.Swift" ~> 0.18.0
 ```
 
 and then:
@@ -500,9 +502,9 @@ carthage update Spin.Swift
 Add the following dependencies to your Podfile:
 
 ```
-pod 'SpinReactiveSwift', '~> 0.17.0'
-pod 'SpinCombine', '~> 0.17.0'
-pod 'SpinRxSwift', '~> 0.17.0'
+pod 'SpinReactiveSwift', '~> 0.18.0'
+pod 'SpinCombine', '~> 0.18.0'
+pod 'SpinRxSwift', '~> 0.18.0'
 ```
 
 You should then be able to import SpinCommon (base implementation), SpinRxSwift, SpinReactiveSwift or SpinCombine

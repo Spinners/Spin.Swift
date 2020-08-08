@@ -11,8 +11,7 @@ import SpinCommon
 import XCTest
 
 final class SignalProducer_ReactiveStream: XCTestCase {
-
-    private let disposeBag = CompositeDisposable()
+    private let disposables = CompositeDisposable()
 
     func test_reactive_stream_is_subscribed_when_spin_is_called() {
 
@@ -28,7 +27,7 @@ final class SignalProducer_ReactiveStream: XCTestCase {
                 exp.fulfill()
             })
             .start()
-            .disposed(by: self.disposeBag)
+            .add(to: self.disposables)
 
         waitForExpectations(timeout: 5)
 

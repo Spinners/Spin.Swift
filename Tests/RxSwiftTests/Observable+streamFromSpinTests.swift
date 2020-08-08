@@ -8,6 +8,7 @@
 import RxBlocking
 import RxRelay
 import RxSwift
+import SpinCommon
 import SpinRxSwift
 import XCTest
 
@@ -17,18 +18,18 @@ final class Observable_streamFromSpinTests: XCTestCase {
     func test_initialState_is_the_first_state_given_to_the_effects() {
         // Given: 2 feedbacks and 1 reducer assembled in a Spin with an initialState
         let initialState = "initialState"
-        var receivedInitialStateInEffectA = ""
-        var receivedInitialStateInEffectB = ""
+        var receivedStateInEffectA = [String]()
+        var receivedStateInEffectB = [String]()
 
         let feedbackA = Feedback<String, String>(effect: { states in
             states.map { state -> String in
-                receivedInitialStateInEffectA = state
+                receivedStateInEffectA.append(state)
                 return "event"
             }
         })
         let feedbackB = Feedback<String, String>(effect: { states in
             states.map { state -> String in
-                receivedInitialStateInEffectB = state
+                receivedStateInEffectB.append(state)
                 return "event"
             }
         })
@@ -43,14 +44,15 @@ final class Observable_streamFromSpinTests: XCTestCase {
         }
 
         // When: producing/subscribing to a stream based on the RxSpin
-        _ = Observable<String>.stream(from: spin)
+        _ = Observable<String>
+            .stream(from: spin)
             .take(1)
             .toBlocking()
             .materialize()
 
         // Then: the feedback's effects receive the initial state
-        XCTAssertEqual(receivedInitialStateInEffectA, initialState)
-        XCTAssertEqual(receivedInitialStateInEffectB, initialState)
+        XCTAssertEqual(receivedStateInEffectA[0], initialState)
+        XCTAssertEqual(receivedStateInEffectB[0], initialState)
     }
 
     func test_initialState_is_the_state_given_to_the_reducer() {
@@ -77,7 +79,7 @@ final class Observable_streamFromSpinTests: XCTestCase {
         // When: producing/subscribing to a stream based on the Spin
         _ = Observable
             .stream(from: spin)
-            .take(2)
+            .take(1)
             .toBlocking()
             .materialize()
 
@@ -114,6 +116,6 @@ final class Observable_streamFromSpinTests: XCTestCase {
         // Then: the reduce is not performed
         // Then: the feedback loop completes with no error
         XCTAssertFalse(reduceIsCalled)
-        XCTAssertEqual(events, MaterializedSequenceResult<String>.completed(elements: ["initialState"]))
+        XCTAssertEqual(events, MaterializedSequenceResult<String>.completed(elements: []))
     }
 }

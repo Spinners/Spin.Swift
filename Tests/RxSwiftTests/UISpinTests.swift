@@ -7,17 +7,23 @@
 
 import Combine
 import RxSwift
+import SpinCommon
 import SpinRxSwift
 import XCTest
 
 fileprivate class SpyRenderer {
-
-    var isRenderCalled = false
     var receivedState = ""
+    var executionQueue = ""
+    let expectation: XCTestExpectation
+
+    init(expectation: XCTestExpectation) {
+        self.expectation = expectation
+    }
 
     func render(state: String) {
+        self.executionQueue = DispatchQueue.currentLabel
         self.receivedState = state
-        self.isRenderCalled = true
+        self.expectation.fulfill()
     }
 }
 
@@ -151,17 +157,17 @@ final class UISpinTests: XCTestCase {
         // Given: a Spin with an initialState and 1 effect
         // Given: a SpyRenderer that will render the state mutations
         let exp = expectation(description: "spin")
-        let spyRenderer = SpyRenderer()
+        // we are awaiting 2 expectations (one for each rendered state initialState/newState)
+        exp.expectedFulfillmentCount = 2
+        let expectedState = "newState"
+        let expectedExecutionQueue = "com.apple.main-thread"
+        let spyRenderer = SpyRenderer(expectation: exp)
 
         let initialState = "initialState"
 
-        let feedback = Feedback<String, String>(effect: { states in
-            states.map { state -> String in
-                if state == "newState" {
-                    exp.fulfill()
-                }
-                return "event"
-            }
+        let feedback = Feedback<String, String>(effect: { (state: String) -> Observable<String> in
+            guard state == "initialState" else { return .empty() }
+            return .just("event")
         })
 
         let reducer = Reducer<String, String>({ state, _ in
@@ -180,14 +186,13 @@ final class UISpinTests: XCTestCase {
 
         Observable
             .stream(from: sut)
-            .take(2)
             .subscribe()
             .disposed(by: self.disposeBag)
 
-        waitForExpectations(timeout: 5)
+        waitForExpectations(timeout: 0.5)
 
-        // Then: the spyRenderer is called
-        XCTAssertTrue(spyRenderer.isRenderCalled)
-        XCTAssertEqual(spyRenderer.receivedState, "newState")
+        // Then: the spyRenderer is called on the main thread
+        XCTAssertEqual(spyRenderer.executionQueue, expectedExecutionQueue)
+        XCTAssertEqual(spyRenderer.receivedState, expectedState)
     }
 }

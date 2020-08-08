@@ -12,7 +12,7 @@ import XCTest
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 final class AnyPublisher_ReactiveStreamTests: XCTestCase {
-    private var disposeBag = [AnyCancellable]()
+    private var subscriptions = [AnyCancellable]()
 
     func test_reactive_stream_is_subscribed_when_spin_is_called() {
 
@@ -28,7 +28,7 @@ final class AnyPublisher_ReactiveStreamTests: XCTestCase {
                 exp.fulfill()
             })
             .subscribe()
-            .disposed(by: &self.disposeBag)
+            .store(in: &self.subscriptions)
 
         waitForExpectations(timeout: 5)
 

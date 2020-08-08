@@ -10,12 +10,6 @@ import RxSwift
 @testable import SpinRxSwift
 import XCTest
 
-private class SpyGear: Gear<Int> {
-    func finishEventStream() {
-        self.eventSubject.onCompleted()
-    }
-}
-
 final class FeedbackTests: XCTestCase {
 
     private let disposeBag = DisposeBag()
@@ -233,12 +227,12 @@ final class FeedbackTests: XCTestCase {
 
     func testFeedback_call_gearSideEffect_and_does_only_trigger_a_feedbackEvent_when_attachment_return_not_nil() {
         let exp = expectation(description: "attach")
-        let spyGear = SpyGear()
+        let gear = Gear<Int>()
         var numberOfCallsGearSideEffect = 0
         var receivedEvents = [String]()
 
         // Given: a feedback attached to a Gear and triggering en event only of the gear event is 1
-        let sut = Feedback<Int, String>(attachedTo: spyGear, propagating: { gearEvent -> String? in
+        let sut = Feedback<Int, String>(attachedTo: gear, propagating: { gearEvent -> String? in
             numberOfCallsGearSideEffect += 1
             if gearEvent == 1 {
                 return "event"
@@ -250,15 +244,18 @@ final class FeedbackTests: XCTestCase {
         // When: executing the feedback
         let inputStream = Observable<Int>.just(1701)
         sut.effect(inputStream)
-            .do(onNext: { event in receivedEvents.append(event) })
-            .do(onCompleted: { exp.fulfill() })
+            .do(onNext: { event in
+                receivedEvents.append(event)
+                if receivedEvents.count == 1 {
+                    exp.fulfill()
+                }
+            })
             .subscribe()
             .disposed(by: self.disposeBag)
 
         // When: sending 0 and then 1 as gear event
-        spyGear.eventSubject.onNext(0)
-        spyGear.eventSubject.onNext(1)
-        spyGear.finishEventStream()
+        gear.eventSubject.accept(0)
+        gear.eventSubject.accept(1)
 
         waitForExpectations(timeout: 0.5)
 

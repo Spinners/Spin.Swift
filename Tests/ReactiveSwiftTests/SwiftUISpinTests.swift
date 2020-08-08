@@ -7,13 +7,15 @@
 
 import Combine
 import ReactiveSwift
+import SpinCommon
 import SpinReactiveSwift
 import XCTest
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 final class SwiftUISpinTests: XCTestCase {
 
-    private let disposeBag = CompositeDisposable()
+    private let disposables = CompositeDisposable()
+    private var subscriptions = [AnyCancellable]()
 
     func test_SwiftUISpin_sets_the_published_state_with_the_initialState_of_the_inner_spin() {
         // Given: a Spin with an initialState
@@ -94,7 +96,7 @@ final class SwiftUISpinTests: XCTestCase {
             .stream(from: sut)
             .take(first: 2)
             .start()
-            .disposed(by: self.disposeBag)
+            .add(to: self.disposables)
 
         sut.emit("newEvent")
 
@@ -132,7 +134,7 @@ final class SwiftUISpinTests: XCTestCase {
             .stream(from: sut)
             .take(first: 2)
             .start()
-            .disposed(by: self.disposeBag)
+            .add(to: self.disposables)
 
         let binding = sut.binding(for: \.count, event: { "\($0)" })
         binding.wrappedValue = 16
@@ -171,7 +173,7 @@ final class SwiftUISpinTests: XCTestCase {
             .stream(from: sut)
             .take(first: 2)
             .start()
-            .disposed(by: self.disposeBag)
+            .add(to: self.disposables)
 
         let binding = sut.binding(for: \.count, event: "newEvent")
         binding.wrappedValue = 16
@@ -207,7 +209,7 @@ final class SwiftUISpinTests: XCTestCase {
         let sut = SwiftUISpin(spin: spin)
         SignalProducer
             .start(spin: sut)
-            .disposed(by: self.disposeBag)
+            .add(to: self.disposables)
 
         waitForExpectations(timeout: 5)
 
@@ -216,17 +218,19 @@ final class SwiftUISpinTests: XCTestCase {
     }
 
     func test_SwiftUISpin_mutates_the_inner_state() {
+        let exp = expectation(description: "SwiftUISpin")
+        // we are expecting 2 fulfillment since the ui state will receive initialState and then newState
+        exp.expectedFulfillmentCount = 2
+
         // Given: a Spin with an initialState and 1 effect
-        let exp = expectation(description: "spin")
+        let expectedExecutionQueue = "com.apple.main-thread"
+        var receivedExecutionQueue = ""
+        let expectedState = "newState"
         let initialState = "initialState"
 
-        let feedback = Feedback<String, String>(effect: { states in
-            states.map { state -> String in
-                if state == "newState" {
-                    exp.fulfill()
-                }
-                return "event"
-            }
+        let feedback = Feedback<String, String>(effect: { (state: String) -> SignalProducer<String, Never> in
+            guard state == "initialState" else { return .empty }
+            return SignalProducer<String, Never>(value: "event")
         })
 
         let reducer = Reducer<String, String>({ state, _ in
@@ -238,19 +242,25 @@ final class SwiftUISpinTests: XCTestCase {
             reducer
         }
 
-        // When: building a UISpin with the Spin
+        // When: building a SwiftUISpin with the Spin
         // When: starting the spin
-        let sut = UISpin(spin: spin)
+        let sut = SwiftUISpin(spin: spin, extraRenderStateFunction: {
+            receivedExecutionQueue = DispatchQueue.currentLabel
+        })
 
         SignalProducer
             .stream(from: sut)
-            .take(first: 2)
             .start()
-            .disposed(by: self.disposeBag)
+            .add(to: self.disposables)
 
-        waitForExpectations(timeout: 5)
+        sut.$state.sink { _ in
+            exp.fulfill()
+        }.store(in: &self.subscriptions)
 
-        // Then: the state is mutated
-        XCTAssertEqual(sut.state, "newState")
+        waitForExpectations(timeout: 0.5)
+
+        // Then: the state is mutated on the main thread
+        XCTAssertEqual(sut.state, expectedState)
+        XCTAssertEqual(receivedExecutionQueue, expectedExecutionQueue)
     }
 }

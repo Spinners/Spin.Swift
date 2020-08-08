@@ -6,24 +6,29 @@
 //
 
 import Combine
-import SpinCombine
+@testable import SpinCombine
+import SpinCommon
 import XCTest
 
 fileprivate class SpyRenderer {
-
-    var isRenderCalled = false
     var receivedState = ""
+    var executionQueue = ""
+    let expectation: XCTestExpectation
+
+    init(expectation: XCTestExpectation) {
+        self.expectation = expectation
+    }
 
     func render(state: String) {
+        self.executionQueue = DispatchQueue.currentLabel
         self.receivedState = state
-        self.isRenderCalled = true
+        self.expectation.fulfill()
     }
 }
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 final class UISpinTests: XCTestCase {
-
-    private var disposeBag = [AnyCancellable]()
+    private var subscriptions = [AnyCancellable]()
 
     func test_UISpin_sets_the_initial_state_with_the_initialState_of_the_inner_spin() {
         // Given: a Spin with an initialState
@@ -100,11 +105,11 @@ final class UISpinTests: XCTestCase {
 
         // When: building a UISpin with the Spin and running the UISpin and emitting an event
         let sut = UISpin(spin: spin)
+
         AnyPublisher
             .stream(from: sut)
-            .output(in: (0...1))
             .subscribe()
-            .disposed(by: &self.disposeBag)
+            .store(in: &self.subscriptions)
 
         sut.emit("newEvent")
 
@@ -139,7 +144,7 @@ final class UISpinTests: XCTestCase {
         let sut = UISpin(spin: spin)
         AnyPublisher
             .start(spin: sut)
-            .disposed(by: &self.disposeBag)
+            .store(in: &self.subscriptions)
 
         waitForExpectations(timeout: 5)
 
@@ -148,21 +153,26 @@ final class UISpinTests: XCTestCase {
     }
 
     func test_UISpin_runs_the_external_render_function () throws {
+        let exp = expectation(description: "Render")
+        // we are awaiting 2 expectations (one for each rendered state initialState/newState)
+        exp.expectedFulfillmentCount = 2
+
         // Given: a Spin with an initialState and 1 effect
         // Given: a SpyRenderer that will render the state mutations
-        let spyRenderer = SpyRenderer()
+        let expectedState = "newState"
+        let expectedExecutionQueue = "com.apple.main-thread"
+        let spyRenderer = SpyRenderer(expectation: exp)
 
         let initialState = "initialState"
 
-        let feedback = Feedback<String, String>(effect: { states in
-            states.map { state -> String in
-                return "event"
-            }.eraseToAnyPublisher()
+        let feedback = Feedback<String, String>(effect: { (state: String) -> AnyPublisher<String, Never> in
+            guard state == "initialState" else { return Empty().eraseToAnyPublisher() }
+            return Just<String>("event").eraseToAnyPublisher()
         })
 
-        let reducer = Reducer<String, String>({ state, _ in
+        let reducer = Reducer<String, String> { state, _ in
             return "newState"
-        })
+        }
 
         let spin = Spin<String, String>(initialState: initialState) {
             feedback
@@ -174,15 +184,15 @@ final class UISpinTests: XCTestCase {
         let sut = UISpin(spin: spin)
         sut.render(on: spyRenderer, using: { $0.render(state:) })
 
-        let recorder = AnyPublisher
+        AnyPublisher
             .stream(from: sut)
-            .output(in: (0...2))
-            .record()
+            .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+            .store(in: &self.subscriptions)
 
-        _ = try wait(for: recorder.completion, timeout: 5)
+        waitForExpectations(timeout: 0.5)
 
-        // Then: the spyRenderer is called
-        XCTAssertTrue(spyRenderer.isRenderCalled)
-        XCTAssertEqual(spyRenderer.receivedState, "newState")
+        // Then: the spyRenderer is called on the main thread
+        XCTAssertEqual(spyRenderer.executionQueue, expectedExecutionQueue)
+        XCTAssertEqual(spyRenderer.receivedState, expectedState)
     }
 }
