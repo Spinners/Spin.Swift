@@ -147,12 +147,12 @@ final class SpinIntegrationTests: XCTestCase {
 
         // Then: the states is constructed incrementally
         XCTAssertEqual(receivedStatesInEffects, ["initialState",
-                                        "initialState_a1",
-                                        "initialState_a1_b1",
-                                        "initialState_a1_b1_c1",
-                                        "initialState_a1_b1_c1_a2",
-                                        "initialState_a1_b1_c1_a2_b2",
-                                        "initialState_a1_b1_c1_a2_b2_c2"])
+                                                 "initialState_a1",
+                                                 "initialState_a1_b1",
+                                                 "initialState_a1_b1_c1",
+                                                 "initialState_a1_b1_c1_a2",
+                                                 "initialState_a1_b1_c1_a2_b2",
+                                                 "initialState_a1_b1_c1_a2_b2_c2"])
     }
 }
 
@@ -203,7 +203,8 @@ extension SpinIntegrationTests {
     }
 
     func testAttach_trigger_checkAuthorizationSpin_when_fetchFeatureSpin_trigger_gear() {
-        let exp = expectation(description: "Gear")
+        let exp1 = expectation(description: "Check Spin is initialized")
+        let exp2 = expectation(description: "Gear")
 
         var receivedCheckAuthorization = [CheckAuthorizationSpinState]()
         var receivedFeatureStates = [FetchFeatureSpinState]()
@@ -221,8 +222,11 @@ extension SpinIntegrationTests {
 
         let spyEffectCheckAuthorizationSpin = { (state: CheckAuthorizationSpinState) -> AnyPublisher<CheckAuthorizationSpinEvent, Never> in
             receivedCheckAuthorization.append(state)
+            if state == .initial {
+                exp1.fulfill()
+            }
             if state == .userHasBeenRevoked {
-                exp.fulfill()
+                exp2.fulfill()
             }
             return Empty().eraseToAnyPublisher()
         }
@@ -233,16 +237,18 @@ extension SpinIntegrationTests {
             .sink(receiveCompletion: { _ in }, receiveValue: { _ in } )
             .store(in: &self.subscriptions)
 
+        wait(for: [exp1], timeout: 0.5)
+
         AnyPublisher.stream(from:fetchFeatureSpin)
             .sink(receiveCompletion: { _ in }, receiveValue: { _ in } )
             .store(in: &self.subscriptions)
 
-        waitForExpectations(timeout: 0.5)
+        wait(for: [exp2], timeout: 0.5)
 
         // Then: the stream of states produced by the spins are the expected one thanks to the propagation of the gear
-        XCTAssertEqual(receivedCheckAuthorization[0], .initial)
         XCTAssertEqual(receivedFeatureStates[0], .initial)
         XCTAssertEqual(receivedFeatureStates[1], .unauthorized)
+        XCTAssertEqual(receivedCheckAuthorization[0], .initial)
         XCTAssertEqual(receivedCheckAuthorization[1], .authorizationShouldBeChecked)
         XCTAssertEqual(receivedCheckAuthorization[2], .userHasBeenRevoked)
     }
@@ -267,12 +273,13 @@ private extension SpinIntegrationTests {
             return Just<CheckAuthorizationSpinEvent>(.revokeUser).eraseToAnyPublisher()
         }
 
-        let attachedCheckAuthorizationFeedback = Feedback<CheckAuthorizationSpinState, CheckAuthorizationSpinEvent>(attachedTo: gear,
-                                                                                                                    propagating: { (event: GearEvent) in
-                                                                                                                        if event == .authorizedIssueDetected {
-                                                                                                                            return CheckAuthorizationSpinEvent.checkAuthorization
-                                                                                                                        }
-                                                                                                                        return nil
+        let attachedCheckAuthorizationFeedback = Feedback<CheckAuthorizationSpinState, CheckAuthorizationSpinEvent>(
+            attachedTo: gear,
+            propagating: { (event: GearEvent) in
+                if event == .authorizedIssueDetected {
+                    return CheckAuthorizationSpinEvent.checkAuthorization
+                }
+                return nil
         })
 
         let spin = Spin<CheckAuthorizationSpinState, CheckAuthorizationSpinEvent>(initialState: .initial) {
@@ -299,12 +306,13 @@ private extension SpinIntegrationTests {
             return Just<FetchFeatureSpinEvent>(.userIsNotAuthorized).eraseToAnyPublisher()
         }
 
-        let attachedFetchFeatureFeedback = Feedback<FetchFeatureSpinState, FetchFeatureSpinEvent>(attachedTo: gear,
-                                                                                                  propagating: { (state: FetchFeatureSpinState) in
-                                                                                                    if state == .unauthorized {
-                                                                                                        return GearEvent.authorizedIssueDetected
-                                                                                                    }
-                                                                                                    return nil
+        let attachedFetchFeatureFeedback = Feedback<FetchFeatureSpinState, FetchFeatureSpinEvent>(
+            attachedTo: gear,
+            propagating: { (state: FetchFeatureSpinState) in
+                if state == .unauthorized {
+                    return GearEvent.authorizedIssueDetected
+                }
+                return nil
         })
 
         let spin = Spin<FetchFeatureSpinState, FetchFeatureSpinEvent>(initialState: .initial) {

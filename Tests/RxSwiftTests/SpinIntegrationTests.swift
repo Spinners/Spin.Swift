@@ -193,7 +193,8 @@ extension SpinIntegrationTests {
     }
 
     func testAttach_trigger_checkAuthorizationSpin_when_fetchFeatureSpin_trigger_gear() {
-        let exp = expectation(description: "Gear")
+        let exp1 = expectation(description: "Check Spin is initialized")
+        let exp2 = expectation(description: "Gear")
 
         var receivedCheckAuthorization = [CheckAuthorizationSpinState]()
         var receivedFeatureStates = [FetchFeatureSpinState]()
@@ -211,8 +212,11 @@ extension SpinIntegrationTests {
 
         let spyEffectCheckAuthorizationSpin = { (state: CheckAuthorizationSpinState) -> Observable<CheckAuthorizationSpinEvent> in
             receivedCheckAuthorization.append(state)
+            if state == .initial {
+                exp1.fulfill()
+            }
             if state == .userHasBeenRevoked {
-                exp.fulfill()
+                exp2.fulfill()
             }
             return .empty()
         }
@@ -224,17 +228,19 @@ extension SpinIntegrationTests {
             .subscribe()
             .disposed(by: self.disposeBag)
 
+        wait(for: [exp1], timeout: 0.5)
+
         Observable
             .stream(from:fetchFeatureSpin)
             .subscribe()
             .disposed(by: self.disposeBag)
 
-        waitForExpectations(timeout: 0.5)
+        wait(for: [exp2], timeout: 0.5)
 
         // Then: the stream of states produced by the spins are the expected one thanks to the propagation of the gear
-        XCTAssertEqual(receivedCheckAuthorization[0], .initial)
         XCTAssertEqual(receivedFeatureStates[0], .initial)
         XCTAssertEqual(receivedFeatureStates[1], .unauthorized)
+        XCTAssertEqual(receivedCheckAuthorization[0], .initial)
         XCTAssertEqual(receivedCheckAuthorization[1], .authorizationShouldBeChecked)
         XCTAssertEqual(receivedCheckAuthorization[2], .userHasBeenRevoked)
     }
