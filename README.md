@@ -276,8 +276,6 @@ Spin(initialState: Levels(left: 10, right: 20), executeOn: MainScheduler.instanc
 
 Of course, it remains possible to handle the Schedulers by yourself inside the feedback functions.
 
-Please note that reducers are executed on default schedulers to handle things like reentrancy or handling events in a serial way. This behaviour can be overridden by passing a custom scheduler to the Reducer you create.
-
 # Using Spin in a UIKit or AppKit based app
 
 Although a feedback loop can exist by itself without any visualization, it makes more sense in our developer world to use it as a way to produce a State that we be rendered on screen and to handle events emitted by the users.
