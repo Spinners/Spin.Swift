@@ -151,40 +151,56 @@ final class SpinIntegrationTests: XCTestCase {
         let exp = expectation(description: "Scheduling")
 
         let expectedReducerQueueLabel = "SPIN_QUEUE_\(UUID())"
-        let expectedFeedbackQueueLabel = "FEEDBACK_QUEUE_\(UUID())"
+        let expectedFeedback1QueueLabel = "FEEDBACK1_QUEUE_\(UUID())"
+        let expectedFeedback2QueueLabel = "FEEDBACK2_QUEUE_\(UUID())"
 
         var receivedReducerQueueLabel = ""
-        var receivedFeedbackQueueLabel = ""
+        var receivedFeedback1QueueLabel = ""
+        var receivedFeedback2QueueLabel = ""
 
-        let spinQueue = QueueScheduler(qos: .default, name: expectedReducerQueueLabel)
-        let feedbackQueue = QueueScheduler(qos: .default, name: expectedFeedbackQueueLabel)
+        let spinQueue = DispatchQueue(label: expectedReducerQueueLabel)
+        let feedback1Queue = DispatchQueue(label: expectedFeedback1QueueLabel)
+        let feedback2Queue = DispatchQueue(label: expectedFeedback2QueueLabel)
+
+        let spinScheduler = QueueScheduler(qos: .default, name: expectedReducerQueueLabel, targeting: spinQueue)
+        let feedback1Scheduler = QueueScheduler(qos: .default, name: expectedFeedback1QueueLabel, targeting: feedback1Queue)
+        let feedback2Scheduler = QueueScheduler(qos: .default, name: expectedFeedback2QueueLabel, targeting: feedback2Queue)
 
         let spyReducer: (String, String) -> String = { _, _ in
             receivedReducerQueueLabel = DispatchQueue.currentLabel
             return ""
         }
 
-        let spyFeedback: (SignalProducer<String, Never>) -> SignalProducer<String, Never> = { states in
+        let spyFeedback1: (SignalProducer<String, Never>) -> SignalProducer<String, Never> = { states in
             states.map {
-                receivedFeedbackQueueLabel = DispatchQueue.currentLabel
+                receivedFeedback1QueueLabel = DispatchQueue.currentLabel
                 return $0
             }
         }
 
-        let sut = Spin<String, String>(initialState: "initialState", executeOn: spinQueue) {
-            Feedback<String, String>(effect: spyFeedback).execute(on: feedbackQueue)
+        let spyFeedback2: (SignalProducer<String, Never>) -> SignalProducer<String, Never> = { states in
+            states.map {
+                receivedFeedback2QueueLabel = DispatchQueue.currentLabel
+                return $0
+            }
+        }
+
+        let sut = Spin<String, String>(initialState: "initialState", executeOn: spinScheduler) {
+            Feedback<String, String>(effect: spyFeedback1).execute(on: feedback1Scheduler)
+            Feedback<String, String>(effect: spyFeedback2).execute(on: feedback2Scheduler)
             Reducer<String, String>(spyReducer)
         }
 
         SignalProducer
             .stream(from: sut)
-            .take(first: 2)
+            .take(first: 3)
             .startWithCompleted { exp.fulfill() }
             .add(to: self.disposables)
 
         waitForExpectations(timeout: 0.5)
 
-        XCTAssertEqual(receivedFeedbackQueueLabel, expectedFeedbackQueueLabel)
+        XCTAssertEqual(receivedFeedback1QueueLabel, expectedFeedback1QueueLabel)
+        XCTAssertEqual(receivedFeedback2QueueLabel, expectedFeedback2QueueLabel)
         XCTAssertEqual(receivedReducerQueueLabel, expectedReducerQueueLabel)
     }
 }

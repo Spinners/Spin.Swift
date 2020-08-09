@@ -12,6 +12,8 @@ import SpinCommon
 public class Executer: ExecuterDefinition {
     public typealias Executer = Scheduler
     public static func defaultSpinExecuter() -> Executer {
-        QueueScheduler(qos: .default, name: "io.warpfactor.spin.dispatch-queue.\(UUID())")
+        let queueName = "io.warpfactor.spin.dispatch-queue.\(UUID())"
+        let dispatchQueue = DispatchQueue(label: queueName)
+        return QueueScheduler(qos: .default, name: queueName, targeting: dispatchQueue)
     }
 }

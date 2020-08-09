@@ -159,28 +159,39 @@ final class SpinIntegrationTests: XCTestCase {
         let exp = expectation(description: "Scheduling")
 
         let expectedReducerQueueLabel = "SPIN_QUEUE_\(UUID())"
-        let expectedFeedbackQueueLabel = "FEEDBACK_QUEUE_\(UUID())"
+        let expectedFeedback1QueueLabel = "FEEDBACK1_QUEUE_\(UUID())"
+        let expectedFeedback2QueueLabel = "FEEDBACK2_QUEUE_\(UUID())"
 
         var receivedReducerQueueLabel = ""
-        var receivedFeedbackQueueLabel = ""
+        var receivedFeedback1QueueLabel = ""
+        var receivedFeedback2QueueLabel = ""
 
         let spinQueue = DispatchQueue(label: expectedReducerQueueLabel)
-        let feedbackQueue = DispatchQueue(label: expectedFeedbackQueueLabel)
+        let feedback1Queue = DispatchQueue(label: expectedFeedback1QueueLabel)
+        let feedback2Queue = DispatchQueue(label: expectedFeedback2QueueLabel)
 
         let spyReducer: (String, String) -> String = { _, _ in
             receivedReducerQueueLabel = DispatchQueue.currentLabel
             return ""
         }
 
-        let spyFeedback: (AnyPublisher<String, Never>) -> AnyPublisher<String, Never> = { states in
+        let spyFeedback1: (AnyPublisher<String, Never>) -> AnyPublisher<String, Never> = { states in
             states.map {
-                receivedFeedbackQueueLabel = DispatchQueue.currentLabel
+                receivedFeedback1QueueLabel = DispatchQueue.currentLabel
+                return $0
+            }.eraseToAnyPublisher()
+        }
+
+        let spyFeedback2: (AnyPublisher<String, Never>) -> AnyPublisher<String, Never> = { states in
+            states.map {
+                receivedFeedback2QueueLabel = DispatchQueue.currentLabel
                 return $0
             }.eraseToAnyPublisher()
         }
 
         let sut = Spin<String, String>(initialState: "initialState", executeOn: spinQueue) {
-            Feedback<String, String>(effect: spyFeedback).execute(on: feedbackQueue.eraseToAnyScheduler())
+            Feedback<String, String>(effect: spyFeedback1).execute(on: feedback1Queue.eraseToAnyScheduler())
+            Feedback<String, String>(effect: spyFeedback2).execute(on: feedback2Queue.eraseToAnyScheduler())
             Reducer<String, String>(spyReducer)
         }
 
@@ -192,7 +203,8 @@ final class SpinIntegrationTests: XCTestCase {
 
         waitForExpectations(timeout: 0.5)
 
-        XCTAssertEqual(receivedFeedbackQueueLabel, expectedFeedbackQueueLabel)
+        XCTAssertEqual(receivedFeedback1QueueLabel, expectedFeedback1QueueLabel)
+        XCTAssertEqual(receivedFeedback2QueueLabel, expectedFeedback2QueueLabel)
         XCTAssertEqual(receivedReducerQueueLabel, expectedReducerQueueLabel)
     }
 }

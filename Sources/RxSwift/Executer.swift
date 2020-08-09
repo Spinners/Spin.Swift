@@ -12,6 +12,8 @@ import SpinCommon
 public class Executer: ExecuterDefinition {
     public typealias Executer = ImmediateSchedulerType
     public static func defaultSpinExecuter() -> Executer {
-        SerialDispatchQueueScheduler(internalSerialQueueName: "io.warpfactor.spin.dispatch-queue.\(UUID())")
+        let queueName = "io.warpfactor.spin.dispatch-queue.\(UUID())"
+        let dispatchQueue = DispatchQueue(label: queueName)
+        return SerialDispatchQueueScheduler(queue: dispatchQueue, internalSerialQueueName: queueName)
     }
 }
