@@ -10,6 +10,17 @@ import XCTest
 
 final class AnySpinTests: XCTestCase {
 
+    func test_initialize_without_executer_uses_default_executer() {
+        // Given: a Spin instantiated without an Executer
+        let sut = AnySpin<MockStream<MockState>, MockStream<MockEvent>, MockExecuter>(initialState: .init(subState: 0),
+                                                                                      effects: [],
+                                                                                      reducer: { _, _ in .toEmpty})
+
+        // When: getting the used Executer
+        // Then: this is the default one
+        XCTAssertEqual(sut.executer, MockExecuter.defaultSpinExecuter())
+    }
+
     func test_initialize_with_several_effects_and_a_reducer_makes_a_stream_based_on_those_elements() {
         // Given: some effects and a reducer
         var effectAIsCalled = false

@@ -145,6 +145,48 @@ final class SpinIntegrationTests: XCTestCase {
                                                  "initialState_a1_b1_c1_a2_b2",
                                                  "initialState_a1_b1_c1_a2_b2_c2"])
     }
+
+    func test_reducer_and_feedback_are_executed_on_specified_executers() {
+        let exp = expectation(description: "Scheduling")
+
+        let expectedReducerQueueLabel = "SPIN_QUEUE_\(UUID())"
+        let expectedFeedbackQueueLabel = "FEEDBACK_QUEUE_\(UUID())"
+
+        var receivedReducerQueueLabel = ""
+        var receivedFeedbackQueueLabel = ""
+
+        let spinQueue = SerialDispatchQueueScheduler(internalSerialQueueName: expectedReducerQueueLabel)
+        let feedbackQueue = SerialDispatchQueueScheduler(internalSerialQueueName: expectedFeedbackQueueLabel)
+
+        let spyReducer: (String, String) -> String = { _, _ in
+            receivedReducerQueueLabel = DispatchQueue.currentLabel
+            return ""
+        }
+
+        let spyFeedback: (Observable<String>) -> Observable<String> = { states in
+            states.map {
+                receivedFeedbackQueueLabel = DispatchQueue.currentLabel
+                return $0
+            }
+        }
+
+        let sut = Spin<String, String>(initialState: "initialState", executeOn: spinQueue) {
+            Feedback<String, String>(effect: spyFeedback).execute(on: feedbackQueue)
+            Reducer<String, String>(spyReducer)
+        }
+
+        Observable
+            .stream(from: sut)
+            .take(1)
+            .do(onCompleted: { exp.fulfill() })
+            .subscribe()
+            .disposed(by: self.disposeBag)
+
+        waitForExpectations(timeout: 0.5)
+
+        XCTAssertEqual(receivedFeedbackQueueLabel, expectedFeedbackQueueLabel)
+        XCTAssertEqual(receivedReducerQueueLabel, expectedReducerQueueLabel)
+    }
 }
 
 extension SpinIntegrationTests {

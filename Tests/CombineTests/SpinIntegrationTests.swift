@@ -154,6 +154,47 @@ final class SpinIntegrationTests: XCTestCase {
                                                  "initialState_a1_b1_c1_a2_b2",
                                                  "initialState_a1_b1_c1_a2_b2_c2"])
     }
+
+    func test_reducer_and_feedback_are_executed_on_specified_executers() {
+        let exp = expectation(description: "Scheduling")
+
+        let expectedReducerQueueLabel = "SPIN_QUEUE_\(UUID())"
+        let expectedFeedbackQueueLabel = "FEEDBACK_QUEUE_\(UUID())"
+
+        var receivedReducerQueueLabel = ""
+        var receivedFeedbackQueueLabel = ""
+
+        let spinQueue = DispatchQueue(label: expectedReducerQueueLabel)
+        let feedbackQueue = DispatchQueue(label: expectedFeedbackQueueLabel)
+
+        let spyReducer: (String, String) -> String = { _, _ in
+            receivedReducerQueueLabel = DispatchQueue.currentLabel
+            return ""
+        }
+
+        let spyFeedback: (AnyPublisher<String, Never>) -> AnyPublisher<String, Never> = { states in
+            states.map {
+                receivedFeedbackQueueLabel = DispatchQueue.currentLabel
+                return $0
+            }.eraseToAnyPublisher()
+        }
+
+        let sut = Spin<String, String>(initialState: "initialState", executeOn: spinQueue) {
+            Feedback<String, String>(effect: spyFeedback).execute(on: feedbackQueue.eraseToAnyScheduler())
+            Reducer<String, String>(spyReducer)
+        }
+
+        AnyPublisher
+            .stream(from: sut)
+            .output(in: 0...0)
+            .sink(receiveCompletion: { _ in exp.fulfill() }, receiveValue: { _ in })
+            .store(in: &self.subscriptions)
+
+        waitForExpectations(timeout: 0.5)
+
+        XCTAssertEqual(receivedFeedbackQueueLabel, expectedFeedbackQueueLabel)
+        XCTAssertEqual(receivedReducerQueueLabel, expectedReducerQueueLabel)
+    }
 }
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)

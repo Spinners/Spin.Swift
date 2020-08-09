@@ -10,9 +10,9 @@ import Foundation
 
 struct MockExecuter: ExecuterDefinition, Equatable {
     typealias Executer = MockExecuter
-    let id = UUID().uuidString
+    var id = UUID().uuidString
 
     static func defaultSpinExecuter() -> Executer {
-        MockExecuter()
+        MockExecuter(id: "defaultExecuter")
     }
 }
