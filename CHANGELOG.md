@@ -1,6 +1,6 @@
 **version 0.19.0**:
 
-* add helper constructor for Feedback to be able to pass there dependencies
+* add helper constructors for Feedback to be able to pass dependencies
 
 **version 0.18.0**:
 
