@@ -412,7 +412,7 @@ enum GearEvent {
 let gear = Gear<GearEvent>()
 ```
 
-We have to tell a Feedback from the check authorization Spin how to react to events happening in the Gear:
+We have to tell a feedback from the check authorization Spin how to react to events happening in the Gear:
 
 ```swift
 let feedback = Feedback<State, Event>(attachedTo: gear, propagating: { (event: GearEvent) in
@@ -428,7 +428,7 @@ let feedback = Feedback<State, Event>(attachedTo: gear, propagating: { (event: G
 ...
 ```
 
-At last we have to tell Feedback from the feature Spin how it will push events in the Gear:
+At last we have to tell a feedback from the feature Spin how it will push events in the Gear:
 
 ```swift
 let feedback = Feedback<State, Event>(attachedTo: gear, propagating: { (state: State) in
