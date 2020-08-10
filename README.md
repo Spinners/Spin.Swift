@@ -25,6 +25,7 @@
 - <a href="#the-multiple-ways-to-create-a-feedback">The multiple ways to create a Feedback</a>
 - <a href="#feedback-lifecycle">Feedback lifecycle</a>
 - <a href="#feedbacks-and-scheduling">Feedbacks and scheduling</a>
+- <a href="#what-about-dependencies-in-feedbacks">What about dependencies in Feedbacks</a>
 - <a href="#using-spin-in-a-uikit-or-appkit-based-app">Using Spin in a UIKit or AppKit based app</a>
 - <a href="#using-spin-in-a-swiftUI-based-app">Using Spin in a SwiftUI based app</a>
 - <a href="#using-spin-with-multiple-reactive-frameworks">Using Spin with multiple Reactive Frameworks</a>
@@ -275,6 +276,90 @@ Spin(initialState: Levels(left: 10, right: 20), executeOn: MainScheduler.instanc
 ```
 
 Of course, it remains possible to handle the Schedulers by yourself inside the feedback functions.
+
+# What about dependencies in Feedbacks
+
+As we saw, a Feedback is a wrapper around a side effect. Side effects, by definition, will need some dependencies to perform their work. Things like: a network service, some persistence tools, a cryptographic 
+utility and so on.
+
+However, side effects signature don't allow to pass dependencies, only a state. How can we take those deps into account ?
+
+These are three possible technics:
+
+### 1: Use a container type
+
+```swift
+class MyUseCase {
+    private let networkService: NetworkService
+    private let cryptographicTool: CryptographicTool
+    
+    init(networkService: NetworkService, cryptographicTool: CryptographicTool) {
+        self.networkService = networkService
+        self.cryptographicTool = cryptographicTool
+    }
+    
+    func load(state: MyState) -> AnyPublisher<MyEvent, Never> {
+        guard state == .loading else return { Empty().eraseToAnyPublisher() }
+        
+        // use the deps here
+        self.networkService
+            .fetch()
+            .map { [cryptographicTool] in cryptographicTool.decrypt($0) }
+            ...
+    }
+}
+
+// then we can build a Feedback with this UseCase
+let myUseCase = MyUseCase(networkService: MyNetworkService(), cryptographicTool: MyCryptographicTool())
+let feedback = Feedback(effect: myUseCase.load)
+```
+
+This technic has the benefit to be very familiar in terms of conception and could be compatible with existing patterns in your application.
+
+It has the downside of forcing us to be careful while capturing dependencies in the side effect.
+
+### 2: Use a feedback factory function
+
+In the previous technic, we use the MyUseCase only as a container of dependencies. It has no other usage than that. We can get rid of it by using a function (global or static) that will receive our dependencies and help capture them in the side effect:
+
+```swift
+typealias LoadEffect: (MyState) -> AnyPublisher<MyEvent, Never>
+func makeLoadEffect(networkService: NetworkService, cryptographicTool: CryptographicTool) -> LoadEffect {
+   return { state in
+       guard state == .loading else return { Empty().eraseToAnyPublisher() }
+       
+       networkService
+            .fetch()
+            .map { cryptographicTool.decrypt($0) }
+            ...
+   }
+} 
+
+// then we can build a Feedback using this factory function
+let effect = makeLoadEffect(networkService: MyNetworkService(), cryptographicTool: MyCryptographicTool())
+let feedback = Feedback(effect: effect)
+```
+
+### 3: Use the built-in Feedback initializer
+
+Spin comes with some Feedback initializers that ease the injection of dependencies. Under the hood, it uses a generic technic derived from the above one.
+
+```swift
+func loadEffect(networkService: NetworkService,
+                cryptographicTool: CryptographicTool,
+                state: MyState) -> AnyPublisher<MyEvent, Never> {
+    guard state == .loading else return { Empty().eraseToAnyPublisher() }
+    
+    networkService
+            .fetch()
+            .map 
+}
+
+// then we can build a Feedback directly using the appropriate initializer
+let feedback = Feedback(effect: effect, dep1: MyNetworkService(), dep2: MyCryptographicTool())
+```
+
+Among those 3 technics it is the less verbose one. It feels a little bit like magic but simply uses partialization under the hood.
 
 # Using Spin in a UIKit or AppKit based app
 
