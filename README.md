@@ -282,7 +282,7 @@ Of course, it remains possible to handle the Schedulers by yourself inside the f
 As we saw, a Feedback is a wrapper around a side effect. Side effects, by definition, will need some dependencies to perform their work. Things like: a network service, some persistence tools, a cryptographic 
 utility and so on.
 
-However, side effects signature don't allow to pass dependencies, only a state. How can we take those deps into account ?
+However, the side effect signature doesn't allow to pass dependencies, only a state. How can we take those deps into account ?
 
 These are three possible technics:
 
