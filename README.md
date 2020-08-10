@@ -391,11 +391,11 @@ All the Demo applications use the three reactive frameworks at the same time. Bu
 
 There are some use cases where two (or more) feedback loops have to talk together directly, without involving existing side effects (like the UI for instance).
 
-A typical use case would be when you have a feedbackloop that handles the routing of your application and checks for the user's authentication state when the app starts. If the user is authorized then the home screen is presented, otherwise a login screen is presented. Assuredly, once authorized, the user will use features that fetch data from a backend and as a consequence that can lead to a authorization issues. In that case you'd like the feedbackloops that drive those features to communicate with the routing one in order to trigger a new authorization state checking.
+A typical use case would be when you have a feedback loop that handles the routing of your application and checks for the user's authentication state when the app starts. If the user is authorized then the home screen is presented, otherwise a login screen is presented. Assuredly, once authorized, the user will use features that fetch data from a backend and as a consequence that can lead to authorization issues. In that case you'd like the loops that drive those features to communicate with the routing one in order to trigger a new authorization state checking.
 
 In design patterns, this kind of need is fulfilled thanks to a Mediator. This is a transversale object used as a communication bus between independent systems.
 
-The mediator equivalent in Spin is called a Gear. A Gear can be attached to several feedbacks, allowing them to push and receive events.
+In Spin, the mediator equivalent is called a **Gear**. A Gear can be attached to several feedbacks, allowing them to push and receive events.
 
 <img alt="Gear" src="https://raw.githubusercontent.com/Spinners/Spin.Swift/master/Resources/gear.png" border="1"/>
 
