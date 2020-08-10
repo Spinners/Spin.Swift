@@ -106,6 +106,7 @@
 		744F1EA224CE20F500997FC9 /* Gear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744F1E9524CE205A00997FC9 /* Gear.swift */; };
 		744F1EA324CE20F500997FC9 /* Gear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744F1E9524CE205A00997FC9 /* Gear.swift */; };
 		744F1EA424CE20F600997FC9 /* Gear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744F1E9524CE205A00997FC9 /* Gear.swift */; };
+		7478874224E1F7FC00698BE0 /* Partial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7478874124E1F7FC00698BE0 /* Partial.swift */; };
 		747B70852444F23200C863C2 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 747B70832444F23200C863C2 /* RxRelay.framework */; };
 		747B70872444F23200C863C2 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 747B70842444F23200C863C2 /* RxSwift.framework */; };
 		747B708C2444F26F00C863C2 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 747B708A2444F26E00C863C2 /* RxRelay.framework */; };
@@ -305,6 +306,7 @@
 		744F1E9324CE205000997FC9 /* Gear.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gear.swift; sourceTree = "<group>"; };
 		744F1E9524CE205A00997FC9 /* Gear.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gear.swift; sourceTree = "<group>"; };
 		744F1E9724CE206100997FC9 /* GearDefinition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GearDefinition.swift; sourceTree = "<group>"; };
+		7478874124E1F7FC00698BE0 /* Partial.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Partial.swift; sourceTree = "<group>"; };
 		747B70832444F23200C863C2 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = Carthage/Build/watchOS/RxRelay.framework; sourceTree = "<group>"; };
 		747B70842444F23200C863C2 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/watchOS/RxSwift.framework; sourceTree = "<group>"; };
 		747B708A2444F26E00C863C2 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = Carthage/Build/tvOS/RxRelay.framework; sourceTree = "<group>"; };
@@ -645,6 +647,7 @@
 		74FB604D2443BAC30054C286 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				7478874124E1F7FC00698BE0 /* Partial.swift */,
 				749A9C9324DCF9D70095032C /* AnySpinner.swift */,
 				749A9C9124DCF9D60095032C /* ExecuterDefinition.swift */,
 				749A9C9224DCF9D60095032C /* Reducer.swift */,
@@ -1309,6 +1312,7 @@
 				742CD3672443FD7100A9AB4C /* SpinDefinition.swift in Sources */,
 				749A9C9524DCF9D70095032C /* Reducer.swift in Sources */,
 				742CD36A2443FD7100A9AB4C /* AnySpin.swift in Sources */,
+				7478874224E1F7FC00698BE0 /* Partial.swift in Sources */,
 				742CD36E2443FD7100A9AB4C /* EventEmitter.swift in Sources */,
 				742CD36D2443FD7100A9AB4C /* FeedbackDefinition+Default.swift in Sources */,
 				742CD3682443FD7100A9AB4C /* ReactiveStream.swift in Sources */,
@@ -1604,7 +1608,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1640,7 +1644,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1674,7 +1678,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCommon;
 				PRODUCT_NAME = SpinCommon;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1705,7 +1709,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCommon;
 				PRODUCT_NAME = SpinCommon;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1740,7 +1744,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1774,7 +1778,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1808,7 +1812,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1844,7 +1848,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1880,7 +1884,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1915,7 +1919,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinReactiveSwift;
 				PRODUCT_NAME = SpinReactiveSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1946,7 +1950,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1977,7 +1981,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2010,7 +2014,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2039,7 +2043,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2068,7 +2072,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2099,7 +2103,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2130,7 +2134,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2160,7 +2164,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinCombine;
 				PRODUCT_NAME = SpinCombine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2315,7 +2319,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2351,7 +2355,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2389,7 +2393,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2423,7 +2427,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2457,7 +2461,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2493,7 +2497,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2529,7 +2533,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2564,7 +2568,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MARKETING_VERSION = 0.18.0;
+				MARKETING_VERSION = 0.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.spinners.SpinRxSwift;
 				PRODUCT_NAME = SpinRxSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
