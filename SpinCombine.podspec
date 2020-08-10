@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = "SpinCombine"
-  s.version = "0.18.0"
+  s.version = "0.19.0"
   s.swift_version = "5.2.2"
   s.summary = "Spin is a tool whose only purpose is to help you build feedback loops called Spins"
   s.description = <<-DESC
@@ -22,6 +22,6 @@ Spin is a tool to build feedback loops within a Swift based application allowing
 
   s.source_files = 'Sources/Combine/*.swift'
 
-  s.dependency 'SpinCommon', '>= 0.18.0'
+  s.dependency 'SpinCommon', '>= 0.19.0'
 
 end

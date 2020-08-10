@@ -397,4 +397,104 @@ final class FeedbackDefinition_DefaultTests: XCTestCase {
         XCTAssertEqual(spyExecutionStrategy, MockFeedback<MockState, MockEvent>.defaultExecutionStrategy)
         XCTAssertEqual(spyGear.receivedEvent, expectedMockGearEvent)
     }
+
+    func test_initializer_transmit_one_dependency_to_effect() {
+        let expectedDep1 = "Dep1"
+        var receivedDep1: String?
+
+        // Given: an effect that takes 1 dependency
+        let effect: (String, MockState) -> MockStream<MockEvent> = { dep1, state in
+            receivedDep1 = dep1
+            return .init(value: .init(value: 0))
+        }
+
+        // When: creating a feedback from it, passing its dependency
+        let sut = SpyFeedback<MockState, MockEvent>(effect: effect, dep1: expectedDep1)
+        // When: executing the feedback
+        _ = sut.effect(.init(value: .init(subState: 0)))
+
+        // Then: the dependency given to the effect is the expected one
+        XCTAssertEqual(receivedDep1, expectedDep1)
+    }
+
+    func test_initializer_transmit_two_dependencies_to_effect() {
+        let expectedDep1 = "Dep1"
+        let expectedDep2 = "Dep2"
+        var receivedDep1: String?
+        var receivedDep2: String?
+
+        // Given: an effect that takes 2 dependencies
+        let effect: (String, String, MockState) -> MockStream<MockEvent> = { dep1, dep2, state in
+            receivedDep1 = dep1
+            receivedDep2 = dep2
+            return .init(value: .init(value: 0))
+        }
+
+        // When: creating a feedback from it, passing its dependencies
+        let sut = SpyFeedback<MockState, MockEvent>(effect: effect, dep1: expectedDep1, dep2: expectedDep2)
+        // When: executing the feedback
+        _ = sut.effect(.init(value: .init(subState: 0)))
+
+        // Then: the dependencies given to the effect are the expected ones
+        XCTAssertEqual(receivedDep1, expectedDep1)
+        XCTAssertEqual(receivedDep2, expectedDep2)
+    }
+
+    func test_initializer_transmit_three_dependencies_to_effect() {
+        let expectedDep1 = "Dep1"
+        let expectedDep2 = "Dep2"
+        let expectedDep3 = "Dep3"
+        var receivedDep1: String?
+        var receivedDep2: String?
+        var receivedDep3: String?
+
+        // Given: an effect that takes 3 dependencies
+        let effect: (String, String, String, MockState) -> MockStream<MockEvent> = { dep1, dep2, dep3, state in
+            receivedDep1 = dep1
+            receivedDep2 = dep2
+            receivedDep3 = dep3
+            return .init(value: .init(value: 0))
+        }
+
+        // When: creating a feedback from it, passing its dependencies
+        let sut = SpyFeedback<MockState, MockEvent>(effect: effect, dep1: expectedDep1, dep2: expectedDep2, dep3: expectedDep3)
+        // When: executing the feedback
+        _ = sut.effect(.init(value: .init(subState: 0)))
+
+        // Then: the dependencies given to the effect are the expected ones
+        XCTAssertEqual(receivedDep1, expectedDep1)
+        XCTAssertEqual(receivedDep2, expectedDep2)
+        XCTAssertEqual(receivedDep3, expectedDep3)
+    }
+
+    func test_initializer_transmit_four_dependencies_to_effect() {
+        let expectedDep1 = "Dep1"
+        let expectedDep2 = "Dep2"
+        let expectedDep3 = "Dep3"
+        let expectedDep4 = "Dep4"
+        var receivedDep1: String?
+        var receivedDep2: String?
+        var receivedDep3: String?
+        var receivedDep4: String?
+
+        // Given: an effect that takes 4 dependencies
+        let effect: (String, String, String, String, MockState) -> MockStream<MockEvent> = { dep1, dep2, dep3, dep4, state in
+            receivedDep1 = dep1
+            receivedDep2 = dep2
+            receivedDep3 = dep3
+            receivedDep4 = dep4
+            return .init(value: .init(value: 0))
+        }
+
+        // When: creating a feedback from it, passing its dependencies
+        let sut = SpyFeedback<MockState, MockEvent>(effect: effect, dep1: expectedDep1, dep2: expectedDep2, dep3: expectedDep3, dep4: expectedDep4)
+        // When: executing the feedback
+        _ = sut.effect(.init(value: .init(subState: 0)))
+
+        // Then: the dependencies given to the effect are the expected ones
+        XCTAssertEqual(receivedDep1, expectedDep1)
+        XCTAssertEqual(receivedDep2, expectedDep2)
+        XCTAssertEqual(receivedDep3, expectedDep3)
+        XCTAssertEqual(receivedDep4, expectedDep4)
+    }
 }

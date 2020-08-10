@@ -210,4 +210,42 @@ public extension FeedbackDefinition {
         
         self.init(effect: effect, on: executer, applying: strategy)
     }
+
+    init<Dep1>(effect: @escaping (Dep1, StateStream.Value) -> EventStream,
+               on executer: Executer? = nil,
+               applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy,
+               dep1: Dep1) {
+        let partializedEffect = partial(effect, arg1: dep1, arg2: .undefined)
+        self.init(effect: partializedEffect, on: executer, applying: strategy)
+    }
+
+    init<Dep1, Dep2>(effect: @escaping (Dep1, Dep2, StateStream.Value) -> EventStream,
+               on executer: Executer? = nil,
+               applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy,
+               dep1: Dep1,
+               dep2: Dep2) {
+        let partializedEffect = partial(effect, arg1: dep1, arg2: dep2, arg3: .undefined)
+        self.init(effect: partializedEffect, on: executer, applying: strategy)
+    }
+
+    init<Dep1, Dep2, Dep3>(effect: @escaping (Dep1, Dep2, Dep3, StateStream.Value) -> EventStream,
+               on executer: Executer? = nil,
+               applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy,
+               dep1: Dep1,
+               dep2: Dep2,
+               dep3: Dep3) {
+        let partializedEffect = partial(effect, arg1: dep1, arg2: dep2, arg3: dep3, arg4: .undefined)
+        self.init(effect: partializedEffect, on: executer, applying: strategy)
+    }
+
+    init<Dep1, Dep2, Dep3, Dep4>(effect: @escaping (Dep1, Dep2, Dep3, Dep4, StateStream.Value) -> EventStream,
+               on executer: Executer? = nil,
+               applying strategy: ExecutionStrategy = Self.defaultExecutionStrategy,
+               dep1: Dep1,
+               dep2: Dep2,
+               dep3: Dep3,
+               dep4: Dep4) {
+        let partializedEffect = partial(effect, arg1: dep1, arg2: dep2, arg3: dep3, arg4: dep4, arg5: .undefined)
+        self.init(effect: partializedEffect, on: executer, applying: strategy)
+    }
 }
