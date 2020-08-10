@@ -1,3 +1,7 @@
+**version 0.19.0**:
+
+* add helper constructor for Feedback to be able to pass there dependencies
+
 **version 0.18.0**:
 
 * breaking: Executers are no longer associated to a Reducer but to the whole Spin instead (and can still be overriden in each Feedback) 
