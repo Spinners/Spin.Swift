@@ -571,7 +571,7 @@ https://github.com/Spinners/Spin.Swift.git
 Add the following entry to your Cartfile:
 
 ```
-github "Spinners/Spin.Swift" ~> 0.18.0
+github "Spinners/Spin.Swift" ~> 0.19.0
 ```
 
 and then:
@@ -585,9 +585,9 @@ carthage update Spin.Swift
 Add the following dependencies to your Podfile:
 
 ```
-pod 'SpinReactiveSwift', '~> 0.18.0'
-pod 'SpinCombine', '~> 0.18.0'
-pod 'SpinRxSwift', '~> 0.18.0'
+pod 'SpinReactiveSwift', '~> 0.19.0'
+pod 'SpinCombine', '~> 0.19.0'
+pod 'SpinRxSwift', '~> 0.19.0'
 ```
 
 You should then be able to import SpinCommon (base implementation), SpinRxSwift, SpinReactiveSwift or SpinCombine
