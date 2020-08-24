@@ -264,4 +264,35 @@ final class FeedbackTests: XCTestCase {
         XCTAssertEqual(numberOfCallsGearSideEffect, 2)
         XCTAssertEqual(receivedEvents, ["event"])
     }
+
+    func testFeedback_call_gearSideEffect_and_does_only_trigger_a_feedbackEvent_when_catching_expected_event() {
+        let exp = expectation(description: "attach")
+        let gear = Gear<Int>()
+        var receivedEvents = [String]()
+
+        // Given: a feedback attached to a Gear and triggering en event only of the gear event is 1
+        let sut = Feedback<Int, String>(attachedTo: gear, catching: 1, emitting: "event")
+
+        // When: executing the feedback
+        let inputStream = Observable<Int>.just(1701)
+        sut.effect(inputStream)
+            .do(onNext: { event in
+                receivedEvents.append(event)
+                if receivedEvents.count == 1 {
+                    exp.fulfill()
+                }
+            })
+            .subscribe()
+            .disposed(by: self.disposeBag)
+
+        // When: sending 0 and then 1 as gear event
+        gear.eventSubject.accept(0)
+        gear.eventSubject.accept(1)
+
+        waitForExpectations(timeout: 0.5)
+
+        // Then: the gear dedicated side effect is called twice
+        // Then: the only event triggered by the feedback is the one when attachment is not nil
+        XCTAssertEqual(receivedEvents, ["event"])
+    }
 }

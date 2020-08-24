@@ -508,8 +508,12 @@ let feedback = Feedback<State, Event>(attachedTo: gear, propagating: { (event: G
 	return nil
 })
 
+// or with the short syntax
+
+let feedback = Feedback<State, Event>(attachedTo: gear, catching: .authorizationIssueHappened, emitting: .checkAuthorization)
+
 ...
-// create the Check Authorization Spin with this feedback
+// then, create the Check Authorization Spin with this feedback
 ...
 ```
 
@@ -519,13 +523,17 @@ At last we have to tell a feedback from the feature Spin how it will push events
 let feedback = Feedback<State, Event>(attachedTo: gear, propagating: { (state: State) in
 	if state == .unauthorized {
 		// only the .unauthorized state should trigger en event in the Gear
-		return . authorizationIssueHappened
+		return .authorizationIssueHappened
 	}
 	return nil
 })
 
+// or with the short syntax
+
+let feedback = Feedback<State, Event>(attachedTo: gear, catching: .unauthorized, propagating: .authorizationIssueHappened)
+
 ...
-// create the Feature Spin with this feedback
+// then, create the Feature Spin with this feedback
 ...
 ```
 
