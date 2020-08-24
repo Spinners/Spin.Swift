@@ -1,3 +1,7 @@
+**version 0.20.0**:
+
+* add a short syntax to build a feedback attached to a Gear
+
 **version 0.19.0**:
 
 * add helper constructors for Feedback to be able to pass dependencies
