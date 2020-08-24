@@ -84,4 +84,19 @@ where SchedulerTime: Strideable, SchedulerTime.Stride: SchedulerTimeIntervalConv
 
         self.init(effect: effect, on: executer)
     }
+
+    public init<Event>(attachedTo gear: Gear<Event>,
+                       catching event: Event,
+                       emitting loopEvent: EventStream.Value,
+                       on executer: Executer? = nil) where Event: Equatable {
+        let emitFunction: (Event) -> EventStream .Value? = { gearEvent in
+            if event == gearEvent {
+                return loopEvent
+            }
+
+            return nil
+        }
+
+        self.init(attachedTo: gear, propagating: emitFunction, on: executer)
+    }
 }

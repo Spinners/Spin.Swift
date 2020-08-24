@@ -398,6 +398,45 @@ final class FeedbackDefinition_DefaultTests: XCTestCase {
         XCTAssertEqual(spyGear.receivedEvent, expectedMockGearEvent)
     }
 
+    func testGear_do_not_propagate_event_if_catched_state_in_the_not_exepcted_one() {
+        let spyGear = MockGear()
+
+        // Given: a feedback built with a gear attachment
+        let sut = SpyFeedback<MockState, MockEvent>(attachedTo: spyGear, catching: MockState(subState: 10), propagating: .event)
+
+        // Given: a feedback built with a gear attachment that return a MockGearEVent
+        _ = sut.effect(MockStream<MockState>(value: MockState(subState: 15)))
+
+        // Then: the default initializer of the feedback is called
+        // Then: the Executer inside the feedback is nil
+        // Then: the ExecutionStrategy is the default one
+        // Then: the event is propagated to the gear
+        XCTAssertTrue(sut.initIsCalled)
+        XCTAssertNil(sut.feedbackExecuter)
+        XCTAssertEqual(spyExecutionStrategy, MockFeedback<MockState, MockEvent>.defaultExecutionStrategy)
+        XCTAssertNil(spyGear.receivedEvent)
+    }
+
+    func testGear_propagate_event_if_catched_state_in_the_exepcted_one() {
+        let spyGear = MockGear()
+        let expectedMockGearEvent = MockGearEvent.event
+
+        // Given: a feedback built with a gear attachment
+        let sut = SpyFeedback<MockState, MockEvent>(attachedTo: spyGear, catching: MockState(subState: 15), propagating: .event)
+
+        // Given: a feedback built with a gear attachment that return a MockGearEVent
+        _ = sut.effect(MockStream<MockState>(value: MockState(subState: 15)))
+
+        // Then: the default initializer of the feedback is called
+        // Then: the Executer inside the feedback is nil
+        // Then: the ExecutionStrategy is the default one
+        // Then: the event is propagated to the gear
+        XCTAssertTrue(sut.initIsCalled)
+        XCTAssertNil(sut.feedbackExecuter)
+        XCTAssertEqual(spyExecutionStrategy, MockFeedback<MockState, MockEvent>.defaultExecutionStrategy)
+        XCTAssertEqual(spyGear.receivedEvent, expectedMockGearEvent)
+    }
+
     func test_initializer_transmit_one_dependency_to_effect() {
         let expectedDep1 = "Dep1"
         var receivedDep1: String?

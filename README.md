@@ -508,8 +508,12 @@ let feedback = Feedback<State, Event>(attachedTo: gear, propagating: { (event: G
 	return nil
 })
 
+// or with the short syntax
+
+let feedback = Feedback<State, Event>(attachedTo: gear, catching: .authorizationIssueHappened, emitting: .checkAuthorization)
+
 ...
-// create the Check Authorization Spin with this feedback
+// then, create the Check Authorization Spin with this feedback
 ...
 ```
 
@@ -519,13 +523,17 @@ At last we have to tell a feedback from the feature Spin how it will push events
 let feedback = Feedback<State, Event>(attachedTo: gear, propagating: { (state: State) in
 	if state == .unauthorized {
 		// only the .unauthorized state should trigger en event in the Gear
-		return . authorizationIssueHappened
+		return .authorizationIssueHappened
 	}
 	return nil
 })
 
+// or with the short syntax
+
+let feedback = Feedback<State, Event>(attachedTo: gear, catching: .unauthorized, propagating: .authorizationIssueHappened)
+
 ...
-// create the Feature Spin with this feedback
+// then, create the Feature Spin with this feedback
 ...
 ```
 
@@ -571,7 +579,7 @@ https://github.com/Spinners/Spin.Swift.git
 Add the following entry to your Cartfile:
 
 ```
-github "Spinners/Spin.Swift" ~> 0.19.0
+github "Spinners/Spin.Swift" ~> 0.20.0
 ```
 
 and then:
@@ -585,9 +593,9 @@ carthage update Spin.Swift
 Add the following dependencies to your Podfile:
 
 ```
-pod 'SpinReactiveSwift', '~> 0.19.0'
-pod 'SpinCombine', '~> 0.19.0'
-pod 'SpinRxSwift', '~> 0.19.0'
+pod 'SpinReactiveSwift', '~> 0.20.0'
+pod 'SpinCombine', '~> 0.20.0'
+pod 'SpinRxSwift', '~> 0.20.0'
 ```
 
 You should then be able to import SpinCommon (base implementation), SpinRxSwift, SpinReactiveSwift or SpinCombine
