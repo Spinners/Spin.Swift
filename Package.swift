@@ -1,4 +1,4 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.3
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -7,7 +7,7 @@ let package = Package(
     name: "Spin.Swift",
     platforms: [
         .macOS(.v10_10),
-        .iOS(.v8),
+        .iOS(.v9),
         .tvOS(.v9),
         .watchOS(.v3)
     ],
@@ -49,7 +49,7 @@ let package = Package(
             path: "Sources/ReactiveSwift"),
         .target(
             name: "SpinRxSwift",
-            dependencies: ["SpinCommon", "RxSwift", "RxRelay"],
+            dependencies: ["SpinCommon", "RxSwift", .product(name: "RxRelay", package: "RxSwift")],
             path: "Sources/RxSwift"),
         .testTarget(
             name: "SpinCommonTests",
@@ -65,7 +65,7 @@ let package = Package(
             path: "Tests/ReactiveSwiftTests"),
         .testTarget(
             name: "SpinRxSwiftTests",
-            dependencies: ["SpinRxSwift", "RxBlocking"],
+            dependencies: ["SpinRxSwift", .product(name: "RxBlocking", package: "RxSwift")],
             path: "Tests/RxSwiftTests"
         ),
     ]
